@@ -12,14 +12,21 @@
     .mode-btn { padding: 8px 16px; border: none; border-radius: 20px; cursor: pointer; font-weight: bold; }
     .btn-active { background: #ffd54f; color: #1b5e20; }
     .btn-inactive { background: rgba(255,255,255,0.2); color: white; }
+    
+    .seat-select { background: rgba(0,0,0,0.2); padding: 10px; text-align: center; }
+    .seat-btn { padding: 6px 12px; margin: 0 4px; border: none; border-radius: 6px; cursor: pointer; background: #fff; color: #333; font-weight: bold; }
+    .seat-btn.my-seat { background: #4caf50; color: white; }
+    .seat-btn:disabled { background: #888; color: #ccc; cursor: not-allowed; }
+
     .game-board { flex: 1; display: grid; grid-template-rows: 1fr 2fr 1fr; grid-template-columns: 1fr 2fr 1fr; gap: 10px; padding: 20px; }
-    .player-table { background: rgba(255,255,255,0.1); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.3); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; }
+    .player-table { background: rgba(255,255,255,0.1); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.3); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; position: relative; }
     .north { grid-row: 1; grid-column: 2; }
     .west { grid-row: 2; grid-column: 1; }
     .center { grid-row: 2; grid-column: 2; border: none; background: transparent; }
     .east { grid-row: 2; grid-column: 3; }
     .south { grid-row: 3; grid-column: 2; background: rgba(255,255,255,0.15); }
-    .card { width: 90px; height: 130px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; text-align: center; }
+    
+    .card { width: 90px; height: 130px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; text-align: center; margin-top: 6px; }
     .card-front { background: #fffde7; color: #2e7d32; border: 2px solid #fbc02d; }
     .card-back { background: #1565c0; color: white; border: 2px solid #64b5f6; }
     .deck { cursor: pointer; }
@@ -36,61 +43,88 @@
     </div>
   </div>
 
+  <!-- 자리 선택 바 -->
+  <div class="seat-select">
+    <span>내 자리 선택: </span>
+    <button id="seat-south" class="seat-btn" onclick="selectSeat('south')">남쪽(나)</button>
+    <button id="seat-north" class="seat-btn" onclick="selectSeat('north')">북쪽</button>
+    <button id="seat-west" class="seat-btn" onclick="selectSeat('west')">서쪽</button>
+    <button id="seat-east" class="seat-btn" onclick="selectSeat('east')">동쪽</button>
+  </div>
+
   <div class="game-board">
-    <div class="player-table north"><div>참여자 B</div><div id="card-north" class="card card-back">대기</div></div>
-    <div class="player-table west"><div>참여자 C</div><div id="card-west" class="card card-back">대기</div></div>
+    <div class="player-table north">
+      <div>북쪽</div>
+      <div id="card-north" class="card card-back">대기</div>
+    </div>
+    <div class="player-table west">
+      <div>서쪽</div>
+      <div id="card-west" class="card card-back">대기</div>
+    </div>
     <div class="player-table center">
       <div class="card card-back deck" onclick="drawCard()">중앙 덱<br><small>(뽑기)</small></div>
     </div>
-    <div class="player-table east"><div>참여자 D</div><div id="card-east" class="card card-back">대기</div></div>
+    <div class="player-table east">
+      <div>동쪽</div>
+      <div id="card-east" class="card card-back">대기</div>
+    </div>
     <div class="player-table south">
-      <div>내 테이블</div>
-      <div id="card-south" class="card card-back">카드 없음</div>
+      <div>남쪽</div>
+      <div id="card-south" class="card card-back">대기</div>
       <div class="controls">
-        <button class="action-btn" onclick="revealCard()">카드 확인하기</button>
+        <button class="action-btn" onclick="revealCard()">정답 공개하기</button>
       </div>
     </div>
   </div>
 
   <script>
     const socket = io();
-    let localState = {};
 
-    socket.on('stateUpdate', (state) => {
-      localState = state;
-      document.getElementById('mode1').className = state.mode === 'me' ? 'mode-btn btn-active' : 'mode-btn btn-inactive';
-      document.getElementById('mode2').className = state.mode === 'others' ? 'mode-btn btn-active' : 'mode-btn btn-inactive';
-
-      const myCard = document.getElementById('card-south');
-      const otherCards = [document.getElementById('card-north'), document.getElementById('card-west'), document.getElementById('card-east')];
-
-      if (!state.currentCard) {
-        myCard.className = "card card-back";
-        myCard.innerText = "카드 없음";
-        otherCards.forEach(c => { c.className = "card card-back"; c.innerText = "대기"; });
-        return;
-      }
-
-      if (state.isRevealed) {
-        myCard.className = "card card-front";
-        myCard.innerText = state.currentCard;
-        otherCards.forEach(c => { c.className = "card card-front"; c.innerText = state.currentCard; });
-      } else {
-        if (state.mode === 'me') {
-          myCard.className = "card card-front";
-          myCard.innerText = state.currentCard;
-          otherCards.forEach(c => { c.className = "card card-back"; c.innerText = "???"; });
-        } else {
-          myCard.className = "card card-back";
-          myCard.innerText = "???";
-          otherCards.forEach(c => { c.className = "card card-front"; c.innerText = state.currentCard; });
-        }
-      }
-    });
+    function selectSeat(seat) {
+      socket.emit('selectSeat', seat);
+    }
 
     function setMode(mode) { socket.emit('setMode', mode); }
     function drawCard() { socket.emit('drawCard'); }
     function revealCard() { socket.emit('revealCard'); }
+
+    socket.on('stateUpdate', (state) => {
+      // 모드 버튼 표시
+      document.getElementById('mode1').className = state.mode === 'me' ? 'mode-btn btn-active' : 'mode-btn btn-inactive';
+      document.getElementById('mode2').className = state.mode === 'others' ? 'mode-btn btn-active' : 'mode-btn btn-inactive';
+
+      // 자리 선택 버튼 상태 업데이트
+      ['south', 'north', 'west', 'east'].forEach(seat => {
+        const btn = document.getElementById(`seat-${seat}`);
+        if (state.mySeat === seat) {
+          btn.className = "seat-btn my-seat";
+          btn.disabled = false;
+        } else if (state.occupiedSeats.includes(seat)) {
+          btn.className = "seat-btn";
+          btn.disabled = true; // 다른 사람이 앉은 자리는 클릭 불가
+        } else {
+          btn.className = "seat-btn";
+          btn.disabled = false;
+        }
+      });
+
+      // 카드 상태 업데이트
+      ['south', 'north', 'west', 'east'].forEach(seat => {
+        const cardElem = document.getElementById(`card-${seat}`);
+        const cardValue = state.cards[seat];
+
+        if (!cardValue) {
+          cardElem.className = "card card-back";
+          cardElem.innerText = "대기";
+        } else if (cardValue === "???") {
+          cardElem.className = "card card-back";
+          cardElem.innerText = "???";
+        } else {
+          cardElem.className = "card card-front";
+          cardElem.innerText = cardValue;
+        }
+      });
+    });
   </script>
 </body>
 </html>
