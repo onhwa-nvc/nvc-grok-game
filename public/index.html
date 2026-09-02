@@ -8,32 +8,53 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: sans-serif; background-color: #1e4d2b; color: white; height: 100vh; display: flex; flex-direction: column; }
-    .header { background: rgba(0,0,0,0.4); padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; }
-    .mode-btn { padding: 8px 16px; border: none; border-radius: 20px; cursor: pointer; font-weight: bold; }
-    .btn-active { background: #ffd54f; color: #1b5e20; }
-    .btn-inactive { background: rgba(255,255,255,0.2); color: white; }
     
-    .seat-select { background: rgba(0,0,0,0.2); padding: 10px; display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .header { background: rgba(0,0,0,0.4); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .header-group { display: flex; align-items: center; gap: 8px; }
+    .group-label { font-size: 13px; font-weight: bold; opacity: 0.8; margin-right: 2px; }
+    
+    .type-btn, .mode-btn { padding: 6px 14px; border: none; border-radius: 16px; cursor: pointer; font-weight: bold; font-size: 13px; }
+    
+    /* 카드 종류 버튼 스타일 */
+    .btn-type-emotion.active { background: #f8bbd0; color: #880e4f; }
+    .btn-type-need.active { background: #b3e5fc; color: #01579b; }
+    .btn-type-inactive { background: rgba(255,255,255,0.15); color: #ddd; }
+
+    /* 모드 버튼 스타일 */
+    .btn-mode-active { background: #ffd54f; color: #1b5e20; }
+    .btn-mode-inactive { background: rgba(255,255,255,0.15); color: #ddd; }
+
+    .seat-select { background: rgba(0,0,0,0.2); padding: 8px; display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap; }
     .name-input { padding: 6px 10px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; width: 110px; outline: none; }
     .seat-btn { padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; background: #fff; color: #333; font-weight: bold; }
     .seat-btn.my-seat { background: #4caf50; color: white; }
-    .seat-btn:disabled { background: #888; color: #ccc; cursor: not-allowed; }
+    .seat-btn:disabled { background: #666; color: #aaa; cursor: not-allowed; }
 
-    .game-board { flex: 1; display: grid; grid-template-rows: 1fr 2fr 1fr; grid-template-columns: 1fr 2fr 1fr; gap: 10px; padding: 20px; }
-    .player-table { background: rgba(255,255,255,0.1); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.3); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; }
-    .player-name { font-weight: bold; margin-bottom: 4px; color: #e8f5e9; font-size: 15px; }
+    .game-board { flex: 1; display: grid; grid-template-rows: 1fr 2fr 1fr; grid-template-columns: 1fr 2fr 1fr; gap: 10px; padding: 15px; }
+    .player-table { background: rgba(255,255,255,0.08); border-radius: 12px; border: 1px dashed rgba(255,255,255,0.25); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; }
+    .player-name { font-weight: bold; margin-bottom: 6px; color: #e8f5e9; font-size: 15px; }
     
     .north { grid-row: 1; grid-column: 2; }
     .west { grid-row: 2; grid-column: 1; }
     .center { grid-row: 2; grid-column: 2; border: none; background: transparent; }
     .east { grid-row: 2; grid-column: 3; }
-    .south { grid-row: 3; grid-column: 2; background: rgba(255,255,255,0.15); }
+    .south { grid-row: 3; grid-column: 2; background: rgba(255,255,255,0.12); }
     
-    .card { width: 90px; height: 130px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; text-align: center; }
-    .card-front { background: #fffde7; color: #2e7d32; border: 2px solid #fbc02d; }
-    .card-back { background: #1565c0; color: white; border: 2px solid #64b5f6; }
+    /* 기본 카드 틀 */
+    .card { width: 90px; height: 130px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 17px; text-align: center; padding: 6px; transition: all 0.3s ease; }
+    
+    /* 대기 상태 (카드 안 뽑음) */
+    .card-none { background: rgba(255, 255, 255, 0.05); border: 2px dashed rgba(255, 255, 255, 0.2); color: transparent; }
+
+    /* 뒷면 (느낌: 연분홍 / 욕구: 연하늘) */
+    .card-back-emotion { background: #f8bbd0; color: #880e4f; border: 2px solid #f48fb1; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+    .card-back-need { background: #b3e5fc; color: #01579b; border: 2px solid #81d4fa; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+
+    /* 공개된 앞면 (밝은 배경) */
+    .card-front-emotion { background: #fff0f5; color: #c2185b; border: 2px solid #e91e63; font-size: 18px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+    .card-front-need { background: #f0f8ff; color: #0288d1; border: 2px solid #03a9f4; font-size: 18px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+
     .deck { cursor: pointer; }
-    
     .center-controls { display: flex; flex-direction: column; align-items: center; gap: 12px; }
     .action-btn { padding: 8px 16px; border: none; border-radius: 16px; background: #ff9800; color: white; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
     .action-btn:hover { background: #f57c00; }
@@ -41,17 +62,27 @@
 </head>
 <body>
   <div class="header">
-    <h1>NVC 그로그 카드</h1>
-    <div>
-      <button id="mode1" class="mode-btn btn-active" onclick="setMode('me')">1. 나만 보기</button>
-      <button id="mode2" class="mode-btn btn-inactive" onclick="setMode('others')">2. 나만 안보기</button>
+    <h1 style="font-size: 20px;">NVC 그로그 카드</h1>
+    
+    <!-- 카드 종류 버튼 -->
+    <div class="header-group">
+      <span class="group-label">카드:</span>
+      <button id="type-emotion" class="type-btn btn-type-emotion active" onclick="setCardType('emotion')">느낌 카드</button>
+      <button id="type-need" class="type-btn btn-type-inactive" onclick="setCardType('need')">욕구 카드</button>
+    </div>
+
+    <!-- 나만 보기 / 나만 안보기 모드 버튼 -->
+    <div class="header-group">
+      <span class="group-label">모드:</span>
+      <button id="mode1" class="mode-btn btn-mode-active" onclick="setMode('me')">1. 나만 보기</button>
+      <button id="mode2" class="mode-btn btn-mode-inactive" onclick="setMode('others')">2. 나만 안보기</button>
     </div>
   </div>
 
   <!-- 자리 및 이름 설정 바 -->
   <div class="seat-select">
     <input type="text" id="user-name" class="name-input" placeholder="이름 입력" maxlength="5">
-    <span>자리 선택:</span>
+    <span style="font-size: 13px;">내 자리:</span>
     <button id="seat-south" class="seat-btn" onclick="selectSeat('south')">남쪽</button>
     <button id="seat-north" class="seat-btn" onclick="selectSeat('north')">북쪽</button>
     <button id="seat-west" class="seat-btn" onclick="selectSeat('west')">서쪽</button>
@@ -61,28 +92,28 @@
   <div class="game-board">
     <div class="player-table north">
       <div id="name-north" class="player-name">북쪽</div>
-      <div id="card-north" class="card card-back">대기</div>
+      <div id="card-north" class="card card-none"></div>
     </div>
     <div class="player-table west">
       <div id="name-west" class="player-name">서쪽</div>
-      <div id="card-west" class="card card-back">대기</div>
+      <div id="card-west" class="card card-none"></div>
     </div>
 
-    <!-- 중앙 영역 (카드 덱 + 정답 공개 버튼) -->
+    <!-- 중앙 영역 -->
     <div class="player-table center">
       <div class="center-controls">
-        <div class="card card-back deck" onclick="drawCard()">중앙 덱<br><small>(뽑기)</small></div>
+        <div id="center-deck" class="card card-back-emotion deck" onclick="drawCard()">중앙 덱<br><small>(뽑기)</small></div>
         <button class="action-btn" onclick="revealCard()">정답 공개하기</button>
       </div>
     </div>
 
     <div class="player-table east">
       <div id="name-east" class="player-name">동쪽</div>
-      <div id="card-east" class="card card-back">대기</div>
+      <div id="card-east" class="card card-none"></div>
     </div>
     <div class="player-table south">
       <div id="name-south" class="player-name">남쪽</div>
-      <div id="card-south" class="card card-back">대기</div>
+      <div id="card-south" class="card card-none"></div>
     </div>
   </div>
 
@@ -94,21 +125,31 @@
       socket.emit('selectSeat', { seat: seat, name: name });
     }
 
+    function setCardType(type) { socket.emit('setCardType', type); }
     function setMode(mode) { socket.emit('setMode', mode); }
     function drawCard() { socket.emit('drawCard'); }
     function revealCard() { socket.emit('revealCard'); }
 
     socket.on('stateUpdate', (state) => {
-      // 모드 버튼
-      document.getElementById('mode1').className = state.mode === 'me' ? 'mode-btn btn-active' : 'mode-btn btn-inactive';
-      document.getElementById('mode2').className = state.mode === 'others' ? 'mode-btn btn-active' : 'mode-btn btn-inactive';
+      // 1. 카드 종류 버튼 스타일 업데이트
+      const isEmotion = state.cardType === 'emotion';
+      document.getElementById('type-emotion').className = isEmotion ? 'type-btn btn-type-emotion active' : 'type-btn btn-type-inactive';
+      document.getElementById('type-need').className = !isEmotion ? 'type-btn btn-type-need active' : 'type-btn btn-type-inactive';
 
-      // 자리별 이름 업데이트
+      // 2. 모드 버튼 스타일 업데이트
+      document.getElementById('mode1').className = state.mode === 'me' ? 'mode-btn btn-mode-active' : 'mode-btn btn-mode-inactive';
+      document.getElementById('mode2').className = state.mode === 'others' ? 'mode-btn btn-mode-active' : 'mode-btn btn-mode-inactive';
+
+      // 3. 중앙 덱 색상 업데이트
+      const centerDeck = document.getElementById('center-deck');
+      centerDeck.className = `card deck ${isEmotion ? 'card-back-emotion' : 'card-back-need'}`;
+
+      // 4. 자리별 이름 업데이트
       ['south', 'north', 'west', 'east'].forEach(seat => {
         document.getElementById(`name-${seat}`).innerText = state.seatNames[seat];
       });
 
-      // 자리 선택 버튼 상태
+      // 5. 자리 선택 버튼 업데이트
       ['south', 'north', 'west', 'east'].forEach(seat => {
         const btn = document.getElementById(`seat-${seat}`);
         if (state.mySeat === seat) {
@@ -123,19 +164,22 @@
         }
       });
 
-      // 카드 상태
+      // 6. 플레이어 카드 상태 및 색상 연출
       ['south', 'north', 'west', 'east'].forEach(seat => {
         const cardElem = document.getElementById(`card-${seat}`);
         const cardValue = state.cards[seat];
 
         if (!cardValue) {
-          cardElem.className = "card card-back";
-          cardElem.innerText = "대기";
+          // 대기 상태: 색상 없음 (빈 프레임)
+          cardElem.className = "card card-none";
+          cardElem.innerText = "";
         } else if (cardValue === "???") {
-          cardElem.className = "card card-back";
+          // 카드를 가져갔지만 글자가 안 보이는 뒷면 상태
+          cardElem.className = `card ${isEmotion ? 'card-back-emotion' : 'card-back-need'}`;
           cardElem.innerText = "???";
         } else {
-          cardElem.className = "card card-front";
+          // 공개된 카드 앞면 상태
+          cardElem.className = `card ${isEmotion ? 'card-front-emotion' : 'card-front-need'}`;
           cardElem.innerText = cardValue;
         }
       });
