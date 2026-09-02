@@ -8,33 +8,32 @@ const io = new Server(server, { cors: { origin: "*" } });
 
 app.use(express.static(__dirname + '/public'));
 
-// 55개 느낌 및 욕구 카드 데이터
 const emotionCards = [
   "감사한", "감동한", "기쁜", "당황스러운", "답답한", "걱정되는", "두려운", "무기력한", "미안한", "반가운",
   "부끄러운", "뿌듯한", "설레는", "슬픈", "안도하는", "억울한", "외로운", "우울한", "자랑스러운", "홀가분한",
-  "화난", "편안한", "평화로운", "희망찬", "억울한", "지루한", "막막한", "섭섭한", "혼란스러운", "좌절한",
-  "후회스러운", "부담스러운", "민망한", "괴로운", "불안한", "초조한", "황당한", "유쾌한", "통쾌한", "짜릿한",
-  "신나는", "벅찬", "포근한", "든든한", "여유로운", "자유로운", "아쉬운", "허전한", "귀찮은", "서운한",
-  "낙담한", "절망적인", "상심한", "무서운", "놀란"
+  "화난", "편안한", "평화로운", "희망찬", "지루한", "막막한", "섭섭한", "혼란스러운", "좌절한", "후회스러운",
+  "부담스러운", "민망한", "괴로운", "불안한", "초조한", "황당한", "유쾌한", "통쾌한", "짜릿한", "신나는",
+  "벅찬", "포근한", "든든한", "여유로운", "자유로운", "아쉬운", "허전한", "귀찮은", "서운한", "낙담한",
+  "절망적인", "상심한", "무서운", "놀란", "행복한"
 ];
 
 const needCards = [
   "안전", "존중", "자율성", "연결", "이해", "휴식", "공정함", "성장", "신뢰", "명확함",
-  "기여", "평화", "사랑", "소속감", "배려", "지방/건강", "수용", "인정", "표현", "공감",
+  "기여", "평화", "사랑", "소속감", "배려", "건강", "수용", "인정", "표현", "공감",
   "공동체", "의미", "창의성", "성취", "질서", "예측가능성", "재미", "즐거움", "아름다움", "조화",
-  "자유", "독립", "도전", "효능감", "안정", "보호", "위로", "친밀함", "협력", "소통", "통합",
-  "진실", "정직", "희망", "목적", "공헌", "유대감", "돌봄", "공유", "공감", "조율", "여유",
-  "자아실현", "학습", "발전"
+  "자유", "독립", "도전", "효능감", "안정", "보호", "위로", "친밀함", "협력", "소통",
+  "통합", "진실", "정직", "희망", "목적", "공헌", "유대감", "돌봄", "공유", "조율",
+  "여유", "자아실현", "학습", "발전", "여가"
 ];
 
 let gameState = {
-  viewMode: "board",   // 'board'(테이블 뽑기 모드) 또는 'grid'(55장 전체 펼침 모드)
-  cardType: "emotion", // 'emotion' 또는 'need'
-  mode: "me",          // 'me' 또는 'others'
+  viewMode: "board",
+  cardType: "emotion",
+  mode: "me",
   currentCard: "",
   drawerSeat: null,
   isRevealed: false,
-  gifts: { north: [], south: [], east: [], west: [] } // 선물로 전달된 카드들
+  gifts: { north: [], south: [], east: [], west: [] }
 };
 
 let players = {};
@@ -81,19 +80,19 @@ io.on('connection', (socket) => {
     sendStateToAll();
   });
 
-  // 카드 선물하기 이벤트 (특정 자리 사람에게 단어 선물)
   socket.on('sendGift', ({ targetSeat, cardWord }) => {
     if (targetSeat && gameState.gifts[targetSeat]) {
-      gameState.gifts[targetSeat].push({
-        word: cardWord,
-        type: gameState.cardType,
-        from: players[socket.id]?.name || "익명"
-      });
-      sendStateToAll();
+      if (gameState.gifts[targetSeat].length < 10) {
+        gameState.gifts[targetSeat].push({
+          word: cardWord,
+          type: gameState.cardType,
+          from: players[socket.id]?.name || "익명"
+        });
+        sendStateToAll();
+      }
     }
   });
 
-  // 선물함 비우기
   socket.on('clearGifts', () => {
     gameState.gifts = { north: [], south: [], east: [], west: [] };
     sendStateToAll();
