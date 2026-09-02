@@ -13,20 +13,24 @@ const sampleCards = ["설레는", "답답한", "감사한", "평화로운", "걱
 let gameState = {
   currentCard: "",
   mode: "me",          // 'me': 나만 보기, 'others': 나만 안보기
-  drawerSeat: null,    // 카드를 뽑은 사람의 자리 ('south', 'north', 'east', 'west')
+  drawerSeat: null,    // 카드를 뽑은 사람의 자리
   isRevealed: false
 };
 
-// 각 접속자별 자리 정보 저장
+// 접속자 정보 (자리 및 닉네임)
 let players = {}; 
 
 io.on('connection', (socket) => {
-  // 새 접속자 기본 상태 전송
+  // 기본 닉네임 및 상태 부여
+  players[socket.id] = { seat: null, name: "참여자" };
   sendStateToUser(socket);
 
-  // 자리 선택 이벤트
-  socket.on('selectSeat', (seat) => {
-    players[socket.id] = seat;
+  // 자리 선택 및 이름 설정
+  socket.on('selectSeat', ({ seat, name }) => {
+    players[socket.id] = { 
+      seat: seat, 
+      name: name || getSeatDefaultName(seat) 
+    };
     sendStateToAll();
   });
 
@@ -39,48 +43,62 @@ io.on('connection', (socket) => {
     sendStateToAll();
   });
 
-  // 카드 뽑기 (카드를 뽑은 사람의 자리 기록)
+  // 카드 뽑기
   socket.on('drawCard', () => {
-    const userSeat = players[socket.id];
-    if (!userSeat) return; // 자리를 안 정했으면 실행 안 함
+    const user = players[socket.id];
+    if (!user || !user.seat) return; // 자리가 없는 유저는 뽑기 불가
 
     gameState.currentCard = sampleCards[Math.floor(Math.random() * sampleCards.length)];
-    gameState.drawerSeat = userSeat;
+    gameState.drawerSeat = user.seat;
     gameState.isRevealed = false;
     sendStateToAll();
   });
 
-  // 카드 공개하기
+  // 정답 공개하기 (누구나 가능)
   socket.on('revealCard', () => {
     gameState.isRevealed = true;
     sendStateToAll();
   });
 
-  // 접속 종료 처리
+  // 접속 종료
   socket.on('disconnect', () => {
     delete players[socket.id];
     sendStateToAll();
   });
 });
 
-// 전체 유저에게 각자의 시선에 맞는 상태 전송
+function getSeatDefaultName(seat) {
+  const names = { south: "남쪽", north: "북쪽", east: "동쪽", west: "서쪽" };
+  return names[seat] || "참여자";
+}
+
 function sendStateToAll() {
   io.sockets.sockets.forEach((s) => {
     sendStateToUser(s);
   });
 }
 
-// 개별 유저 맞춤 화면 데이터 계산 후 전송
 function sendStateToUser(socket) {
-  const mySeat = players[socket.id] || null;
+  const myData = players[socket.id] || { seat: null, name: "" };
   
-  // 소켓별 전송 데이터 생성
+  // 현재 각 자리에 앉은 사람들의 정보 생성
+  let seatInfo = { north: "북쪽", south: "남쪽", east: "동쪽", west: "서쪽" };
+  let occupiedSeats = [];
+
+  Object.values(players).forEach(p => {
+    if (p.seat) {
+      seatInfo[p.seat] = p.name;
+      occupiedSeats.push(p.seat);
+    }
+  });
+
   let userView = {
     mode: gameState.mode,
     isRevealed: gameState.isRevealed,
     drawerSeat: gameState.drawerSeat,
-    mySeat: mySeat,
-    occupiedSeats: Object.values(players),
+    mySeat: myData.seat,
+    seatNames: seatInfo,
+    occupiedSeats: occupiedSeats,
     cards: { north: "", south: "", east: "", west: "" }
   };
 
@@ -93,11 +111,9 @@ function sendStateToUser(socket) {
         if (gameState.isRevealed) {
           userView.cards[seat] = card;
         } else if (gameState.mode === 'me') {
-          // [나만 보기 모드] 카드를 뽑은 당사자 본인에게만 글자 표시
-          userView.cards[seat] = (mySeat === drawer) ? card : "???";
+          userView.cards[seat] = (myData.seat === drawer) ? card : "???";
         } else if (gameState.mode === 'others') {
-          // [나만 안보기 모드] 카드를 뽑은 당사자 제외 다른 사람에게만 글자 표시
-          userView.cards[seat] = (mySeat === drawer) ? "???" : card;
+          userView.cards[seat] = (myData.seat === drawer) ? "???" : card;
         }
       }
     });
