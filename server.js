@@ -8,20 +8,21 @@ const io = new Server(server, { cors: { origin: "*" } });
 
 app.use(express.static(__dirname + '/public'));
 
-const sampleCards = ["설레는", "답답한", "감사한", "평화로운", "걱정되는", "뿌듯한", "무기력한", "홀가분한", "당황스러운", "안도하는"];
+// NVC 단어 데이터
+const emotionCards = ["설레는", "답답한", "감사한", "평화로운", "걱정되는", "뿌듯한", "무기력한", "홀가분한", "당황스러운", "안도하는", "슬픈", "기쁜"];
+const needCards = ["안전", "존중", "자율성", "연결", "이해", "휴식", "공정함", "성장", "신뢰", "명확함", "기여", "평화"];
 
 let gameState = {
+  cardType: "emotion", // 'emotion'(느낌) 또는 'need'(욕구)
+  mode: "me",          // 'me'(나만 보기) 또는 'others'(나만 안보기)
   currentCard: "",
-  mode: "me",          // 'me': 나만 보기, 'others': 나만 안보기
   drawerSeat: null,    // 카드를 뽑은 사람의 자리
   isRevealed: false
 };
 
-// 접속자 정보 (자리 및 닉네임)
 let players = {}; 
 
 io.on('connection', (socket) => {
-  // 기본 닉네임 및 상태 부여
   players[socket.id] = { seat: null, name: "참여자" };
   sendStateToUser(socket);
 
@@ -34,38 +35,49 @@ io.on('connection', (socket) => {
     sendStateToAll();
   });
 
-  // 모드 변경
+  // 카드 종류 변경 (느낌/욕구)
+  socket.on('setCardType', (type) => {
+    gameState.cardType = type;
+    resetCardState();
+    sendStateToAll();
+  });
+
+  // 모드 변경 (나만 보기/나만 안보기)
   socket.on('setMode', (mode) => {
     gameState.mode = mode;
-    gameState.currentCard = "";
-    gameState.drawerSeat = null;
-    gameState.isRevealed = false;
+    resetCardState();
     sendStateToAll();
   });
 
   // 카드 뽑기
   socket.on('drawCard', () => {
     const user = players[socket.id];
-    if (!user || !user.seat) return; // 자리가 없는 유저는 뽑기 불가
+    if (!user || !user.seat) return;
 
-    gameState.currentCard = sampleCards[Math.floor(Math.random() * sampleCards.length)];
+    const list = gameState.cardType === 'emotion' ? emotionCards : needCards;
+    gameState.currentCard = list[Math.floor(Math.random() * list.length)];
     gameState.drawerSeat = user.seat;
     gameState.isRevealed = false;
     sendStateToAll();
   });
 
-  // 정답 공개하기 (누구나 가능)
+  // 정답 공개하기
   socket.on('revealCard', () => {
     gameState.isRevealed = true;
     sendStateToAll();
   });
 
-  // 접속 종료
   socket.on('disconnect', () => {
     delete players[socket.id];
     sendStateToAll();
   });
 });
+
+function resetCardState() {
+  gameState.currentCard = "";
+  gameState.drawerSeat = null;
+  gameState.isRevealed = false;
+}
 
 function getSeatDefaultName(seat) {
   const names = { south: "남쪽", north: "북쪽", east: "동쪽", west: "서쪽" };
@@ -81,7 +93,6 @@ function sendStateToAll() {
 function sendStateToUser(socket) {
   const myData = players[socket.id] || { seat: null, name: "" };
   
-  // 현재 각 자리에 앉은 사람들의 정보 생성
   let seatInfo = { north: "북쪽", south: "남쪽", east: "동쪽", west: "서쪽" };
   let occupiedSeats = [];
 
@@ -93,6 +104,7 @@ function sendStateToUser(socket) {
   });
 
   let userView = {
+    cardType: gameState.cardType,
     mode: gameState.mode,
     isRevealed: gameState.isRevealed,
     drawerSeat: gameState.drawerSeat,
