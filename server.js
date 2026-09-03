@@ -162,20 +162,12 @@ function sendStateToUser(socket) {
     list.forEach(g => giftedWords.push(g.word));
   });
 
-  // 카드가 이동하더라도 원래 자리가 빈 슬롯으로 유지되도록 전체 카드 고정 배열 생성
+  // 카드가 이동해도 원래 자리에 빈 슬롯(isGifted)을 남기는 고정 리스트 생성
   let cardList = [];
   if (gameState.cardType === 'emotion') {
-    cardList = emotionCards.map(w => ({
-      word: w,
-      type: 'emotion',
-      isGifted: giftedWords.includes(w)
-    }));
+    cardList = emotionCards.map(w => ({ word: w, type: 'emotion', isGifted: giftedWords.includes(w) }));
   } else if (gameState.cardType === 'need') {
-    cardList = needCards.map(w => ({
-      word: w,
-      type: 'need',
-      isGifted: giftedWords.includes(w)
-    }));
+    cardList = needCards.map(w => ({ word: w, type: 'need', isGifted: giftedWords.includes(w) }));
   } else {
     cardList = [
       ...emotionCards.map(w => ({ word: w, type: 'emotion', isGifted: giftedWords.includes(w) })),
