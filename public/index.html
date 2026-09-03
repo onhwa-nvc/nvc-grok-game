@@ -9,28 +9,28 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: sans-serif; background-color: #1e4d2b; color: white; height: 100vh; display: flex; flex-direction: column; overflow: hidden; user-select: none; }
     
-    .header { background: rgba(0,0,0,0.4); padding: 8px 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
-    .header-group { display: flex; align-items: center; gap: 6px; }
+    .header { background: rgba(0,0,0,0.4); padding: 6px 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; }
+    .header-group { display: flex; align-items: center; gap: 4px; }
     
-    .type-btn, .mode-btn, .view-btn { padding: 6px 14px; border: none; border-radius: 14px; cursor: pointer; font-weight: bold; font-size: 13px; }
+    .type-btn, .mode-btn, .view-btn { padding: 5px 10px; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 12px; }
     .btn-type-emotion.active { background: #f8bbd0; color: #880e4f; }
     .btn-type-need.active { background: #b3e5fc; color: #01579b; }
     .btn-type-inactive { background: rgba(255,255,255,0.15); color: #ddd; }
     .btn-mode-active { background: #ffd54f; color: #1b5e20; }
     .btn-mode-inactive { background: rgba(255,255,255,0.15); color: #ddd; }
 
-    .seat-select { background: rgba(0,0,0,0.2); padding: 6px; display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .name-input { padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc; font-size: 13px; width: 100px; outline: none; }
-    .seat-btn { padding: 5px 12px; border: none; border-radius: 4px; cursor: pointer; background: #fff; color: #333; font-weight: bold; font-size: 12px; }
+    .seat-select { background: rgba(0,0,0,0.2); padding: 4px 8px; display: flex; justify-content: center; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .name-input { padding: 4px 6px; border-radius: 4px; border: 1px solid #ccc; font-size: 12px; width: 80px; outline: none; }
+    .seat-btn { padding: 4px 8px; border: none; border-radius: 4px; cursor: pointer; background: #fff; color: #333; font-weight: bold; font-size: 11px; }
     .seat-btn.my-seat { background: #4caf50; color: white; }
     .seat-btn:disabled { background: #666; color: #aaa; cursor: not-allowed; }
 
     .main-container { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; position: relative; }
 
     /* 모드 1: 기본 게임판 레이아웃 */
-    .game-board { flex: 1; display: grid; grid-template-rows: 120px 1fr 120px; grid-template-columns: 140px 1fr 140px; gap: 10px; padding: 12px; height: 100%; }
-    .player-table { background: rgba(255,255,255,0.08); border-radius: 10px; border: 1px dashed rgba(255,255,255,0.25); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px; position: relative; }
-    .player-name { font-weight: bold; margin-bottom: 4px; color: #e8f5e9; font-size: 14px; text-align: center; }
+    .game-board { flex: 1; display: grid; grid-template-rows: 100px 1fr 100px; grid-template-columns: 110px 1fr 110px; gap: 8px; padding: 8px; height: 100%; }
+    .player-table { background: rgba(255,255,255,0.08); border-radius: 8px; border: 1px dashed rgba(255,255,255,0.25); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px; position: relative; overflow: hidden; }
+    .player-name { font-weight: bold; margin-bottom: 2px; color: #e8f5e9; font-size: 12px; text-align: center; }
     
     .north { grid-row: 1; grid-column: 2; }
     .west { grid-row: 2; grid-column: 1; }
@@ -38,42 +38,42 @@
     .east { grid-row: 2; grid-column: 3; }
     .south { grid-row: 3; grid-column: 2; background: rgba(255,255,255,0.12); }
     
-    /* 55장 전체 카드 및 선물 카드 동일 세로 규격 (65px x 90px) */
-    .card { width: 65px; height: 90px; border-radius: 6px; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; padding: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+    .card { width: 60px; height: 84px; border-radius: 5px; font-size: 13px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; padding: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.3); flex-shrink: 0; }
     .card-none { background: rgba(255, 255, 255, 0.05); border: 1px dashed rgba(255, 255, 255, 0.2); color: transparent; box-shadow: none; }
     .card-back-emotion { background: #f8bbd0; color: #880e4f; border: 2px solid #f48fb1; }
     .card-back-need { background: #b3e5fc; color: #01579b; border: 2px solid #81d4fa; }
     .card-front-emotion { background: #fff0f5; color: #c2185b; border: 2px solid #e91e63; }
     .card-front-need { background: #f0f8ff; color: #0288d1; border: 2px solid #03a9f4; }
 
-    /* 모드 2: 55장 전체 펼침 레이아웃 */
-    .grid-board { flex: 1; display: grid; grid-template-rows: 130px 1fr 130px; grid-template-columns: 140px 1fr 140px; gap: 8px; padding: 10px; height: 100%; }
-    .grid-center { grid-row: 2; grid-column: 2; background: rgba(0,0,0,0.2); border-radius: 12px; padding: 10px; overflow-y: auto; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; }
+    /* 모드 2: 55장 전체 펼침 레이아웃 (반응형 규격 조정) */
+    .grid-board { flex: 1; display: grid; grid-template-rows: auto 1fr auto; grid-template-columns: 80px 1fr 80px; gap: 6px; padding: 6px; height: 100%; overflow: hidden; }
     
-    /* 중앙 55장 미니 세로 카드 */
-    .mini-card { width: 65px; height: 90px; border-radius: 6px; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; cursor: grab; box-shadow: 0 3px 6px rgba(0,0,0,0.3); transition: transform 0.15s; }
+    /* 카드 간격 균일화 (상하/좌우 4px 동일 유지 및 중앙 집중 배치) */
+    .grid-center { grid-row: 2; grid-column: 2; background: rgba(0,0,0,0.25); border-radius: 8px; padding: 6px; overflow-y: auto; display: flex; flex-wrap: wrap; gap: 4px; align-content: center; justify-content: center; }
+    
+    /* 모바일 및 데스크톱 모드 전체 조회를 위해 컴팩트 카드 규격 적용 */
+    .mini-card { width: 54px; height: 72px; border-radius: 4px; font-size: 11px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; cursor: grab; box-shadow: 0 2px 4px rgba(0,0,0,0.25); transition: transform 0.1s; flex-shrink: 0; word-break: keep-all; padding: 2px; }
     .mini-card:active { cursor: grabbing; }
-    .mini-card.selected { transform: scale(1.15); border: 3px solid #ffeb3b !important; box-shadow: 0 0 12px #ffeb3b; }
-    .mini-emotion { background: #fff0f5; color: #c2185b; border: 2px solid #e91e63; }
-    .mini-need { background: #f0f8ff; color: #0288d1; border: 2px solid #03a9f4; }
+    .mini-card.selected { transform: scale(1.15); border: 2px solid #ffeb3b !important; box-shadow: 0 0 8px #ffeb3b; z-index: 10; }
+    .mini-emotion { background: #fff0f5; color: #c2185b; border: 1.5px solid #e91e63; }
+    .mini-need { background: #f0f8ff; color: #0288d1; border: 1.5px solid #03a9f4; }
 
-    /* 남/북쪽: 가로 10칸 슬롯 레이아웃 */
-    .gift-slots-horizontal { display: flex; gap: 4px; overflow-x: auto; max-width: 100%; padding: 4px; }
+    /* 가로 슬롯 (남/북) */
+    .gift-slots-horizontal { display: flex; gap: 3px; overflow-x: auto; max-width: 100%; padding: 2px; width: 100%; justify-content: center; }
     
-    /* 동/서쪽: 세로 10칸 슬롯 레이아웃 */
-    .gift-slots-vertical { display: flex; flex-direction: column; gap: 4px; overflow-y: auto; max-height: 100%; padding: 4px; }
+    /* 세로 슬롯 (동/서) */
+    .gift-slots-vertical { display: flex; flex-direction: column; gap: 3px; overflow-y: auto; max-height: 100%; padding: 2px; height: 100%; align-items: center; }
 
-    /* 동/서쪽 누운 상태(90도 회전) 카드 연출 */
     .rotate-90 { transform: rotate(90deg); transform-origin: center; }
 
     .deck { cursor: pointer; }
-    .center-controls { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-    .action-btn { padding: 6px 14px; border: none; border-radius: 12px; background: #ff9800; color: white; font-weight: bold; cursor: pointer; font-size: 13px; }
+    .center-controls { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .action-btn { padding: 5px 12px; border: none; border-radius: 10px; background: #ff9800; color: white; font-weight: bold; cursor: pointer; font-size: 12px; }
   </style>
 </head>
 <body>
   <div class="header">
-    <h1 style="font-size: 16px;">NVC 그로그</h1>
+    <h1 style="font-size: 15px;">NVC 그로그</h1>
     
     <div class="header-group">
       <button id="view-board" class="view-btn btn-mode-active" onclick="setViewMode('board')">카드 덱 모드</button>
@@ -93,7 +93,7 @@
 
   <div class="seat-select">
     <input type="text" id="user-name" class="name-input" placeholder="이름" maxlength="5">
-    <span style="font-size: 12px;">내 자리:</span>
+    <span style="font-size: 11px;">내 자리:</span>
     <button id="seat-south" class="seat-btn" onclick="selectSeat('south')">남쪽</button>
     <button id="seat-north" class="seat-btn" onclick="selectSeat('north')">북쪽</button>
     <button id="seat-west" class="seat-btn" onclick="selectSeat('west')">서쪽</button>
@@ -207,7 +207,7 @@
         });
 
       } else {
-        // 중앙 55장 세로형 카드
+        // 55장 전체 카드
         let gridCardsHtml = state.allCards.map(word => {
           const isSelected = selectedWord === word ? 'selected' : '';
           return `<div class="mini-card ${isEmotion ? 'mini-emotion' : 'mini-need'} ${isSelected}" 
@@ -216,7 +216,6 @@
                        onclick="selectCardToGift('${word}')">${word}</div>`;
         }).join('');
 
-        // 자리별 선물 슬롯 생성 함수 (가로/세로 10칸)
         function renderGiftSlots(seat, isVertical = false) {
           const giftList = state.gifts[seat] || [];
           let slotsHtml = '';
