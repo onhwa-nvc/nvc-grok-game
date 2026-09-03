@@ -1,187 +1,271 @@
-const express = require('express');
-const http = require('http');
-const { Server } = require('socket.io');
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NVC 그로그 카드 놀이</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: sans-serif; background-color: #f4f1ea; color: #333; height: 100vh; display: flex; flex-direction: column; overflow: hidden; user-select: none; }
+    
+    .header { background: #e8e3d9; padding: 4px 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid #d6cfc2; }
+    .header-group { display: flex; align-items: center; gap: 4px; }
+    
+    .type-btn, .mode-btn, .view-btn { padding: 4px 8px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 11px; }
+    .btn-type-emotion.active { background: #f8bbd0; color: #880e4f; }
+    .btn-type-need.active { background: #b3e5fc; color: #01579b; }
+    .btn-type-both.active { background: #d1c4e9; color: #4a148c; }
+    .btn-type-inactive { background: #dcd6cd; color: #666; }
+    .btn-mode-active { background: #ffe082; color: #5d4037; }
+    .btn-mode-inactive { background: #dcd6cd; color: #666; }
 
-const app = express();
-const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: "*" } });
+    .seat-select { background: #efebe2; padding: 3px 6px; display: flex; justify-content: center; align-items: center; gap: 6px; flex-wrap: wrap; border-bottom: 1px solid #e0d8cc; }
+    .name-input { padding: 3px 5px; border-radius: 4px; border: 1px solid #ccc; font-size: 11px; width: 75px; outline: none; }
+    .seat-btn { padding: 3px 7px; border: none; border-radius: 4px; cursor: pointer; background: #fff; color: #333; font-weight: bold; font-size: 11px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+    .seat-btn.my-seat { background: #81c784; color: white; }
+    .seat-btn:disabled { background: #ccc; color: #888; cursor: not-allowed; }
 
-app.use(express.static(__dirname + '/public'));
+    .main-container { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; position: relative; }
 
-const emotionCards = [
-  "감사한", "감동한", "기쁜", "당황스러운", "답답한", "걱정되는", "두려운", "무기력한", "미안한", "반가운",
-  "부끄러운", "뿌듯한", "설레는", "슬픈", "안도하는", "억울한", "외로운", "우울한", "자랑스러운", "홀가분한",
-  "화난", "편안한", "평화로운", "희망찬", "지루한", "막막한", "섭섭한", "혼란스러운", "좌절한", "후회스러운",
-  "부담스러운", "민망한", "괴로운", "불안한", "초조한", "황당한", "유쾌한", "통쾌한", "짜릿한", "신나는",
-  "벅찬", "포근한", "든든한", "여유로운", "자유로운", "아쉬운", "허전한", "귀찮은", "서운한", "낙담한",
-  "절망적인", "상심한", "무서운", "놀란", "행복한"
-];
+    /* 모드 1: 기본 게임판 */
+    .game-board { flex: 1; display: grid; grid-template-rows: 85px 1fr 85px; grid-template-columns: 95px 1fr 95px; gap: 6px; padding: 6px; height: 100%; }
+    .player-table { background: #ffffff; border-radius: 8px; border: 1px dashed #c8c2b7; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3px; position: relative; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .player-name { font-weight: bold; margin-bottom: 2px; color: #4a4035; font-size: 11px; text-align: center; }
+    
+    .north { grid-row: 1; grid-column: 2; }
+    .west { grid-row: 2; grid-column: 1; }
+    .center { grid-row: 2; grid-column: 2; border: none; background: transparent; box-shadow: none; }
+    .east { grid-row: 2; grid-column: 3; }
+    .south { grid-row: 3; grid-column: 2; background: #fbf9f5; }
+    
+    /* 기본 가로형 카드 비율 (68px x 44px) */
+    .card { width: 68px; height: 44px; border-radius: 5px; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; padding: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); flex-shrink: 0; word-break: keep-all; }
+    .card-none { background: #f0ede6; border: 1px dashed #d0c9bd; color: transparent; box-shadow: none; }
+    .card-back-emotion { background: #f8bbd0; color: #880e4f; border: 1.5px solid #f48fb1; }
+    .card-back-need { background: #b3e5fc; color: #01579b; border: 1.5px solid #81d4fa; }
+    .card-front-emotion { background: #fff0f5; color: #c2185b; border: 1.5px solid #e91e63; }
+    .card-front-need { background: #f0f8ff; color: #0288d1; border: 1.5px solid #03a9f4; }
 
-const needCards = [
-  "안전", "존중", "자율성", "연결", "이해", "휴식", "공정함", "성장", "신뢰", "명확함",
-  "기여", "평화", "사랑", "소속감", "배려", "건강", "수용", "인정", "표현", "공감",
-  "공동체", "의미", "창의성", "성취", "질서", "예측가능성", "재미", "즐거움", "아름다움", "조화",
-  "자유", "독립", "도전", "효능감", "안정", "보호", "위로", "친밀함", "협력", "소통",
-  "통합", "진실", "정직", "희망", "목적", "공헌", "유대감", "돌봄", "공유", "조율",
-  "여유", "자아실현", "학습", "발전", "여가"
-];
+    /* 모드 2: 남쪽 가림 방지를 위해 중앙 높이를 축소한 8x7 그리드 레이아웃 */
+    .grid-board { flex: 1; display: grid; grid-template-rows: 95px 1fr 95px; grid-template-columns: 80px 1fr 80px; gap: 4px; padding: 4px; height: 100%; overflow: hidden; }
+    
+    /* 중앙 55장 / 110장 밀집형 그리드 */
+    .grid-center { grid-row: 2; grid-column: 2; background: #e2ddd3; border-radius: 8px; padding: 4px; overflow-y: auto; display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; align-content: flex-start; justify-items: center; }
+    
+    .mini-card { width: 100%; height: 40px; border-radius: 4px; font-size: 11px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; cursor: grab; box-shadow: 0 1px 3px rgba(0,0,0,0.08); transition: transform 0.1s; flex-shrink: 0; word-break: keep-all; padding: 1px; }
+    .mini-card:active { cursor: grabbing; }
+    .mini-card.selected { transform: scale(1.12); border: 2px solid #fbc02d !important; box-shadow: 0 0 6px #fbc02d; z-index: 10; }
+    .mini-emotion { background: #fff0f5; color: #c2185b; border: 1.5px solid #f48fb1; }
+    .mini-need { background: #f0f8ff; color: #0288d1; border: 1.5px solid #81d4fa; }
 
-let gameState = {
-  viewMode: "board",
-  cardType: "emotion", // 'emotion', 'need', 또는 'both'
-  mode: "me",
-  currentCard: "",
-  drawerSeat: null,
-  isRevealed: false,
-  gifts: { north: [], south: [], east: [], west: [] }
-};
+    /* 남/북/동/서 가로형 슬롯 */
+    .gift-slots-horizontal { display: flex; gap: 2px; overflow-x: auto; max-width: 100%; padding: 2px; width: 100%; justify-content: center; }
+    .gift-slots-vertical { display: flex; flex-direction: column; gap: 2px; overflow-y: auto; max-height: 100%; padding: 2px; height: 100%; align-items: center; }
 
-let players = {};
+    .deck { cursor: pointer; }
+    .center-controls { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .action-btn { padding: 4px 10px; border: none; border-radius: 8px; background: #ffa726; color: white; font-weight: bold; cursor: pointer; font-size: 11px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1 style="font-size: 14px; color: #4a4035;">NVC 그로그</h1>
+    
+    <div class="header-group">
+      <button id="view-board" class="view-btn btn-mode-active" onclick="setViewMode('board')">카드 덱</button>
+      <button id="view-grid" class="view-btn btn-mode-inactive" onclick="setViewMode('grid')">전체 보기</button>
+    </div>
 
-io.on('connection', (socket) => {
-  players[socket.id] = { seat: null, name: "참여자" };
-  sendStateToUser(socket);
+    <!-- 느낌 / 욕구 / 느낌+욕구(110장) 선택 -->
+    <div class="header-group">
+      <button id="type-emotion" class="type-btn btn-type-emotion active" onclick="setCardType('emotion')">느낌</button>
+      <button id="type-need" class="type-btn btn-type-inactive" onclick="setCardType('need')">욕구</button>
+      <button id="type-both" class="type-btn btn-type-inactive" onclick="setCardType('both')">느낌+욕구</button>
+    </div>
 
-  socket.on('selectSeat', ({ seat, name }) => {
-    players[socket.id] = { seat, name: name || getSeatDefaultName(seat) };
-    sendStateToAll();
-  });
+    <div class="header-group">
+      <button id="mode1" class="mode-btn btn-mode-active" onclick="setMode('me')">나만 보기</button>
+      <button id="mode2" class="mode-btn btn-mode-inactive" onclick="setMode('others')">나만 안보기</button>
+    </div>
+  </div>
 
-  socket.on('setViewMode', (viewMode) => {
-    gameState.viewMode = viewMode;
-    sendStateToAll();
-  });
+  <div class="seat-select">
+    <input type="text" id="user-name" class="name-input" placeholder="이름" maxlength="5">
+    <span style="font-size: 11px; color: #5d5346;">내 자리:</span>
+    <button id="seat-south" class="seat-btn" onclick="selectSeat('south')">남쪽</button>
+    <button id="seat-north" class="seat-btn" onclick="selectSeat('north')">북쪽</button>
+    <button id="seat-west" class="seat-btn" onclick="selectSeat('west')">서쪽</button>
+    <button id="seat-east" class="seat-btn" onclick="selectSeat('east')">동쪽</button>
+  </div>
 
-  socket.on('setCardType', (type) => {
-    gameState.cardType = type;
-    resetCardState();
-    sendStateToAll();
-  });
+  <div class="main-container" id="main-container"></div>
 
-  socket.on('setMode', (mode) => {
-    gameState.mode = mode;
-    resetCardState();
-    sendStateToAll();
-  });
+  <script>
+    const socket = io();
+    let selectedCardObj = null;
 
-  socket.on('drawCard', () => {
-    const user = players[socket.id];
-    if (!user || !user.seat) return;
+    function selectSeat(seat) {
+      const name = document.getElementById('user-name').value.trim();
+      socket.emit('selectSeat', { seat: seat, name: name });
+    }
 
-    let list = emotionCards;
-    if (gameState.cardType === 'need') list = needCards;
-    else if (gameState.cardType === 'both') list = [...emotionCards, ...needCards];
+    function setViewMode(v) { socket.emit('setViewMode', v); }
+    function setCardType(t) { socket.emit('setCardType', t); }
+    function setMode(m) { socket.emit('setMode', m); }
+    function drawCard() { socket.emit('drawCard'); }
+    function revealCard() { socket.emit('revealCard'); }
 
-    gameState.currentCard = list[Math.floor(Math.random() * list.length)];
-    gameState.drawerSeat = user.seat;
-    gameState.isRevealed = false;
-    sendStateToAll();
-  });
+    function handleDragStart(e, word, type) {
+      selectedCardObj = { word, type };
+      e.dataTransfer.setData("text/plain", JSON.stringify(selectedCardObj));
+    }
 
-  socket.on('revealCard', () => {
-    gameState.isRevealed = true;
-    sendStateToAll();
-  });
+    function selectCardToGift(word, type) {
+      selectedCardObj = { word, type };
+      renderBoard();
+    }
 
-  socket.on('sendGift', ({ targetSeat, cardWord, cardType }) => {
-    if (targetSeat && gameState.gifts[targetSeat]) {
-      if (gameState.gifts[targetSeat].length < 10) {
-        gameState.gifts[targetSeat].push({
-          word: cardWord,
-          type: cardType || gameState.cardType,
-          from: players[socket.id]?.name || "익명"
-        });
-        sendStateToAll();
+    function handleSeatClick(targetSeat) {
+      if (selectedCardObj) {
+        socket.emit('sendGift', { targetSeat, cardWord: selectedCardObj.word, cardType: selectedCardObj.type });
+        selectedCardObj = null;
       }
     }
-  });
 
-  socket.on('clearGifts', () => {
-    gameState.gifts = { north: [], south: [], east: [], west: [] };
-    sendStateToAll();
-  });
+    function handleDragOver(e) { e.preventDefault(); }
 
-  socket.on('disconnect', () => {
-    delete players[socket.id];
-    sendStateToAll();
-  });
-});
-
-function resetCardState() {
-  gameState.currentCard = "";
-  gameState.drawerSeat = null;
-  gameState.isRevealed = false;
-}
-
-function getSeatDefaultName(seat) {
-  const names = { south: "남쪽", north: "북쪽", east: "동쪽", west: "서쪽" };
-  return names[seat] || "참여자";
-}
-
-function sendStateToAll() {
-  io.sockets.sockets.forEach((s) => sendStateToUser(s));
-}
-
-function sendStateToUser(socket) {
-  const myData = players[socket.id] || { seat: null, name: "" };
-  
-  let seatInfo = { north: "북쪽", south: "남쪽", east: "동쪽", west: "서쪽" };
-  let occupiedSeats = [];
-
-  Object.values(players).forEach(p => {
-    if (p.seat) {
-      seatInfo[p.seat] = p.name;
-      occupiedSeats.push(p.seat);
-    }
-  });
-
-  // 카드 목록 조합
-  let cardList = [];
-  if (gameState.cardType === 'emotion') {
-    cardList = emotionCards.map(w => ({ word: w, type: 'emotion' }));
-  } else if (gameState.cardType === 'need') {
-    cardList = needCards.map(w => ({ word: w, type: 'need' }));
-  } else {
-    // 110장 통합 모드 (느낌 55장 + 욕구 55장)
-    cardList = [
-      ...emotionCards.map(w => ({ word: w, type: 'emotion' })),
-      ...needCards.map(w => ({ word: w, type: 'need' }))
-    ];
-  }
-
-  let userView = {
-    viewMode: gameState.viewMode,
-    cardType: gameState.cardType,
-    mode: gameState.mode,
-    isRevealed: gameState.isRevealed,
-    drawerSeat: gameState.drawerSeat,
-    mySeat: myData.seat,
-    seatNames: seatInfo,
-    occupiedSeats: occupiedSeats,
-    gifts: gameState.gifts,
-    allCards: cardList,
-    cards: { north: "", south: "", east: "", west: "" }
-  };
-
-  if (gameState.currentCard && gameState.drawerSeat) {
-    const card = gameState.currentCard;
-    const drawer = gameState.drawerSeat;
-
-    ['south', 'north', 'east', 'west'].forEach((seat) => {
-      if (seat === drawer) {
-        if (gameState.isRevealed) {
-          userView.cards[seat] = card;
-        } else if (gameState.mode === 'me') {
-          userView.cards[seat] = (myData.seat === drawer) ? card : "???";
-        } else if (gameState.mode === 'others') {
-          userView.cards[seat] = (myData.seat === drawer) ? "???" : card;
-        }
+    function handleDrop(e, targetSeat) {
+      e.preventDefault();
+      let data = e.dataTransfer.getData("text/plain");
+      let item = selectedCardObj;
+      if (data) {
+        try { item = JSON.parse(data); } catch(err) {}
       }
+      if (item && item.word) {
+        socket.emit('sendGift', { targetSeat, cardWord: item.word, cardType: item.type });
+        selectedCardObj = null;
+      }
+    }
+
+    let localState = {};
+    socket.on('stateUpdate', (state) => {
+      localState = state;
+      renderBoard();
     });
-  }
 
-  socket.emit('stateUpdate', userView);
-}
+    function renderBoard() {
+      const state = localState;
+      if (!state.viewMode) return;
 
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+      document.getElementById('view-board').className = state.viewMode === 'board' ? 'view-btn btn-mode-active' : 'view-btn btn-mode-inactive';
+      document.getElementById('view-grid').className = state.viewMode === 'grid' ? 'view-btn btn-mode-active' : 'view-btn btn-mode-inactive';
+
+      document.getElementById('type-emotion').className = state.cardType === 'emotion' ? 'type-btn btn-type-emotion active' : 'type-btn btn-type-inactive';
+      document.getElementById('type-need').className = state.cardType === 'need' ? 'type-btn btn-type-need active' : 'type-btn btn-type-inactive';
+      document.getElementById('type-both').className = state.cardType === 'both' ? 'type-btn btn-type-both active' : 'type-btn btn-type-inactive';
+
+      document.getElementById('mode1').className = state.mode === 'me' ? 'mode-btn btn-mode-active' : 'mode-btn btn-mode-inactive';
+      document.getElementById('mode2').className = state.mode === 'others' ? 'mode-btn btn-mode-active' : 'mode-btn btn-mode-inactive';
+
+      ['south', 'north', 'west', 'east'].forEach(seat => {
+        const btn = document.getElementById(`seat-${seat}`);
+        if (state.mySeat === seat) {
+          btn.className = "seat-btn my-seat"; btn.disabled = false;
+        } else if (state.occupiedSeats.includes(seat)) {
+          btn.className = "seat-btn"; btn.disabled = true;
+        } else {
+          btn.className = "seat-btn"; btn.disabled = false;
+        }
+      });
+
+      const container = document.getElementById('main-container');
+
+      if (state.viewMode === 'board') {
+        const isEmotion = state.cardType === 'emotion';
+        container.innerHTML = `
+          <div class="game-board">
+            <div class="player-table north"><div class="player-name">${state.seatNames.north}</div><div id="card-north" class="card"></div></div>
+            <div class="player-table west"><div class="player-name">${state.seatNames.west}</div><div id="card-west" class="card"></div></div>
+            <div class="player-table center">
+              <div class="center-controls">
+                <div id="center-deck" class="card deck ${isEmotion ? 'card-back-emotion' : 'card-back-need'}" onclick="drawCard()">중앙 덱<br><small>(뽑기)</small></div>
+                <button class="action-btn" onclick="revealCard()">정답 공개하기</button>
+              </div>
+            </div>
+            <div class="player-table east"><div class="player-name">${state.seatNames.east}</div><div id="card-east" class="card"></div></div>
+            <div class="player-table south"><div class="player-name">${state.seatNames.south}</div><div id="card-south" class="card"></div></div>
+          </div>
+        `;
+
+        ['south', 'north', 'west', 'east'].forEach(seat => {
+          const cardElem = document.getElementById(`card-${seat}`);
+          const cardValue = state.cards[seat];
+          if (!cardValue) {
+            cardElem.className = "card card-none"; cardElem.innerText = "";
+          } else if (cardValue === "???") {
+            cardElem.className = `card ${isEmotion ? 'card-back-emotion' : 'card-back-need'}`; cardElem.innerText = "???";
+          } else {
+            cardElem.className = `card ${isEmotion ? 'card-front-emotion' : 'card-front-need'}`; cardElem.innerText = cardValue;
+          }
+        });
+
+      } else {
+        // 전체 카드 목록 (110장 대응)
+        let gridCardsHtml = state.allCards.map(item => {
+          const isSelected = selectedCardObj && selectedCardObj.word === item.word ? 'selected' : '';
+          const cardCls = item.type === 'emotion' ? 'mini-emotion' : 'mini-need';
+          return `<div class="mini-card ${cardCls} ${isSelected}" 
+                       draggable="true" 
+                       ondragstart="handleDragStart(event, '${item.word}', '${item.type}')"
+                       onclick="selectCardToGift('${item.word}', '${item.type}')">${item.word}</div>`;
+        }).join('');
+
+        function renderGiftSlots(seat, isVertical = false) {
+          const giftList = state.gifts[seat] || [];
+          let slotsHtml = '';
+          
+          for (let i = 0; i < 10; i++) {
+            const item = giftList[i];
+            if (item) {
+              const cls = item.type === 'emotion' ? 'card-front-emotion' : 'card-front-need';
+              slotsHtml += `<div class="card ${cls}">${item.word}</div>`;
+            } else {
+              slotsHtml += `<div class="card card-none"></div>`;
+            }
+          }
+          return `<div class="${isVertical ? 'gift-slots-vertical' : 'gift-slots-horizontal'}">${slotsHtml}</div>`;
+        }
+
+        container.innerHTML = `
+          <div class="grid-board">
+            <div class="player-table north" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'north')" onclick="handleSeatClick('north')">
+              <div class="player-name">${state.seatNames.north}</div>
+              ${renderGiftSlots('north', false)}
+            </div>
+            
+            <div class="player-table west" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'west')" onclick="handleSeatClick('west')">
+              <div class="player-name">${state.seatNames.west}</div>
+              ${renderGiftSlots('west', true)}
+            </div>
+
+            <div class="grid-center">
+              ${gridCardsHtml}
+            </div>
+
+            <div class="player-table east" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'east')" onclick="handleSeatClick('east')">
+              <div class="player-name">${state.seatNames.east}</div>
+              ${renderGiftSlots('east', true)}
+            </div>
+
+            <div class="player-table south" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'south')" onclick="handleSeatClick('south')">
+              <div class="player-name">${state.seatNames.south}</div>
+              ${renderGiftSlots('south', false)}
+            </div>
+          </div>
+        `;
+      }
+    }
+  </script>
+</body>
+</html>
