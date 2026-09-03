@@ -28,7 +28,7 @@ const needCards = [
 
 let gameState = {
   viewMode: "board",
-  cardType: "emotion", // 'emotion', 'need', 또는 'both'
+  cardType: "emotion",
   mode: "me",
   currentCard: "",
   drawerSeat: null,
@@ -42,9 +42,22 @@ io.on('connection', (socket) => {
   players[socket.id] = { seat: null, name: "참여자" };
   sendStateToUser(socket);
 
+  // 자리 선택 및 변경
   socket.on('selectSeat', ({ seat, name }) => {
-    players[socket.id] = { seat, name: name || getSeatDefaultName(seat) };
+    // 자리가 바뀔 때 이전 자리 해제
+    players[socket.id] = {
+      seat: seat,
+      name: name || getSeatDefaultName(seat)
+    };
     sendStateToAll();
+  });
+
+  // 자리 비우기 (퇴장)
+  socket.on('leaveSeat', () => {
+    if (players[socket.id]) {
+      players[socket.id].seat = null;
+      sendStateToAll();
+    }
   });
 
   socket.on('setViewMode', (viewMode) => {
@@ -135,14 +148,12 @@ function sendStateToUser(socket) {
     }
   });
 
-  // 카드 목록 조합
   let cardList = [];
   if (gameState.cardType === 'emotion') {
     cardList = emotionCards.map(w => ({ word: w, type: 'emotion' }));
   } else if (gameState.cardType === 'need') {
     cardList = needCards.map(w => ({ word: w, type: 'need' }));
   } else {
-    // 110장 통합 모드 (느낌 55장 + 욕구 55장)
     cardList = [
       ...emotionCards.map(w => ({ word: w, type: 'emotion' })),
       ...needCards.map(w => ({ word: w, type: 'need' }))
