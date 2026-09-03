@@ -27,8 +27,8 @@
 
     .main-container { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; position: relative; }
 
-    /* 모드 1: 기본 게임판 레이아웃 */
-    .game-board { flex: 1; display: grid; grid-template-rows: 100px 1fr 100px; grid-template-columns: 110px 1fr 110px; gap: 8px; padding: 8px; height: 100%; }
+    /* 모드 1: 기본 게임판 */
+    .game-board { flex: 1; display: grid; grid-template-rows: 100px 1fr 100px; grid-template-columns: 120px 1fr 120px; gap: 8px; padding: 8px; height: 100%; }
     .player-table { background: rgba(255,255,255,0.08); border-radius: 8px; border: 1px dashed rgba(255,255,255,0.25); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px; position: relative; overflow: hidden; }
     .player-name { font-weight: bold; margin-bottom: 2px; color: #e8f5e9; font-size: 12px; text-align: center; }
     
@@ -38,33 +38,30 @@
     .east { grid-row: 2; grid-column: 3; }
     .south { grid-row: 3; grid-column: 2; background: rgba(255,255,255,0.12); }
     
-    .card { width: 60px; height: 84px; border-radius: 5px; font-size: 13px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; padding: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.3); flex-shrink: 0; }
+    /* 기본 가로형 카드 규격 */
+    .card { width: 75px; height: 50px; border-radius: 6px; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; padding: 2px; box-shadow: 0 2px 4px rgba(0,0,0,0.3); flex-shrink: 0; word-break: keep-all; }
     .card-none { background: rgba(255, 255, 255, 0.05); border: 1px dashed rgba(255, 255, 255, 0.2); color: transparent; box-shadow: none; }
     .card-back-emotion { background: #f8bbd0; color: #880e4f; border: 2px solid #f48fb1; }
     .card-back-need { background: #b3e5fc; color: #01579b; border: 2px solid #81d4fa; }
     .card-front-emotion { background: #fff0f5; color: #c2185b; border: 2px solid #e91e63; }
     .card-front-need { background: #f0f8ff; color: #0288d1; border: 2px solid #03a9f4; }
 
-    /* 모드 2: 55장 전체 펼침 레이아웃 (반응형 규격 조정) */
-    .grid-board { flex: 1; display: grid; grid-template-rows: auto 1fr auto; grid-template-columns: 80px 1fr 80px; gap: 6px; padding: 6px; height: 100%; overflow: hidden; }
+    /* 모드 2: 55장 전체 가로형 8x7 배치 레이아웃 */
+    .grid-board { flex: 1; display: grid; grid-template-rows: auto 1fr auto; grid-template-columns: 100px 1fr 100px; gap: 6px; padding: 6px; height: 100%; overflow: hidden; }
     
-    /* 카드 간격 균일화 (상하/좌우 4px 동일 유지 및 중앙 집중 배치) */
-    .grid-center { grid-row: 2; grid-column: 2; background: rgba(0,0,0,0.25); border-radius: 8px; padding: 6px; overflow-y: auto; display: flex; flex-wrap: wrap; gap: 4px; align-content: center; justify-content: center; }
+    /* 8행 7열(8x7) 정갈한 그리드 (간격 4px 고정) */
+    .grid-center { grid-row: 2; grid-column: 2; background: rgba(0,0,0,0.25); border-radius: 8px; padding: 6px; overflow-y: auto; display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; align-content: center; justify-items: center; }
     
-    /* 모바일 및 데스크톱 모드 전체 조회를 위해 컴팩트 카드 규격 적용 */
-    .mini-card { width: 54px; height: 72px; border-radius: 4px; font-size: 11px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; cursor: grab; box-shadow: 0 2px 4px rgba(0,0,0,0.25); transition: transform 0.1s; flex-shrink: 0; word-break: keep-all; padding: 2px; }
+    /* 가로형 미니 카드 (글씨 크기 시원하게 확대) */
+    .mini-card { width: 100%; height: 46px; border-radius: 5px; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; cursor: grab; box-shadow: 0 2px 4px rgba(0,0,0,0.25); transition: transform 0.1s; flex-shrink: 0; word-break: keep-all; padding: 2px; }
     .mini-card:active { cursor: grabbing; }
-    .mini-card.selected { transform: scale(1.15); border: 2px solid #ffeb3b !important; box-shadow: 0 0 8px #ffeb3b; z-index: 10; }
+    .mini-card.selected { transform: scale(1.12); border: 2.5px solid #ffeb3b !important; box-shadow: 0 0 8px #ffeb3b; z-index: 10; }
     .mini-emotion { background: #fff0f5; color: #c2185b; border: 1.5px solid #e91e63; }
     .mini-need { background: #f0f8ff; color: #0288d1; border: 1.5px solid #03a9f4; }
 
-    /* 가로 슬롯 (남/북) */
+    /* 남/북/동/서 가로형 선물 슬롯 레이아웃 */
     .gift-slots-horizontal { display: flex; gap: 3px; overflow-x: auto; max-width: 100%; padding: 2px; width: 100%; justify-content: center; }
-    
-    /* 세로 슬롯 (동/서) */
     .gift-slots-vertical { display: flex; flex-direction: column; gap: 3px; overflow-y: auto; max-height: 100%; padding: 2px; height: 100%; align-items: center; }
-
-    .rotate-90 { transform: rotate(90deg); transform-origin: center; }
 
     .deck { cursor: pointer; }
     .center-controls { display: flex; flex-direction: column; align-items: center; gap: 6px; }
@@ -207,7 +204,7 @@
         });
 
       } else {
-        // 55장 전체 카드
+        // 55장 전체 가로형 카드
         let gridCardsHtml = state.allCards.map(word => {
           const isSelected = selectedWord === word ? 'selected' : '';
           return `<div class="mini-card ${isEmotion ? 'mini-emotion' : 'mini-need'} ${isSelected}" 
@@ -216,18 +213,18 @@
                        onclick="selectCardToGift('${word}')">${word}</div>`;
         }).join('');
 
+        // 모든 자리 가로형 슬롯 연출
         function renderGiftSlots(seat, isVertical = false) {
           const giftList = state.gifts[seat] || [];
           let slotsHtml = '';
           
           for (let i = 0; i < 10; i++) {
             const item = giftList[i];
-            const rotateClass = isVertical ? 'rotate-90' : '';
             if (item) {
               const cls = item.type === 'emotion' ? 'card-front-emotion' : 'card-front-need';
-              slotsHtml += `<div class="card ${cls} ${rotateClass}">${item.word}</div>`;
+              slotsHtml += `<div class="card ${cls}">${item.word}</div>`;
             } else {
-              slotsHtml += `<div class="card card-none ${rotateClass}"></div>`;
+              slotsHtml += `<div class="card card-none"></div>`;
             }
           }
           return `<div class="${isVertical ? 'gift-slots-vertical' : 'gift-slots-horizontal'}">${slotsHtml}</div>`;
