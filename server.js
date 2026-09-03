@@ -42,17 +42,11 @@ io.on('connection', (socket) => {
   players[socket.id] = { seat: null, name: "참여자" };
   sendStateToUser(socket);
 
-  // 자리 선택 및 변경
   socket.on('selectSeat', ({ seat, name }) => {
-    // 자리가 바뀔 때 이전 자리 해제
-    players[socket.id] = {
-      seat: seat,
-      name: name || getSeatDefaultName(seat)
-    };
+    players[socket.id] = { seat, name: name || getSeatDefaultName(seat) };
     sendStateToAll();
   });
 
-  // 자리 비우기 (퇴장)
   socket.on('leaveSeat', () => {
     if (players[socket.id]) {
       players[socket.id].seat = null;
@@ -96,16 +90,33 @@ io.on('connection', (socket) => {
     sendStateToAll();
   });
 
+  // 카드를 선물함으로 보내기 (중복 체크)
   socket.on('sendGift', ({ targetSeat, cardWord, cardType }) => {
     if (targetSeat && gameState.gifts[targetSeat]) {
       if (gameState.gifts[targetSeat].length < 10) {
-        gameState.gifts[targetSeat].push({
-          word: cardWord,
-          type: cardType || gameState.cardType,
-          from: players[socket.id]?.name || "익명"
+        // 이미 어디든 선물되어 있는 카드인지 확인
+        let alreadyGifted = false;
+        Object.values(gameState.gifts).forEach(list => {
+          if (list.some(g => g.word === cardWord)) alreadyGifted = true;
         });
-        sendStateToAll();
+
+        if (!alreadyGifted) {
+          gameState.gifts[targetSeat].push({
+            word: cardWord,
+            type: cardType || gameState.cardType,
+            from: players[socket.id]?.name || "익명"
+          });
+          sendStateToAll();
+        }
       }
+    }
+  });
+
+  // 선물함에 있는 카드를 중앙으로 다시 반납하기
+  socket.on('returnGiftCard', ({ fromSeat, cardWord }) => {
+    if (fromSeat && gameState.gifts[fromSeat]) {
+      gameState.gifts[fromSeat] = gameState.gifts[fromSeat].filter(g => g.word !== cardWord);
+      sendStateToAll();
     }
   });
 
@@ -148,15 +159,22 @@ function sendStateToUser(socket) {
     }
   });
 
+  // 이미 선물된 단어 목록 추출
+  let giftedWords = [];
+  Object.values(gameState.gifts).forEach(list => {
+    list.forEach(g => giftedWords.push(g.word));
+  });
+
+  // 전체 카드 중 아직 선물되지 않은 카드만 필터링
   let cardList = [];
   if (gameState.cardType === 'emotion') {
-    cardList = emotionCards.map(w => ({ word: w, type: 'emotion' }));
+    cardList = emotionCards.filter(w => !giftedWords.includes(w)).map(w => ({ word: w, type: 'emotion' }));
   } else if (gameState.cardType === 'need') {
-    cardList = needCards.map(w => ({ word: w, type: 'need' }));
+    cardList = needCards.filter(w => !giftedWords.includes(w)).map(w => ({ word: w, type: 'need' }));
   } else {
     cardList = [
-      ...emotionCards.map(w => ({ word: w, type: 'emotion' })),
-      ...needCards.map(w => ({ word: w, type: 'need' }))
+      ...emotionCards.filter(w => !giftedWords.includes(w)).map(w => ({ word: w, type: 'emotion' })),
+      ...needCards.filter(w => !giftedWords.includes(w)).map(w => ({ word: w, type: 'need' }))
     ];
   }
 
