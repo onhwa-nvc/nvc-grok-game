@@ -29,7 +29,7 @@
     .main-container { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; position: relative; }
 
     /* 모드 1: 기본 게임판 */
-    .game-board { flex: 1; display: grid; grid-template-rows: 95px 1fr 95px; grid-template-columns: 85px 1fr 85px; gap: 6px; padding: 6px; height: 100%; }
+    .game-board { flex: 1; display: grid; grid-template-rows: 90px 1fr 90px; grid-template-columns: 85px 1fr 85px; gap: 6px; padding: 6px; height: 100%; }
     .player-table { background: #ffffff; border-radius: 8px; border: 1px dashed #c8c2b7; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3px; position: relative; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
     .player-name { font-weight: bold; margin-bottom: 2px; color: #4a4035; font-size: 11px; text-align: center; }
     
@@ -39,8 +39,8 @@
     .east { grid-row: 2; grid-column: 3; }
     .south { grid-row: 3; grid-column: 2; background: #fbf9f5; }
     
-    /* 기본 게임판 카드 규격 (54px x 76px 세로 카드) */
-    .card { width: 54px; height: 76px; border-radius: 5px; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; padding: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); flex-shrink: 0; word-break: keep-all; }
+    /* 완벽한 가로형 카드 비율 (가로 66px x 세로 44px) */
+    .card { width: 66px; height: 44px; border-radius: 5px; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; padding: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); flex-shrink: 0; word-break: keep-all; }
     .card-none { background: #f0ede6; border: 1px dashed #d0c9bd; color: transparent; box-shadow: none; }
     .card-back-emotion { background: #f8bbd0; color: #880e4f; border: 1.5px solid #f48fb1; }
     .card-back-need { background: #b3e5fc; color: #01579b; border: 1.5px solid #81d4fa; }
@@ -48,13 +48,13 @@
     .card-front-need { background: #f0f8ff; color: #0288d1; border: 1.5px solid #03a9f4; }
 
     /* 모드 2: 55장/110장 카드 무더기 레이아웃 */
-    .grid-board { flex: 1; display: grid; grid-template-rows: 95px 1fr 95px; grid-template-columns: 75px 1fr 75px; gap: 4px; padding: 4px; height: 100%; overflow: hidden; }
+    .grid-board { flex: 1; display: grid; grid-template-rows: 90px 1fr 90px; grid-template-columns: 75px 1fr 75px; gap: 4px; padding: 4px; height: 100%; overflow: hidden; }
     
-    /* 카드 무더기 중앙 판 (사방여백 padding: 10px, 카드 간격 gap: 2px) */
-    .grid-center { grid-row: 2; grid-column: 2; background: #e2ddd3; border-radius: 8px; padding: 10px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(54px, 1fr)); gap: 2px; align-content: flex-start; justify-items: center; }
+    /* 중앙 카드 판: 사방 여백(10px) 확보 및 카드 간격(2px) 촘촘하게 유지 */
+    .grid-center { grid-row: 2; grid-column: 2; background: #e2ddd3; border-radius: 8px; padding: 10px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(66px, 1fr)); gap: 2px; align-content: flex-start; justify-items: center; }
     
-    /* 세로 카드 모양 미니 카드 */
-    .mini-card { width: 54px; height: 76px; border-radius: 5px; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; cursor: grab; box-shadow: 0 1px 3px rgba(0,0,0,0.08); transition: transform 0.1s; flex-shrink: 0; word-break: keep-all; padding: 2px; }
+    /* 가로형 미니 카드 규격 */
+    .mini-card { width: 66px; height: 44px; border-radius: 5px; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; cursor: grab; box-shadow: 0 1px 3px rgba(0,0,0,0.08); transition: transform 0.1s; flex-shrink: 0; word-break: keep-all; padding: 2px; }
     .mini-card:active { cursor: grabbing; }
     .mini-card.selected { transform: scale(1.12); border: 2px solid #fbc02d !important; box-shadow: 0 0 6px #fbc02d; z-index: 10; }
     .mini-emotion { background: #fff0f5; color: #c2185b; border: 1.5px solid #f48fb1; }
