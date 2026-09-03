@@ -20,7 +20,7 @@
     .btn-mode-active { background: #ffe082; color: #5d4037; }
     .btn-mode-inactive { background: #dcd6cd; color: #666; }
 
-    .seat-select { background: #efebe2; padding: 4px 8px; display: flex; justify-content: center; align-items: center; gap: 5px; flex-wrap: wrap; border-bottom: 1px solid #e0d8cc; }
+    .seat-select { background: #efebe2; padding: 3px 6px; display: flex; justify-content: center; align-items: center; gap: 5px; flex-wrap: wrap; border-bottom: 1px solid #e0d8cc; }
     .name-input { padding: 3px 5px; border-radius: 4px; border: 1px solid #ccc; font-size: 11px; width: 75px; outline: none; }
     .seat-btn { padding: 4px 8px; border: none; border-radius: 4px; cursor: pointer; background: #fff; color: #333; font-weight: bold; font-size: 11px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
     .seat-btn.my-seat { background: #4caf50; color: white; border: 1.5px solid #2e7d32; }
@@ -29,10 +29,8 @@
 
     .main-container { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; position: relative; }
 
-    /* 모드 1: 기본 게임판 */
     .game-board { flex: 1; display: grid; grid-template-rows: 90px 1fr 90px; grid-template-columns: 85px 1fr 85px; gap: 6px; padding: 6px; height: 100%; }
     .player-table { background: #ffffff; border-radius: 8px; border: 1px dashed #c8c2b7; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3px; position: relative; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04); cursor: pointer; }
-    .player-table.target-hover { border: 2px solid #ffb74d; background: #fff8e1; }
     .player-name { font-weight: bold; margin-bottom: 2px; color: #4a4035; font-size: 11px; text-align: center; }
     
     .north { grid-row: 1; grid-column: 2; }
@@ -48,7 +46,6 @@
     .card-front-emotion { background: #fff0f5; color: #c2185b; border: 1.5px solid #e91e63; }
     .card-front-need { background: #f0f8ff; color: #0288d1; border: 1.5px solid #03a9f4; }
 
-    /* 모드 2: 55장/110장 카드 레이아웃 */
     .grid-board { flex: 1; display: grid; grid-template-rows: 90px 1fr 90px; grid-template-columns: 75px 1fr 75px; gap: 4px; padding: 4px; height: 100%; overflow: hidden; }
     
     .grid-center { grid-row: 2; grid-column: 2; background: #e2ddd3; border-radius: 8px; padding: 10px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(66px, 1fr)); gap: 2px; align-content: flex-start; justify-items: center; }
@@ -108,39 +105,39 @@
       socket.emit('selectSeat', { seat: seat, name: name });
     }
 
-    function leaveSeat() {
-      socket.emit('leaveSeat');
-    }
-
+    function leaveSeat() { socket.emit('leaveSeat'); }
     function setViewMode(v) { socket.emit('setViewMode', v); }
     function setCardType(t) { socket.emit('setCardType', t); }
     function setMode(m) { socket.emit('setMode', m); }
     function drawCard() { socket.emit('drawCard'); }
     function revealCard() { socket.emit('revealCard'); }
 
-    // PC용 드래그 지원
     function handleDragStart(e, word, type) {
       selectedCardObj = { word, type };
       e.dataTransfer.setData("text/plain", JSON.stringify(selectedCardObj));
     }
 
-    // 모바일 터치 및 PC 클릭 카드 선택 (노란색 테두리 선택)
     function selectCardToGift(word, type) {
       if (selectedCardObj && selectedCardObj.word === word) {
-        selectedCardObj = null; // 재터치 시 선택 해제
+        selectedCardObj = null;
       } else {
         selectedCardObj = { word, type };
       }
       renderBoard();
     }
 
-    // 대상 선물함 클릭/터치 시 카드 전달
     function handleSeatClick(targetSeat) {
       if (selectedCardObj) {
         socket.emit('sendGift', { targetSeat, cardWord: selectedCardObj.word, cardType: selectedCardObj.type });
         selectedCardObj = null;
         renderBoard();
       }
+    }
+
+    // 선물함에 등록된 카드를 반납하는 동작
+    function returnCard(fromSeat, cardWord, event) {
+      if (event) event.stopPropagation(); // 자리 선택 이벤트 방지
+      socket.emit('returnGiftCard', { fromSeat, cardWord });
     }
 
     function handleDragOver(e) { e.preventDefault(); }
@@ -156,6 +153,19 @@
         socket.emit('sendGift', { targetSeat, cardWord: item.word, cardType: item.type });
         selectedCardObj = null;
         renderBoard();
+      }
+    }
+
+    function handleCenterDrop(e) {
+      e.preventDefault();
+      let data = e.dataTransfer.getData("text/plain");
+      if (data) {
+        try {
+          let item = JSON.parse(data);
+          if (item && item.fromSeat && item.word) {
+            socket.emit('returnGiftCard', { fromSeat: item.fromSeat, cardWord: item.word });
+          }
+        } catch(err) {}
       }
     }
 
@@ -179,7 +189,6 @@
       document.getElementById('mode1').className = state.mode === 'me' ? 'mode-btn btn-mode-active' : 'mode-btn btn-mode-inactive';
       document.getElementById('mode2').className = state.mode === 'others' ? 'mode-btn btn-mode-active' : 'mode-btn btn-mode-inactive';
 
-      // 내 자리 선택 버튼 업데이트
       ['south', 'north', 'west', 'east'].forEach(seat => {
         const btn = document.getElementById(`seat-${seat}`);
         if (state.mySeat === seat) {
@@ -189,7 +198,7 @@
         } else if (state.occupiedSeats.includes(seat)) {
           btn.className = "seat-btn";
           btn.innerText = getSeatLabel(seat);
-          btn.disabled = true; // 타인이 앉아있는 자리는 버튼 비활성화
+          btn.disabled = true;
         } else {
           btn.className = "seat-btn";
           btn.innerText = getSeatLabel(seat);
@@ -246,7 +255,11 @@
             const item = giftList[i];
             if (item) {
               const cls = item.type === 'emotion' ? 'card-front-emotion' : 'card-front-need';
-              slotsHtml += `<div class="card ${cls}">${item.word}</div>`;
+              slotsHtml += `<div class="card ${cls}" 
+                                 draggable="true"
+                                 ondragstart="e => e.dataTransfer.setData('text/plain', JSON.stringify({fromSeat:'${seat}', word:'${item.word}'}))"
+                                 onclick="returnCard('${seat}', '${item.word}', event)"
+                                 title="클릭 시 중앙으로 반납">${item.word}</div>`;
             } else {
               slotsHtml += `<div class="card card-none"></div>`;
             }
@@ -266,7 +279,7 @@
               ${renderGiftSlots('west', true)}
             </div>
 
-            <div class="grid-center">
+            <div class="grid-center" ondragover="handleDragOver(event)" ondrop="handleCenterDrop(event)">
               ${gridCardsHtml}
             </div>
 
