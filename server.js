@@ -90,11 +90,9 @@ io.on('connection', (socket) => {
     sendStateToAll();
   });
 
-  // 카드를 선물함으로 보내기 (중복 체크)
   socket.on('sendGift', ({ targetSeat, cardWord, cardType }) => {
     if (targetSeat && gameState.gifts[targetSeat]) {
       if (gameState.gifts[targetSeat].length < 10) {
-        // 이미 어디든 선물되어 있는 카드인지 확인
         let alreadyGifted = false;
         Object.values(gameState.gifts).forEach(list => {
           if (list.some(g => g.word === cardWord)) alreadyGifted = true;
@@ -112,7 +110,6 @@ io.on('connection', (socket) => {
     }
   });
 
-  // 선물함에 있는 카드를 중앙으로 다시 반납하기
   socket.on('returnGiftCard', ({ fromSeat, cardWord }) => {
     if (fromSeat && gameState.gifts[fromSeat]) {
       gameState.gifts[fromSeat] = gameState.gifts[fromSeat].filter(g => g.word !== cardWord);
@@ -159,22 +156,30 @@ function sendStateToUser(socket) {
     }
   });
 
-  // 이미 선물된 단어 목록 추출
+  // 이미 선물된 단어 목록
   let giftedWords = [];
   Object.values(gameState.gifts).forEach(list => {
     list.forEach(g => giftedWords.push(g.word));
   });
 
-  // 전체 카드 중 아직 선물되지 않은 카드만 필터링
+  // 카드가 이동하더라도 원래 자리가 빈 슬롯으로 유지되도록 전체 카드 고정 배열 생성
   let cardList = [];
   if (gameState.cardType === 'emotion') {
-    cardList = emotionCards.filter(w => !giftedWords.includes(w)).map(w => ({ word: w, type: 'emotion' }));
+    cardList = emotionCards.map(w => ({
+      word: w,
+      type: 'emotion',
+      isGifted: giftedWords.includes(w)
+    }));
   } else if (gameState.cardType === 'need') {
-    cardList = needCards.filter(w => !giftedWords.includes(w)).map(w => ({ word: w, type: 'need' }));
+    cardList = needCards.map(w => ({
+      word: w,
+      type: 'need',
+      isGifted: giftedWords.includes(w)
+    }));
   } else {
     cardList = [
-      ...emotionCards.filter(w => !giftedWords.includes(w)).map(w => ({ word: w, type: 'emotion' })),
-      ...needCards.filter(w => !giftedWords.includes(w)).map(w => ({ word: w, type: 'need' }))
+      ...emotionCards.map(w => ({ word: w, type: 'emotion', isGifted: giftedWords.includes(w) })),
+      ...needCards.map(w => ({ word: w, type: 'need', isGifted: giftedWords.includes(w) }))
     ];
   }
 
