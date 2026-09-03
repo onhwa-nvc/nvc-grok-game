@@ -209,14 +209,21 @@
 
       if (state.viewMode === 'board') {
         const isEmotion = state.cardType === 'emotion';
+        
+        // 카드 종류별 중앙 덱 타이틀 라벨 설정
+        let deckTitle = "카드 더미";
+        if (state.cardType === 'emotion') deckTitle = "느낌카드 더미";
+        else if (state.cardType === 'need') deckTitle = "욕구카드 더미";
+        else if (state.cardType === 'both') deckTitle = "느낌+욕구 더미";
+
         container.innerHTML = `
           <div class="game-board">
             <div class="player-table north"><div class="player-name">${state.seatNames.north}</div><div id="card-north" class="card"></div></div>
             <div class="player-table west"><div class="player-name">${state.seatNames.west}</div><div id="card-west" class="card"></div></div>
             <div class="player-table center">
               <div class="center-controls">
-                <div id="center-deck" class="card deck ${isEmotion ? 'card-back-emotion' : 'card-back-need'}" onclick="drawCard()">중앙 덱<br><small>(뽑기)</small></div>
-                <button class="action-btn" onclick="revealCard()">정답 공개하기</button>
+                <div id="center-deck" class="card deck ${isEmotion ? 'card-back-emotion' : 'card-back-need'}" onclick="drawCard()">${deckTitle}<br><small>(뽑기)</small></div>
+                <button class="action-btn" onclick="revealCard()">카드 공개하기</button>
               </div>
             </div>
             <div class="player-table east"><div class="player-name">${state.seatNames.east}</div><div id="card-east" class="card"></div></div>
@@ -237,7 +244,6 @@
         });
 
       } else {
-        // 이미 선물된 카드는 그 자리에 빈 테두리 슬롯으로 남기기
         let gridCardsHtml = state.allCards.map(item => {
           if (item.isGifted) {
             return `<div class="mini-card card-none"></div>`;
