@@ -29,7 +29,7 @@
 
     .main-container { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; position: relative; }
 
-    .game-board { flex: 1; display: grid; grid-template-rows: 90px 1fr 90px; grid-template-columns: 85px 1fr 85px; gap: 6px; padding: 6px; height: 100%; }
+    .game-board { flex: 1; display: grid; grid-template-rows: 95px 1fr 95px; grid-template-columns: 85px 1fr 85px; gap: 6px; padding: 6px; height: 100%; }
     .player-table { background: #ffffff; border-radius: 8px; border: 1px dashed #c8c2b7; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3px; position: relative; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04); cursor: pointer; }
     .player-name { font-weight: bold; margin-bottom: 2px; color: #4a4035; font-size: 11px; text-align: center; }
     
@@ -46,17 +46,20 @@
     .card-front-emotion { background: #fff0f5; color: #c2185b; border: 1.5px solid #e91e63; }
     .card-front-need { background: #f0f8ff; color: #0288d1; border: 1.5px solid #03a9f4; }
 
-    .grid-board { flex: 1; display: grid; grid-template-rows: 90px 1fr 90px; grid-template-columns: 75px 1fr 75px; gap: 4px; padding: 4px; height: 100%; overflow: hidden; }
+    /* 전체보기 모드: 남/북쪽 공간 확장 (110px 높이) */
+    .grid-board { flex: 1; display: grid; grid-template-rows: 110px 1fr 110px; grid-template-columns: 75px 1fr 75px; gap: 4px; padding: 4px; height: 100%; overflow: hidden; }
     
-    .grid-center { grid-row: 2; grid-column: 2; background: #e2ddd3; border-radius: 8px; padding: 10px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(66px, 1fr)); gap: 2px; align-content: flex-start; justify-items: center; }
+    .grid-center { grid-row: 2; grid-column: 2; background: #e2ddd3; border-radius: 8px; padding: 8px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(66px, 1fr)); gap: 2px; align-content: flex-start; justify-items: center; }
     
     .mini-card { width: 66px; height: 44px; border-radius: 5px; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.08); transition: transform 0.1s, border 0.1s; flex-shrink: 0; word-break: keep-all; padding: 2px; }
     .mini-card.selected { transform: scale(1.15); border: 2.5px solid #fbc02d !important; box-shadow: 0 0 8px #fbc02d; z-index: 10; background: #fffde7 !important; }
     .mini-emotion { background: #fff0f5; color: #c2185b; border: 1.5px solid #f48fb1; }
     .mini-need { background: #f0f8ff; color: #0288d1; border: 1.5px solid #81d4fa; }
 
-    .gift-slots-horizontal { display: flex; gap: 2px; overflow-x: auto; max-width: 100%; padding: 2px; width: 100%; justify-content: center; }
-    .gift-slots-vertical { display: flex; flex-direction: column; gap: 2px; overflow-y: auto; max-height: 100%; padding: 2px; height: 100%; align-items: center; }
+    /* 남/북 가로 터치 스크롤 강화 */
+    .gift-slots-horizontal { display: flex; gap: 4px; overflow-x: auto; max-width: 100%; padding: 4px 2px; width: 100%; align-items: center; -webkit-overflow-scrolling: touch; }
+    /* 동/서 세로 터치 스크롤 */
+    .gift-slots-vertical { display: flex; flex-direction: column; gap: 4px; overflow-y: auto; max-height: 100%; padding: 2px; height: 100%; align-items: center; -webkit-overflow-scrolling: touch; }
 
     .deck { cursor: pointer; }
     .center-controls { display: flex; flex-direction: column; align-items: center; gap: 4px; }
@@ -210,7 +213,6 @@
       if (state.viewMode === 'board') {
         const isEmotion = state.cardType === 'emotion';
         
-        // 카드 종류별 중앙 덱 타이틀 라벨 설정
         let deckTitle = "카드 더미";
         if (state.cardType === 'emotion') deckTitle = "느낌카드 더미";
         else if (state.cardType === 'need') deckTitle = "욕구카드 더미";
