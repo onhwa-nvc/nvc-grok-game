@@ -9,10 +9,10 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: sans-serif; background-color: #f4f1ea; color: #333; height: 100vh; display: flex; flex-direction: column; overflow: hidden; user-select: none; }
     
-    .header { background: #e8e3d9; padding: 4px 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid #d6cfc2; }
-    .header-group { display: flex; align-items: center; gap: 4px; }
+    .header { background: #e8e3d9; padding: 4px 6px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid #d6cfc2; }
+    .header-group { display: flex; align-items: center; gap: 3px; }
     
-    .type-btn, .mode-btn, .view-btn { padding: 4px 8px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 11px; }
+    .type-btn, .mode-btn, .view-btn { padding: 4px 6px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 11px; }
     .btn-type-emotion.active { background: #f8bbd0; color: #880e4f; }
     .btn-type-need.active { background: #b3e5fc; color: #01579b; }
     .btn-type-both.active { background: #d1c4e9; color: #4a148c; }
@@ -20,18 +20,18 @@
     .btn-mode-active { background: #ffe082; color: #5d4037; }
     .btn-mode-inactive { background: #dcd6cd; color: #666; }
 
-    .seat-select { background: #efebe2; padding: 3px 6px; display: flex; justify-content: center; align-items: center; gap: 5px; flex-wrap: wrap; border-bottom: 1px solid #e0d8cc; }
-    .name-input { padding: 3px 5px; border-radius: 4px; border: 1px solid #ccc; font-size: 11px; width: 75px; outline: none; }
-    .seat-btn { padding: 4px 8px; border: none; border-radius: 4px; cursor: pointer; background: #fff; color: #333; font-weight: bold; font-size: 11px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-    .seat-btn.my-seat { background: #4caf50; color: white; border: 1.5px solid #2e7d32; }
+    .seat-select { background: #efebe2; padding: 3px 4px; display: flex; justify-content: center; align-items: center; gap: 4px; flex-wrap: wrap; border-bottom: 1px solid #e0d8cc; }
+    .name-input { padding: 3px 4px; border-radius: 4px; border: 1px solid #ccc; font-size: 11px; width: 65px; outline: none; }
+    .seat-btn { padding: 4px 6px; border: none; border-radius: 4px; cursor: pointer; background: #fff; color: #333; font-weight: bold; font-size: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+    .seat-btn.my-seat { background: #4caf50; color: white; border: 1px solid #2e7d32; }
     .seat-btn:disabled { background: #ccc; color: #888; cursor: not-allowed; }
-    .leave-btn { padding: 4px 8px; border: none; border-radius: 4px; cursor: pointer; background: #e57373; color: white; font-weight: bold; font-size: 11px; }
+    .leave-btn { padding: 4px 6px; border: none; border-radius: 4px; cursor: pointer; background: #e57373; color: white; font-weight: bold; font-size: 10px; }
 
     .main-container { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; position: relative; }
 
     /* 모드 1: 기본 게임판 */
-    .game-board { flex: 1; display: grid; grid-template-rows: 95px 1fr 95px; grid-template-columns: 85px 1fr 85px; gap: 6px; padding: 6px; height: 100%; }
-    .player-table { background: #ffffff; border-radius: 8px; border: 1px dashed #c8c2b7; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3px; position: relative; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04); cursor: pointer; }
+    .game-board { flex: 1; display: grid; grid-template-rows: 85px 1fr 85px; grid-template-columns: 70px 1fr 70px; gap: 4px; padding: 4px; height: 100%; width: 100%; }
+    .player-table { background: #ffffff; border-radius: 6px; border: 1px dashed #c8c2b7; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px; position: relative; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.04); cursor: pointer; width: 100%; }
     .player-name { font-weight: bold; margin-bottom: 2px; color: #4a4035; font-size: 11px; text-align: center; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     
     .north { grid-row: 1; grid-column: 2; }
@@ -40,38 +40,38 @@
     .east { grid-row: 2; grid-column: 3; }
     .south { grid-row: 3; grid-column: 2; background: #fbf9f5; }
     
-    /* 고정 카드 규격 (66px x 44px) */
-    .card { width: 66px; height: 44px; border-radius: 5px; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; padding: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); flex-shrink: 0; word-break: keep-all; }
+    /* 가로형 카드 크기 (60px x 40px - 모바일 맞춤) */
+    .card { width: 60px; height: 40px; border-radius: 4px; font-size: 11px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; padding: 1px; box-shadow: 0 1px 2px rgba(0,0,0,0.08); flex-shrink: 0; word-break: keep-all; }
     .card-none { background: #f0ede6; border: 1px dashed #d0c9bd; color: transparent; box-shadow: none; }
-    .card-back-emotion { background: #f8bbd0; color: #880e4f; border: 1.5px solid #f48fb1; }
-    .card-back-need { background: #b3e5fc; color: #01579b; border: 1.5px solid #81d4fa; }
+    .card-back-emotion { background: #f8bbd0; color: #880e4f; border: 1px solid #f48fb1; }
+    .card-back-need { background: #b3e5fc; color: #01579b; border: 1px solid #81d4fa; }
     .card-front-emotion { background: #fff0f5; color: #c2185b; border: 1.5px solid #e91e63; }
     .card-front-need { background: #f0f8ff; color: #0288d1; border: 1.5px solid #03a9f4; }
 
-    /* 모드 2: 전체보기 레이아웃 */
-    .grid-board { flex: 1; display: grid; grid-template-rows: 95px 1fr 95px; grid-template-columns: 80px 1fr 80px; gap: 4px; padding: 4px; height: 100%; overflow: hidden; }
+    /* 모드 2: 전체보기 모드 (좌우 68px로 모바일 가로폭 완전 보장) */
+    .grid-board { flex: 1; display: grid; grid-template-rows: 85px 1fr 85px; grid-template-columns: 68px 1fr 68px; gap: 3px; padding: 3px; height: 100%; width: 100%; overflow: hidden; }
     
-    .grid-center { grid-row: 2; grid-column: 2; background: #e2ddd3; border-radius: 8px; padding: 6px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(66px, 1fr)); gap: 2px; align-content: flex-start; justify-items: center; }
+    .grid-center { grid-row: 2; grid-column: 2; background: #e2ddd3; border-radius: 6px; padding: 4px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 2px; align-content: flex-start; justify-items: center; width: 100%; }
     
-    .mini-card { width: 66px; height: 44px; border-radius: 5px; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.08); transition: transform 0.1s, border 0.1s; flex-shrink: 0; word-break: keep-all; padding: 2px; }
-    .mini-card.selected { transform: scale(1.15); border: 2.5px solid #fbc02d !important; box-shadow: 0 0 8px #fbc02d; z-index: 10; background: #fffde7 !important; }
-    .mini-emotion { background: #fff0f5; color: #c2185b; border: 1.5px solid #f48fb1; }
-    .mini-need { background: #f0f8ff; color: #0288d1; border: 1.5px solid #81d4fa; }
+    .mini-card { width: 60px; height: 40px; border-radius: 4px; font-size: 11px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.08); transition: transform 0.1s, border 0.1s; flex-shrink: 0; word-break: keep-all; padding: 1px; }
+    .mini-card.selected { transform: scale(1.15); border: 2px solid #fbc02d !important; box-shadow: 0 0 6px #fbc02d; z-index: 10; background: #fffde7 !important; }
+    .mini-emotion { background: #fff0f5; color: #c2185b; border: 1px solid #f48fb1; }
+    .mini-need { background: #f0f8ff; color: #0288d1; border: 1px solid #81d4fa; }
 
-    /* 가로 선물 슬롯 터치 스크롤 강화 (남/북) */
-    .gift-slots-horizontal { display: flex; gap: 4px; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px; width: 100%; align-items: center; justify-content: flex-start; -webkit-overflow-scrolling: touch; }
+    /* 가로 터치 스크롤 (남/북) */
+    .gift-slots-horizontal { display: flex; gap: 3px; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px; width: 100%; align-items: center; justify-content: flex-start; -webkit-overflow-scrolling: touch; }
     
-    /* 세로 선물 슬롯 터치 스크롤 강화 (동/서) */
-    .gift-slots-vertical { display: flex; flex-direction: column; gap: 4px; overflow-y: auto; overflow-x: hidden; max-height: 100%; padding: 2px; height: 100%; width: 100%; align-items: center; justify-content: flex-start; -webkit-overflow-scrolling: touch; }
+    /* 세로 터치 스크롤 (동/서) */
+    .gift-slots-vertical { display: flex; flex-direction: column; gap: 3px; overflow-y: auto; overflow-x: hidden; max-height: 100%; padding: 2px; height: 100%; width: 100%; align-items: center; justify-content: flex-start; -webkit-overflow-scrolling: touch; }
 
     .deck { cursor: pointer; }
     .center-controls { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-    .action-btn { padding: 4px 10px; border: none; border-radius: 8px; background: #ffa726; color: white; font-weight: bold; cursor: pointer; font-size: 11px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .action-btn { padding: 4px 8px; border: none; border-radius: 6px; background: #ffa726; color: white; font-weight: bold; cursor: pointer; font-size: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
   </style>
 </head>
 <body>
   <div class="header">
-    <h1 style="font-size: 14px; color: #4a4035;">NVC 그로그</h1>
+    <h1 style="font-size: 13px; color: #4a4035;">NVC 그로그</h1>
     
     <div class="header-group">
       <button id="view-board" class="view-btn btn-mode-active" onclick="setViewMode('board')">카드 덱</button>
@@ -91,8 +91,8 @@
   </div>
 
   <div class="seat-select">
-    <input type="text" id="user-name" class="name-input" placeholder="이름 입력" maxlength="5">
-    <span style="font-size: 11px; color: #5d5346;">내 자리 선택:</span>
+    <input type="text" id="user-name" class="name-input" placeholder="이름" maxlength="5">
+    <span style="font-size: 10px; color: #5d5346;">내 자리:</span>
     <button id="seat-south" class="seat-btn" onclick="selectSeat('south')">남쪽</button>
     <button id="seat-north" class="seat-btn" onclick="selectSeat('north')">북쪽</button>
     <button id="seat-west" class="seat-btn" onclick="selectSeat('west')">서쪽</button>
@@ -140,7 +140,6 @@
       }
     }
 
-    // 카드 개별 터치 시 반납 처리 (부모 영역 클릭 이벤트 차단)
     function returnCard(fromSeat, cardWord, event) {
       if (event) {
         event.stopPropagation();
@@ -253,6 +252,7 @@
         });
 
       } else {
+        // 이미 선물된 카드는 빈 슬롯(card-none)으로 제자리에 고정하여 렌더링
         let gridCardsHtml = state.allCards.map(item => {
           if (item.isGifted) {
             return `<div class="mini-card card-none"></div>`;
