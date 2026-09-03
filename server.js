@@ -28,7 +28,7 @@ const needCards = [
 
 let gameState = {
   viewMode: "board",
-  cardType: "emotion",
+  cardType: "emotion", // 'emotion', 'need', 또는 'both'
   mode: "me",
   currentCard: "",
   drawerSeat: null,
@@ -68,7 +68,10 @@ io.on('connection', (socket) => {
     const user = players[socket.id];
     if (!user || !user.seat) return;
 
-    const list = gameState.cardType === 'emotion' ? emotionCards : needCards;
+    let list = emotionCards;
+    if (gameState.cardType === 'need') list = needCards;
+    else if (gameState.cardType === 'both') list = [...emotionCards, ...needCards];
+
     gameState.currentCard = list[Math.floor(Math.random() * list.length)];
     gameState.drawerSeat = user.seat;
     gameState.isRevealed = false;
@@ -80,12 +83,12 @@ io.on('connection', (socket) => {
     sendStateToAll();
   });
 
-  socket.on('sendGift', ({ targetSeat, cardWord }) => {
+  socket.on('sendGift', ({ targetSeat, cardWord, cardType }) => {
     if (targetSeat && gameState.gifts[targetSeat]) {
       if (gameState.gifts[targetSeat].length < 10) {
         gameState.gifts[targetSeat].push({
           word: cardWord,
-          type: gameState.cardType,
+          type: cardType || gameState.cardType,
           from: players[socket.id]?.name || "익명"
         });
         sendStateToAll();
@@ -132,6 +135,20 @@ function sendStateToUser(socket) {
     }
   });
 
+  // 카드 목록 조합
+  let cardList = [];
+  if (gameState.cardType === 'emotion') {
+    cardList = emotionCards.map(w => ({ word: w, type: 'emotion' }));
+  } else if (gameState.cardType === 'need') {
+    cardList = needCards.map(w => ({ word: w, type: 'need' }));
+  } else {
+    // 110장 통합 모드 (느낌 55장 + 욕구 55장)
+    cardList = [
+      ...emotionCards.map(w => ({ word: w, type: 'emotion' })),
+      ...needCards.map(w => ({ word: w, type: 'need' }))
+    ];
+  }
+
   let userView = {
     viewMode: gameState.viewMode,
     cardType: gameState.cardType,
@@ -142,7 +159,7 @@ function sendStateToUser(socket) {
     seatNames: seatInfo,
     occupiedSeats: occupiedSeats,
     gifts: gameState.gifts,
-    allCards: gameState.cardType === 'emotion' ? emotionCards : needCards,
+    allCards: cardList,
     cards: { north: "", south: "", east: "", west: "" }
   };
 
