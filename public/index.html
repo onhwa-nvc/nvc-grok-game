@@ -93,27 +93,33 @@
     .center-controls { display: flex; flex-direction: column; align-items: center; gap: 6px; }
     .action-btn { padding: 8px 14px; border: none; border-radius: 8px; background: #ffa726; color: white; font-weight: bold; cursor: pointer; font-size: 13px; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
 
-    /* 스마트폰 가로 모드 전용 */
+    /* 스마트폰 가로 모드(Landscape) 전용 - 남/북 세로 높이 최적화 */
     @media (orientation: landscape) and (max-height: 500px) {
-      .header { padding: 4px 6px; }
+      .header { padding: 3px 6px; }
       .header h1 { font-size: 12px !important; }
-      .type-btn, .mode-btn, .view-btn, .fullscreen-btn, .font-btn { padding: 4px 8px; font-size: 11px; border-radius: 6px; }
+      .type-btn, .mode-btn, .view-btn, .fullscreen-btn, .font-btn { padding: 3px 6px; font-size: 11px; border-radius: 6px; }
 
-      .game-board, .grid-board { grid-template-rows: 55px 1fr 55px; grid-template-columns: 78px 1fr 78px; gap: 2px; padding: 2px; }
+      /* 남/북 영역 높이 62px로 넓히고 여백 슬림화 */
+      .game-board, .grid-board { grid-template-rows: 62px 1fr 62px; grid-template-columns: 78px 1fr 78px; gap: 2px; padding: 2px; }
 
       .west { grid-row: 1 / 4 !important; grid-column: 1 !important; z-index: 2; }
       .east { grid-row: 1 / 4 !important; grid-column: 3 !important; z-index: 2; }
 
-      .north { grid-row: 1 !important; grid-column: 2 !important; }
-      .south { grid-row: 3 !important; grid-column: 2 !important; }
+      .north { grid-row: 1 !important; grid-column: 2 !important; padding: 1px !important; }
+      .south { grid-row: 3 !important; grid-column: 2 !important; padding: 1px !important; }
 
-      .player-name { font-size: 10px; margin-bottom: 1px; }
-      .inline-name-input { font-size: 10px; padding: 2px; }
-      .seat-ui-vertical .inline-name-input, .seat-ui-vertical .inline-seat-btn { width: 50px; }
-      .seat-ui-horizontal .inline-name-input { width: 50px; }
-      .inline-seat-btn { font-size: 10px; }
+      .seat-ui-horizontal { margin-bottom: 0px !important; gap: 3px !important; }
 
-      .action-btn { padding: 4px 10px; font-size: 11px; }
+      .card { width: 46px !important; min-width: 46px !important; height: 30px !important; min-height: 30px !important; font-size: 9px; }
+      .mini-card { width: 46px !important; min-width: 46px !important; height: 30px !important; min-height: 30px !important; font-size: 9px; }
+
+      .player-name { font-size: 9px; margin-bottom: 0px; }
+      .inline-name-input { font-size: 9px; padding: 1px; }
+      .seat-ui-vertical .inline-name-input, .seat-ui-vertical .inline-seat-btn { width: 48px; }
+      .seat-ui-horizontal .inline-name-input { width: 48px; }
+      .inline-seat-btn { font-size: 9px; padding: 2px 4px !important; }
+
+      .action-btn { padding: 3px 8px; font-size: 10px; }
     }
   </style>
 </head>
@@ -170,7 +176,6 @@
       document.documentElement.style.setProperty('--card-height', `${height}px`);
     }
 
-    // 두 손가락 터치 핀치 제스처(Pinch Zoom) 이벤트 수신기
     let initialTouchDistance = 0;
     document.addEventListener('touchstart', function(e) {
       if (e.touches.length === 2) {
@@ -189,11 +194,11 @@
         );
 
         let diff = currentDistance - initialTouchDistance;
-        if (Math.abs(diff) > 25) { // 25px 이상 손가락 간격 변동 시
+        if (Math.abs(diff) > 25) {
           if (diff > 0) {
-            adjustFontSize(1); // 확대
+            adjustFontSize(1);
           } else {
-            adjustFontSize(-1); // 축소
+            adjustFontSize(-1);
           }
           initialTouchDistance = currentDistance;
         }
