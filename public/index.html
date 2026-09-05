@@ -20,19 +20,18 @@
     .btn-mode-active { background: #ffe082; color: #5d4037; }
     .btn-mode-inactive { background: #dcd6cd; color: #666; }
 
-    .seat-select { background: #efebe2; padding: 4px 8px; display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap; border-bottom: 1px solid #e0d8cc; flex-shrink: 0; }
-    .seat-box { display: flex; align-items: center; gap: 3px; background: #ffffff; padding: 2px 4px; border-radius: 6px; border: 1px solid #dcd6cd; }
-    .name-input { padding: 3px 5px; border-radius: 4px; border: 1px solid #ccc; font-size: 11px; width: 60px; outline: none; }
-    .seat-btn { padding: 4px 7px; border: none; border-radius: 4px; cursor: pointer; background: #eee; color: #333; font-weight: bold; font-size: 11px; }
-    .seat-btn.my-seat { background: #4caf50; color: white; border: 1px solid #2e7d32; }
-    .seat-btn:disabled { background: #ccc; color: #888; cursor: not-allowed; }
-    .leave-btn { padding: 4px 7px; border: none; border-radius: 4px; cursor: pointer; background: #e57373; color: white; font-weight: bold; font-size: 11px; margin-left: 2px; }
-
     .main-container { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; position: relative; }
 
-    /* 모드 1: 기본 카드 덱 뽑기 판 */
+    /* 각 플레이어 테이블 및 카드 영역 */
     .game-board { flex: 1; display: grid; grid-template-rows: 95px 1fr 95px; grid-template-columns: 85px 1fr 85px; gap: 6px; padding: 6px; height: 100%; width: 100%; min-width: 320px; min-height: 300px; }
     .player-table { background: #ffffff; border-radius: 8px; border: 1px dashed #c8c2b7; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.04); cursor: pointer; overflow: hidden; }
+    
+    /* 개인 영역 내 이름 및 자리잡기 UI */
+    .seat-ui-box { display: flex; align-items: center; gap: 3px; margin-bottom: 3px; max-width: 100%; }
+    .inline-name-input { width: 52px; padding: 2px 4px; border: 1px solid #ccc; border-radius: 4px; font-size: 10px; text-align: center; outline: none; }
+    .inline-seat-btn { padding: 2px 5px; border: none; border-radius: 4px; background: #8d6e63; color: white; font-weight: bold; font-size: 10px; cursor: pointer; flex-shrink: 0; }
+    .inline-leave-btn { padding: 2px 4px; border: none; border-radius: 4px; background: #ef5350; color: white; font-size: 9px; cursor: pointer; flex-shrink: 0; }
+
     .player-name { font-weight: bold; margin-bottom: 3px; color: #4a4035; font-size: 11px; text-align: center; width: 100%; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     
     .north { grid-row: 1; grid-column: 2; }
@@ -41,7 +40,7 @@
     .east { grid-row: 2; grid-column: 3; }
     .south { grid-row: 3; grid-column: 2; background: #fbf9f5; }
     
-    /* PC/모바일 절대 가독성 카드 고정 규격 */
+    /* 고정 카드 규격 */
     .card { width: 66px !important; min-width: 66px !important; height: 44px !important; min-height: 44px !important; border-radius: 5px; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; padding: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); flex-shrink: 0 !important; word-break: keep-all; }
     .card-none { background: #f0ede6; border: 1px dashed #d0c9bd; color: transparent; box-shadow: none; }
     .card-back-emotion { background: #f8bbd0; color: #880e4f; border: 1.5px solid #f48fb1; }
@@ -49,7 +48,7 @@
     .card-front-emotion { background: #fff0f5; color: #c2185b; border: 1.5px solid #e91e63; }
     .card-front-need { background: #f0f8ff; color: #0288d1; border: 1.5px solid #03a9f4; }
 
-    /* 모드 2: 전체보기 모드 */
+    /* 전체보기 모드 */
     .grid-board { flex: 1; display: grid; grid-template-rows: 95px 1fr 95px; grid-template-columns: 80px 1fr 80px; gap: 4px; padding: 4px; height: 100%; width: 100%; min-width: 320px; min-height: 320px; overflow: hidden; }
     
     .grid-center { grid-row: 2; grid-column: 2; background: #e2ddd3; border-radius: 8px; padding: 8px; overflow-y: auto; overflow-x: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(66px, 1fr)); gap: 3px; align-content: flex-start; justify-items: center; width: 100%; height: 100%; }
@@ -88,27 +87,6 @@
     </div>
   </div>
 
-  <!-- 동서남북 각각 개별 이름 입력 구조로 개선 -->
-  <div class="seat-select">
-    <div class="seat-box">
-      <input type="text" id="input-south" class="name-input" placeholder="이름" maxlength="5">
-      <button id="seat-south" class="seat-btn" onclick="selectSeat('south')">남쪽</button>
-    </div>
-    <div class="seat-box">
-      <input type="text" id="input-north" class="name-input" placeholder="이름" maxlength="5">
-      <button id="seat-north" class="seat-btn" onclick="selectSeat('north')">북쪽</button>
-    </div>
-    <div class="seat-box">
-      <input type="text" id="input-west" class="name-input" placeholder="이름" maxlength="5">
-      <button id="seat-west" class="seat-btn" onclick="selectSeat('west')">서쪽</button>
-    </div>
-    <div class="seat-box">
-      <input type="text" id="input-east" class="name-input" placeholder="이름" maxlength="5">
-      <button id="seat-east" class="seat-btn" onclick="selectSeat('east')">동쪽</button>
-    </div>
-    <button id="leave-seat" class="leave-btn" onclick="leaveSeat()">자리 비우기</button>
-  </div>
-
   <div class="main-container" id="main-container"></div>
 
   <script>
@@ -116,7 +94,7 @@
     let selectedCardObj = null;
 
     function selectSeat(seat) {
-      const inputElem = document.getElementById(`input-${seat}`);
+      const inputElem = document.getElementById(`inline-input-${seat}`);
       const name = inputElem ? inputElem.value.trim() : "";
       socket.emit('selectSeat', { seat: seat, name: name });
     }
@@ -193,6 +171,28 @@
       renderBoard();
     });
 
+    // 개별 영역에 표시할 이름/착석 UI 생성 함수
+    function renderSeatHeaderHtml(seat) {
+      const state = localState;
+      const isOccupied = state.occupiedSeats && state.occupiedSeats.includes(seat);
+      const isMySeat = state.mySeat === seat;
+      const seatName = state.seatNames ? state.seatNames[seat] : getSeatLabel(seat);
+
+      if (isMySeat) {
+        return `<div class="seat-ui-box" onclick="event.stopPropagation()">
+                  <span class="player-name" style="color:#2e7d32;">${seatName} (나)</span>
+                  <button class="inline-leave-btn" onclick="leaveSeat()">비우기</button>
+                </div>`;
+      } else if (isOccupied) {
+        return `<div class="player-name">${seatName}</div>`;
+      } else {
+        return `<div class="seat-ui-box" onclick="event.stopPropagation()">
+                  <input type="text" id="inline-input-${seat}" class="inline-name-input" placeholder="이름" maxlength="5">
+                  <button class="inline-seat-btn" onclick="selectSeat('${seat}')">착석</button>
+                </div>`;
+      }
+    }
+
     function renderBoard() {
       const state = localState;
       if (!state.viewMode) return;
@@ -207,36 +207,6 @@
       document.getElementById('mode1').className = state.mode === 'me' ? 'mode-btn btn-mode-active' : 'mode-btn btn-mode-inactive';
       document.getElementById('mode2').className = state.mode === 'others' ? 'mode-btn btn-mode-active' : 'mode-btn btn-mode-inactive';
 
-      // 각 동서남북 입력창 및 버튼 상태 동기화
-      ['south', 'north', 'west', 'east'].forEach(seat => {
-        const btn = document.getElementById(`seat-${seat}`);
-        const input = document.getElementById(`input-${seat}`);
-        const seatName = state.seatNames[seat];
-
-        if (state.mySeat === seat) {
-          btn.className = "seat-btn my-seat";
-          btn.innerText = `내 자리`;
-          btn.disabled = false;
-          if (input && document.activeElement !== input) input.value = seatName !== getSeatLabel(seat) ? seatName : "";
-        } else if (state.occupiedSeats.includes(seat)) {
-          btn.className = "seat-btn";
-          btn.innerText = seatName;
-          btn.disabled = true;
-          if (input) {
-            input.value = seatName;
-            input.disabled = true;
-          }
-        } else {
-          btn.className = "seat-btn";
-          btn.innerText = getSeatLabel(seat);
-          btn.disabled = false;
-          if (input) {
-            input.disabled = false;
-            if (document.activeElement !== input && input.value === seatName) input.value = "";
-          }
-        }
-      });
-
       const container = document.getElementById('main-container');
 
       if (state.viewMode === 'board') {
@@ -249,16 +219,16 @@
 
         container.innerHTML = `
           <div class="game-board">
-            <div class="player-table north"><div class="player-name">${state.seatNames.north}</div><div id="card-north" class="card"></div></div>
-            <div class="player-table west"><div class="player-name">${state.seatNames.west}</div><div id="card-west" class="card"></div></div>
+            <div class="player-table north">${renderSeatHeaderHtml('north')}<div id="card-north" class="card"></div></div>
+            <div class="player-table west">${renderSeatHeaderHtml('west')}<div id="card-west" class="card"></div></div>
             <div class="player-table center">
               <div class="center-controls">
                 <div id="center-deck" class="card deck ${isEmotion ? 'card-back-emotion' : 'card-back-need'}" onclick="drawCard()">${deckTitle}<br><small>(뽑기)</small></div>
                 <button class="action-btn" onclick="revealCard()">카드 공개하기</button>
               </div>
             </div>
-            <div class="player-table east"><div class="player-name">${state.seatNames.east}</div><div id="card-east" class="card"></div></div>
-            <div class="player-table south"><div class="player-name">${state.seatNames.south}</div><div id="card-south" class="card"></div></div>
+            <div class="player-table east">${renderSeatHeaderHtml('east')}<div id="card-east" class="card"></div></div>
+            <div class="player-table south">${renderSeatHeaderHtml('south')}<div id="card-south" class="card"></div></div>
           </div>
         `;
 
@@ -311,12 +281,12 @@
         container.innerHTML = `
           <div class="grid-board">
             <div class="player-table north" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'north')" onclick="handleSeatClick('north')">
-              <div class="player-name">${state.seatNames.north}</div>
+              ${renderSeatHeaderHtml('north')}
               ${renderGiftSlots('north', false)}
             </div>
             
             <div class="player-table west" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'west')" onclick="handleSeatClick('west')">
-              <div class="player-name">${state.seatNames.west}</div>
+              ${renderSeatHeaderHtml('west')}
               ${renderGiftSlots('west', true)}
             </div>
 
@@ -325,12 +295,12 @@
             </div>
 
             <div class="player-table east" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'east')" onclick="handleSeatClick('east')">
-              <div class="player-name">${state.seatNames.east}</div>
+              ${renderSeatHeaderHtml('east')}
               ${renderGiftSlots('east', true)}
             </div>
 
             <div class="player-table south" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'south')" onclick="handleSeatClick('south')">
-              <div class="player-name">${state.seatNames.south}</div>
+              ${renderSeatHeaderHtml('south')}
               ${renderGiftSlots('south', false)}
             </div>
           </div>
