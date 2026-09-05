@@ -24,7 +24,7 @@
     .header { background: #e8e3d9; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; border-bottom: 1px solid #d6cfc2; flex-shrink: 0; }
     .header-group { display: flex; align-items: center; gap: 5px; }
     
-    .type-btn, .mode-btn, .view-btn, .font-btn, .fullscreen-btn { 
+    .type-btn, .mode-btn, .view-btn, .font-btn, .fullscreen-btn, .close-room-btn { 
       padding: 7px 12px; 
       border: none; 
       border-radius: 8px; 
@@ -43,6 +43,7 @@
     
     .font-btn { background: #795548; color: white; padding: 5px 10px; font-size: 13px; }
     .fullscreen-btn { background: #ff9800; color: white; }
+    .close-room-btn { background: #d32f2f; color: white; }
 
     .main-container { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; position: relative; }
 
@@ -134,7 +135,7 @@
     @media (orientation: landscape) and (max-height: 500px) {
       .header { padding: 3px 6px; }
       .header h1 { font-size: 12px !important; }
-      .type-btn, .mode-btn, .view-btn, .fullscreen-btn, .font-btn { padding: 3px 6px; font-size: 11px; border-radius: 6px; }
+      .type-btn, .mode-btn, .view-btn, .fullscreen-btn, .font-btn, .close-room-btn { padding: 3px 6px; font-size: 11px; border-radius: 6px; }
 
       .game-board, .grid-board { grid-template-rows: 62px 1fr 62px; grid-template-columns: 80px 1fr 80px; gap: 2px; padding: 2px; }
 
@@ -179,6 +180,7 @@
       <button class="font-btn" onclick="adjustFontSize(0)">기본</button>
       <button class="font-btn" onclick="adjustFontSize(1)">+</button>
       <button class="fullscreen-btn" onclick="toggleFullScreen()">전체 화면</button>
+      <button id="admin-close-btn" class="close-room-btn" style="display:none;" onclick="closeRoom()">🔒 모임 종료</button>
     </div>
   </div>
 
@@ -187,6 +189,33 @@
   <script>
     const socket = io();
     let selectedCardObj = null;
+
+    // URL에서 방장 여부 확인 (?admin=1)
+    const urlParams = new URLSearchParams(window.location.search);
+    const isAdmin = urlParams.get('admin') === '1';
+
+    if (isAdmin) {
+      document.getElementById('admin-close-btn').style.display = 'inline-block';
+    }
+
+    // 모임 종료 처리 이벤트 감지
+    socket.on('roomClosed', () => {
+      document.body.innerHTML = `
+        <div style="height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f4f1ea; text-align: center; padding: 20px;">
+          <h1 style="color: #5d4037; font-size: 22px; margin-bottom: 12px;">🔒 모임이 종료되었습니다</h1>
+          <p style="color: #666; font-size: 14px; line-height: 1.6;">
+            오늘 NVC 그로그 카드 놀이에 참여해 주셔서 감사합니다.<br>
+            더 이상 앱을 사용할 수 없습니다.
+          </p>
+        </div>
+      `;
+    });
+
+    function closeRoom() {
+      if (confirm("정말로 모임을 종료하시겠습니까?\n종료 후에는 모든 참가자의 접속이 차단되고 앱을 사용할 수 없게 됩니다.")) {
+        socket.emit('closeRoom');
+      }
+    }
 
     let currentFontSize = 11;
     function adjustFontSize(delta) {
