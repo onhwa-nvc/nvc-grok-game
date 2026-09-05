@@ -165,19 +165,29 @@ io.on('connection', (socket) => {
     sendStateToAll();
   });
 
-  // [수정된 카드 뽑기 로직] 사람이 앉아 있는 자리(occupiedSeats)에만 카드가 뽑히도록 변경
+  // [수정된 카드 뽑기 로직] 카드를 누른 사람(socket.seat)의 자리에만 카드가 뽑힙니다.
   socket.on('drawCard', () => {
+    let targetSeat = socket.seat;
+    
+    // 만약 자리에 앉지 않은 사람이 뽑았다면 기본적으로 south(남쪽)나 첫 번째 빈 자리에 뽑히게 처리하거나 방어 코드를 둡니다.
+    if (!targetSeat) {
+      // 자리에 앉지 않았다면 현재 착석한 자리 중 첫 번째 자리에 부여하거나 전체 초기화 후 첫 자리 지정
+      if (gameState.occupiedSeats.length > 0) {
+        targetSeat = gameState.occupiedSeats[0];
+      } else {
+        targetSeat = 'south'; // 기본값
+      }
+    }
+
     let wordList = EMOTION_WORDS;
     if (gameState.cardType === 'need') wordList = NEED_WORDS;
     else if (gameState.cardType === 'both') wordList = EMOTION_WORDS.concat(NEED_WORDS);
 
-    // 모든 자리를 비운 뒤, 현재 착석한 자리들에만 각각 카드를 한 장씩 부여합니다.
-    gameState.cards = { south: "", north: "", east: "", west: "" };
+    const randIndex = Math.floor(Math.random() * wordList.length);
     
-    gameState.occupiedSeats.forEach(seat => {
-      const randIndex = Math.floor(Math.random() * wordList.length);
-      gameState.cards[seat] = wordList[randIndex];
-    });
+    // 전체 카드를 초기화한 후, 오직 카드를 뽑은 사람의 자리(targetSeat)에만 카드를 꽂습니다.
+    gameState.cards = { south: "", north: "", east: "", west: "" };
+    gameState.cards[targetSeat] = wordList[randIndex];
     
     if (gameState.mode === 'reveal') {
       gameState.mode = 'me';
