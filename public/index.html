@@ -181,8 +181,8 @@
       <button class="font-btn" onclick="adjustFontSize(0)">기본</button>
       <button class="font-btn" onclick="adjustFontSize(1)">+</button>
       <button class="fullscreen-btn" onclick="toggleFullScreen()">전체 화면</button>
-      <!-- 게임 초기화 버튼 추가 -->
-      <button class="reset-btn" onclick="resetGame()">🔄 게임 초기화</button>
+      <!-- 게임 새로하기 버튼 (확인창 없이 즉시 리셋) -->
+      <button class="reset-btn" onclick="resetGame()">🔄 게임 새로하기</button>
       <button id="admin-close-btn" class="close-room-btn" style="display:none;" onclick="closeRoom()">🔒 모임 종료</button>
     </div>
   </div>
@@ -219,9 +219,7 @@
     }
 
     function resetGame() {
-      if (confirm("게임을 초기화하시겠습니까?\n모든 메인 카드와 선물 슬롯이 비워지고 덱이 새로 섞입니다.")) {
-        socket.emit('resetGame');
-      }
+      socket.emit('resetGame');
     }
 
     let currentFontSize = 11;
