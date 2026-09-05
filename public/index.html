@@ -26,8 +26,8 @@
     .game-board { flex: 1; display: grid; grid-template-rows: 95px 1fr 95px; grid-template-columns: 85px 1fr 85px; gap: 6px; padding: 6px; height: 100%; width: 100%; min-width: 320px; min-height: 300px; }
     .player-table { background: #ffffff; border-radius: 8px; border: 1px dashed #c8c2b7; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.04); cursor: pointer; overflow: hidden; }
     
-    /* 개인 영역 내 이름 및 자리잡기 UI */
-    .seat-ui-box { display: flex; align-items: center; gap: 3px; margin-bottom: 3px; max-width: 100%; }
+    /* 개인 영역 내 이름 및 자리잡기 UI 정중앙 정렬 */
+    .seat-ui-box { display: flex; align-items: center; justify-content: center; gap: 3px; margin-bottom: 3px; max-width: 100%; }
     .inline-name-input { width: 52px; padding: 2px 4px; border: 1px solid #ccc; border-radius: 4px; font-size: 10px; text-align: center; outline: none; }
     .inline-seat-btn { padding: 2px 5px; border: none; border-radius: 4px; background: #8d6e63; color: white; font-weight: bold; font-size: 10px; cursor: pointer; flex-shrink: 0; }
     .inline-leave-btn { padding: 2px 4px; border: none; border-radius: 4px; background: #ef5350; color: white; font-size: 9px; cursor: pointer; flex-shrink: 0; }
@@ -58,8 +58,9 @@
     .mini-emotion { background: #fff0f5; color: #c2185b; border: 1.5px solid #f48fb1; }
     .mini-need { background: #f0f8ff; color: #0288d1; border: 1.5px solid #81d4fa; }
 
-    .gift-slots-horizontal { display: flex; gap: 4px; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px; width: 100%; align-items: center; justify-content: flex-start; -webkit-overflow-scrolling: touch; }
-    .gift-slots-vertical { display: flex; flex-direction: column; gap: 4px; overflow-y: auto; overflow-x: hidden; max-height: 100%; padding: 2px; height: 100%; width: 100%; align-items: center; justify-content: flex-start; -webkit-overflow-scrolling: touch; }
+    /* 개인 영역 슬롯 정중앙(Center) 정렬 수정 */
+    .gift-slots-horizontal { display: flex; gap: 4px; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px; width: 100%; align-items: center; justify-content: center; -webkit-overflow-scrolling: touch; }
+    .gift-slots-vertical { display: flex; flex-direction: column; gap: 4px; overflow-y: auto; overflow-x: hidden; max-height: 100%; padding: 2px; height: 100%; width: 100%; align-items: center; justify-content: center; -webkit-overflow-scrolling: touch; }
 
     .deck { cursor: pointer; }
     .center-controls { display: flex; flex-direction: column; align-items: center; gap: 4px; }
@@ -171,7 +172,6 @@
       renderBoard();
     });
 
-    // 개별 영역에 표시할 이름/착석 UI 생성 함수
     function renderSeatHeaderHtml(seat) {
       const state = localState;
       const isOccupied = state.occupiedSeats && state.occupiedSeats.includes(seat);
