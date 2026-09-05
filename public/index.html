@@ -1,522 +1,209 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes">
-  
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="mobile-web-app-capable" content="yes">
-  
-  <title>NVC 그로그 카드 놀이</title>
-  <script src="/socket.io/socket.io.js"></script>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    
-    :root {
-      --card-font-size: 11px;
-      --card-width: 58px;
-      --card-height: 40px;
+const express = require('express');
+const app = express();
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
+
+app.use(express.static('public'));
+
+const EMOTION_WORDS = [
+  "걱정되는", "답답한", "두려운", "부담스러운", "불안한", "서운한", "속상한", "슬픈",
+  "외로운", "우울한", "억울한", "지친", "화난", "당황스러운", "미안한", "부끄러운",
+  "놀란", "무서운", "막막한", "혼란스러운", "아쉬운", "절망적인", "피곤한", "무기력한",
+  "괴로운", "불편한", "어색한", "야속한", "허전한", "냉담한", "막연한", "초조한",
+  "기쁜", "반가운", "설레는", "감사한", "편안한", "행복한", "든든한", "뿌듯한",
+  "희망찬", "자유로운", "감동적인", "평화로운", "신나는", "활기찬", "후련한", "만족스러운",
+  "따뜻한", "친근한", "홀가분한", "자신있는", "유쾌한", "사랑스러운", "안도하는", "상쾌한",
+  "흥미로운", "호기심나는", "충만한", "연민을느끼는", "자랑스러운", "황홀한", "아늑한", "편안한"
+];
+
+const NEED_WORDS = [
+  "자율성", "선택", "자유", "꿈", "목표", "공간", "독립",
+  "축하", "애도", "기억", "성찰", "명예",
+  "진실성", "진정성", "창의성", "자기형성", "자존감", "의미",
+  "상호의존", "수용", "전달", "공감", "사랑", "소속감", "배려", "친밀함", "존중", "지지", "신뢰", "이해", "협동", "안전", "연결", "소통",
+  "놀이", "재미", "즐거움", "휴식", "유머",
+  "영적연결", "아름다움", "조화", "평화", "질서", "영감",
+  "신체적생존", "공기", "음식", "물", "주거", "운동", "휴식", "안전", "보호", "접촉"
+];
+
+let gameState = {
+  isClosed: false,
+  viewMode: 'board',
+  cardType: 'emotion',
+  mode: 'me',
+  cards: { south: "", north: "", east: "", west: "" },
+  gifts: { south: [], north: [], east: [], west: [] },
+  occupiedSeats: [],
+  seatNames: { south: "", north: "", east: "", west: "" },
+  allCards: []
+};
+
+function rebuildAllCards() {
+  let list = [];
+  if (gameState.cardType === 'emotion') {
+    list = EMOTION_WORDS.map(w => ({ word: w, type: 'emotion', isGifted: false }));
+  } else if (gameState.cardType === 'need') {
+    list = NEED_WORDS.map(w => ({ word: w, type: 'need', isGifted: false }));
+  } else if (gameState.cardType === 'both') {
+    const ems = EMOTION_WORDS.map(w => ({ word: w, type: 'emotion', isGifted: false }));
+    const nds = NEED_WORDS.map(w => ({ word: w, type: 'need', isGifted: false }));
+    list = ems.concat(nds);
+  }
+  for (let i = list.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [list[i], list[j]] = [list[j], list[i]];
+  }
+  gameState.allCards = list;
+}
+
+rebuildAllCards();
+
+// 각 클라이언트(나/타인)에 맞춘 보안 가림 처리 로직
+function sendStateToAll() {
+  io.sockets.sockets.forEach((socket) => {
+    let mySeat = socket.seat || null;
+    let clientCards = { ...gameState.cards };
+
+    // 1. '나만 보기' 모드 일 때
+    if (gameState.mode === 'me') {
+      ['south', 'north', 'east', 'west'].forEach(seat => {
+        // 내 자리가 아니면서 카드가 놓여있다면 무조건 ??? 로 가림
+        if (seat !== mySeat && clientCards[seat] && clientCards[seat] !== "") {
+          clientCards[seat] = "???";
+        }
+      });
+    } 
+    // 2. '나만 안보기' 모드 일 때
+    else if (gameState.mode === 'others') {
+      // 내 자리의 카드만 ??? 로 가림
+      if (mySeat && clientCards[mySeat] && clientCards[mySeat] !== "") {
+        clientCards[mySeat] = "???";
+      }
     }
+    // 3. '공개(reveal)' 모드 일 때는 모든 카드를 그대로 보여줌
 
-    body { font-family: sans-serif; background-color: #f4f1ea; color: #333; height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; touch-action: pan-x pan-y; }
-    
-    .header { background: #e8e3d9; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; border-bottom: 1px solid #d6cfc2; flex-shrink: 0; }
-    .header-group { display: flex; align-items: center; gap: 5px; }
-    
-    .type-btn, .mode-btn, .view-btn, .font-btn, .fullscreen-btn, .close-room-btn { 
-      padding: 7px 12px; 
-      border: none; 
-      border-radius: 8px; 
-      cursor: pointer; 
-      font-weight: bold; 
-      font-size: 14px; 
-      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-    }
-    
-    .btn-type-emotion.active { background: #f8bbd0; color: #880e4f; }
-    .btn-type-need.active { background: #b3e5fc; color: #01579b; }
-    .btn-type-both.active { background: #d1c4e9; color: #4a148c; }
-    .btn-type-inactive { background: #dcd6cd; color: #666; }
-    .btn-mode-active { background: #ffe082; color: #5d4037; }
-    .btn-mode-inactive { background: #dcd6cd; color: #666; }
-    
-    .font-btn { background: #795548; color: white; padding: 5px 10px; font-size: 13px; }
-    .fullscreen-btn { background: #ff9800; color: white; }
-    .close-room-btn { background: #d32f2f; color: white; }
-
-    .main-container { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; position: relative; }
-
-    .game-board { flex: 1; display: grid; grid-template-rows: 95px 1fr 95px; grid-template-columns: 85px 1fr 85px; gap: 4px; padding: 4px; height: 100%; width: 100%; min-width: 320px; }
-    .grid-board { flex: 1; display: grid; grid-template-rows: 90px 1fr 90px; grid-template-columns: 85px 1fr 85px; gap: 4px; padding: 4px; height: 100%; width: 100%; min-width: 320px; overflow: hidden; }
-
-    .player-table { background: #ffffff; border-radius: 6px; border: 1px dashed #c8c2b7; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.04); cursor: pointer; overflow: hidden; width: 100%; }
-    
-    .seat-control-box { display: flex; align-items: center; justify-content: center; gap: 3px; width: 100%; margin-bottom: 2px; }
-    .seat-ui-vertical { flex-direction: column; }
-    .seat-ui-horizontal { flex-direction: row; }
-
-    .inline-name-input { padding: 3px 4px; border: 1px solid #ccc; border-radius: 5px; font-size: 11px; font-weight: bold; text-align: center; outline: none; }
-    .inline-name-input:disabled { background-color: #f0f0f0; border-color: #e0e0e0; color: #aaa; }
-    .seat-ui-vertical .inline-name-input { width: 72px; }
-    .seat-ui-horizontal .inline-name-input { width: 60px; }
-
-    .btn-group-row { display: flex; gap: 2px; align-items: center; justify-content: center; }
-
-    .seat-act-btn { border: none; border-radius: 4px; padding: 3px 4px; font-size: 10px; font-weight: bold; cursor: pointer; text-align: center; white-space: nowrap; }
-    .btn-sit { background: #8d6e63; color: white; }
-    .btn-leave { background: #ef5350; color: white; }
-    .seat-act-btn:disabled { background: #e0e0e0 !important; color: #a0a0a0 !important; cursor: not-allowed; }
-
-    .player-name-display { font-weight: bold; color: #2e7d32; font-size: 11px; text-align: center; }
-    
-    .north { grid-row: 1; grid-column: 1 / 4; }
-    .west { grid-row: 2; grid-column: 1; }
-    .center { grid-row: 2; grid-column: 2; border: none; background: transparent; box-shadow: none; cursor: default; }
-    .east { grid-row: 2; grid-column: 3; }
-    .south { grid-row: 3; grid-column: 1 / 4; background: #fbf9f5; }
-    
-    .card { 
-      width: var(--card-width) !important; 
-      min-width: var(--card-width) !important; 
-      height: var(--card-height) !important; 
-      min-height: var(--card-height) !important; 
-      border-radius: 5px; 
-      font-size: var(--card-font-size) !important; 
-      font-weight: bold; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      text-align: center; 
-      padding: 2px; 
-      box-shadow: 0 1px 2px rgba(0,0,0,0.08); 
-      flex-shrink: 0 !important; 
-      word-break: keep-all; 
-    }
-    .card-none { background: #f0ede6; border: 1px dashed #d0c9bd; color: transparent; box-shadow: none; }
-    .card-back-emotion { background: #f8bbd0; color: #880e4f; border: 1.5px solid #f48fb1; }
-    .card-back-need { background: #b3e5fc; color: #01579b; border: 1.5px solid #81d4fa; }
-    .card-front-emotion { background: #fff0f5; color: #c2185b; border: 1.5px solid #e91e63; }
-    .card-front-need { background: #f0f8ff; color: #0288d1; border: 1.5px solid #03a9f4; }
-
-    .grid-center { grid-row: 2; grid-column: 2; background: #e2ddd3; border-radius: 6px; padding: 4px 2px; overflow-y: auto; overflow-x: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--card-width), 1fr)); gap: 3px; align-content: flex-start; justify-items: center; width: 100%; height: 100%; }
-    
-    .mini-card { 
-      width: var(--card-width) !important; 
-      min-width: var(--card-width) !important; 
-      height: var(--card-height) !important; 
-      min-height: var(--card-height) !important; 
-      border-radius: 5px; 
-      font-size: var(--card-font-size) !important; 
-      font-weight: bold; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      text-align: center; 
-      cursor: pointer; 
-      box-shadow: 0 1px 2px rgba(0,0,0,0.08); 
-      transition: transform 0.1s, border 0.1s; 
-      flex-shrink: 0 !important; 
-      word-break: keep-all; 
-      padding: 2px; 
-    }
-    .mini-card.selected { transform: scale(1.12); border: 2.5px solid #fbc02d !important; box-shadow: 0 0 8px #fbc02d; z-index: 10; background: #fffde7 !important; }
-    .mini-emotion { background: #fff0f5; color: #c2185b; border: 1.5px solid #f48fb1; }
-    .mini-need { background: #f0f8ff; color: #0288d1; border: 1.5px solid #81d4fa; }
-
-    .gift-slots-horizontal { display: flex; gap: 3px; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 1px; width: 100%; align-items: center; justify-content: safe center; -webkit-overflow-scrolling: touch; }
-    .gift-slots-vertical { display: flex; flex-direction: column; gap: 3px; overflow-y: auto; overflow-x: hidden; max-height: 100%; padding: 1px; height: 100%; width: 100%; align-items: center; justify-content: safe center; -webkit-overflow-scrolling: touch; }
-
-    .deck { cursor: pointer; }
-    .center-controls { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-    .action-btn { padding: 8px 14px; border: none; border-radius: 8px; background: #ffa726; color: white; font-weight: bold; cursor: pointer; font-size: 13px; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
-
-    /* 스마트폰 가로 모드 (Landscape) */
-    @media (orientation: landscape) and (max-height: 500px) {
-      .header { padding: 3px 6px; }
-      .header h1 { font-size: 12px !important; }
-      .type-btn, .mode-btn, .view-btn, .fullscreen-btn, .font-btn, .close-room-btn { padding: 3px 6px; font-size: 11px; border-radius: 6px; }
-
-      .game-board, .grid-board { grid-template-rows: 62px 1fr 62px; grid-template-columns: 80px 1fr 80px; gap: 2px; padding: 2px; }
-
-      .west { grid-row: 1 / 4 !important; grid-column: 1 !important; z-index: 2; }
-      .east { grid-row: 1 / 4 !important; grid-column: 3 !important; z-index: 2; }
-
-      .north { grid-row: 1 !important; grid-column: 2 !important; padding: 1px !important; }
-      .south { grid-row: 3 !important; grid-column: 2 !important; padding: 1px !important; }
-
-      .inline-name-input { font-size: 9px; padding: 1px; }
-      .seat-ui-vertical .inline-name-input { width: 52px; }
-      .seat-ui-horizontal .inline-name-input { width: 52px; }
-      .seat-act-btn { font-size: 8px; padding: 2px 3px; }
-
-      .action-btn { padding: 3px 8px; font-size: 10px; }
-    }
-  </style>
-</head>
-<body>
-  <div class="header">
-    <h1 style="font-size: 15px; color: #4a4035;">NVC 그로그</h1>
-    
-    <div class="header-group">
-      <button id="view-board" class="view-btn btn-mode-active" onclick="setViewMode('board')">카드 덱</button>
-      <button id="view-grid" class="view-btn btn-mode-inactive" onclick="setViewMode('grid')">전체 보기</button>
-    </div>
-
-    <div class="header-group">
-      <button id="type-emotion" class="type-btn btn-type-emotion active" onclick="setCardType('emotion')">느낌</button>
-      <button id="type-need" class="type-btn btn-type-inactive" onclick="setCardType('need')">욕구</button>
-      <button id="type-both" class="type-btn btn-type-inactive" onclick="setCardType('both')">느낌+욕구</button>
-    </div>
-
-    <div class="header-group">
-      <button id="mode1" class="mode-btn btn-mode-active" onclick="setMode('me')">나만 보기</button>
-      <button id="mode2" class="mode-btn btn-mode-inactive" onclick="setMode('others')">나만 안보기</button>
-    </div>
-
-    <div class="header-group">
-      <span style="font-size: 12px; font-weight: bold; color: #5d4037;">글자:</span>
-      <button class="font-btn" onclick="adjustFontSize(-1)">-</button>
-      <button class="font-btn" onclick="adjustFontSize(0)">기본</button>
-      <button class="font-btn" onclick="adjustFontSize(1)">+</button>
-      <button class="fullscreen-btn" onclick="toggleFullScreen()">전체 화면</button>
-      <button id="admin-close-btn" class="close-room-btn" style="display:none;" onclick="closeRoom()">🔒 모임 종료</button>
-    </div>
-  </div>
-
-  <div class="main-container" id="main-container"></div>
-
-  <script>
-    const socket = io();
-    let selectedCardObj = null;
-
-    // URL에서 방장 여부 확인 (?admin=1)
-    const urlParams = new URLSearchParams(window.location.search);
-    const isAdmin = urlParams.get('admin') === '1';
-
-    if (isAdmin) {
-      document.getElementById('admin-close-btn').style.display = 'inline-block';
-    }
-
-    // 모임 종료 처리 이벤트 감지
-    socket.on('roomClosed', () => {
-      document.body.innerHTML = `
-        <div style="height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f4f1ea; text-align: center; padding: 20px;">
-          <h1 style="color: #5d4037; font-size: 22px; margin-bottom: 12px;">🔒 모임이 종료되었습니다</h1>
-          <p style="color: #666; font-size: 14px; line-height: 1.6;">
-            오늘 NVC 그로그 카드 놀이에 참여해 주셔서 감사합니다.<br>
-            더 이상 앱을 사용할 수 없습니다.
-          </p>
-        </div>
-      `;
+    socket.emit('stateUpdate', {
+      ...gameState,
+      cards: clientCards,
+      mySeat: mySeat
     });
+  });
+}
 
-    function closeRoom() {
-      if (confirm("정말로 모임을 종료하시겠습니까?\n종료 후에는 모든 참가자의 접속이 차단되고 앱을 사용할 수 없게 됩니다.")) {
-        socket.emit('closeRoom');
-      }
+io.on('connection', (socket) => {
+  socket.seat = null;
+
+  if (gameState.isClosed) {
+    socket.emit('roomClosed');
+    return;
+  }
+
+  sendStateToAll();
+
+  socket.on('closeRoom', () => {
+    gameState.isClosed = true;
+    io.emit('roomClosed');
+  });
+
+  socket.on('selectSeat', (data) => {
+    if (gameState.isClosed) return;
+    const { seat, name } = data;
+    if (gameState.occupiedSeats.includes(seat)) return;
+    
+    gameState.occupiedSeats.push(seat);
+    gameState.seatNames[seat] = name || getSeatLabel(seat);
+    socket.seat = seat;
+    sendStateToAll();
+  });
+
+  socket.on('leaveSeat', () => {
+    if (socket.seat) {
+      const s = socket.seat;
+      gameState.occupiedSeats = gameState.occupiedSeats.filter(item => item !== s);
+      gameState.seatNames[s] = "";
+      socket.seat = null;
+      sendStateToAll();
     }
+  });
 
-    let currentFontSize = 11;
-    function adjustFontSize(delta) {
-      if (delta === 0) {
-        currentFontSize = 11;
-      } else {
-        currentFontSize += delta;
-        if (currentFontSize < 8) currentFontSize = 8;
-        if (currentFontSize > 22) currentFontSize = 22;
-      }
-      
-      const width = Math.round(58 * (currentFontSize / 11));
-      const height = Math.round(40 * (currentFontSize / 11));
+  socket.on('setViewMode', (mode) => {
+    gameState.viewMode = mode;
+    sendStateToAll();
+  });
 
-      document.documentElement.style.setProperty('--card-font-size', `${currentFontSize}px`);
-      document.documentElement.style.setProperty('--card-width', `${width}px`);
-      document.documentElement.style.setProperty('--card-height', `${height}px`);
-    }
+  socket.on('setCardType', (type) => {
+    gameState.cardType = type;
+    gameState.cards = { south: "", north: "", east: "", west: "" };
+    gameState.gifts = { south: [], north: [], east: [], west: [] };
+    rebuildAllCards();
+    sendStateToAll();
+  });
 
-    let initialTouchDistance = 0;
-    document.addEventListener('touchstart', function(e) {
-      if (e.touches.length === 2) {
-        initialTouchDistance = Math.hypot(
-          e.touches[0].pageX - e.touches[1].pageX,
-          e.touches[0].pageY - e.touches[1].pageY
-        );
-      }
-    }, { passive: true });
+  socket.on('setMode', (mode) => {
+    gameState.mode = mode;
+    sendStateToAll();
+  });
 
-    document.addEventListener('touchmove', function(e) {
-      if (e.touches.length === 2 && initialTouchDistance > 0) {
-        let currentDistance = Math.hypot(
-          e.touches[0].pageX - e.touches[1].pageX,
-          e.touches[0].pageY - e.touches[1].pageY
-        );
+  socket.on('drawCard', () => {
+    let wordList = EMOTION_WORDS;
+    if (gameState.cardType === 'need') wordList = NEED_WORDS;
+    else if (gameState.cardType === 'both') wordList = EMOTION_WORDS.concat(NEED_WORDS);
 
-        let diff = currentDistance - initialTouchDistance;
-        if (Math.abs(diff) > 25) {
-          if (diff > 0) {
-            adjustFontSize(1);
-          } else {
-            adjustFontSize(-1);
-          }
-          initialTouchDistance = currentDistance;
-        }
-      }
-    }, { passive: true });
-
-    function toggleFullScreen() {
-      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-        let docEl = document.documentElement;
-        if (docEl.requestFullscreen) {
-          docEl.requestFullscreen();
-        } else if (docEl.webkitRequestFullscreen) {
-          docEl.webkitRequestFullscreen();
-        } else {
-          alert("이 브라우저는 전체화면 버튼을 지원하지 않습니다. Safari의 경우 [공유] -> [홈 화면에 추가]를 이용해 주세요!");
-        }
-      } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen();
-        }
-      }
-    }
-
-    function selectSeat(seat) {
-      const inputElem = document.getElementById(`inline-input-${seat}`);
-      const name = inputElem ? inputElem.value.trim() : "";
-      socket.emit('selectSeat', { seat: seat, name: name });
-    }
-
-    function leaveSeat() { socket.emit('leaveSeat'); }
-    function setViewMode(v) { socket.emit('setViewMode', v); }
-    function setCardType(t) { socket.emit('setCardType', t); }
-    function setMode(m) { socket.emit('setMode', m); }
-    function drawCard() { socket.emit('drawCard'); }
-    function revealCard() { socket.emit('revealCard'); }
-
-    function handleDragStart(e, word, type) {
-      selectedCardObj = { word, type };
-      e.dataTransfer.setData("text/plain", JSON.stringify(selectedCardObj));
-    }
-
-    function selectCardToGift(word, type) {
-      if (selectedCardObj && selectedCardObj.word === word) {
-        selectedCardObj = null;
-      } else {
-        selectedCardObj = { word, type };
-      }
-      renderBoard();
-    }
-
-    function handleSeatClick(targetSeat) {
-      if (selectedCardObj) {
-        socket.emit('sendGift', { targetSeat, cardWord: selectedCardObj.word, cardType: selectedCardObj.type });
-        selectedCardObj = null;
-        renderBoard();
-      }
-    }
-
-    function returnCard(fromSeat, cardWord, event) {
-      if (event) {
-        event.stopPropagation();
-        event.preventDefault();
-      }
-      socket.emit('returnGiftCard', { fromSeat, cardWord });
-    }
-
-    function handleDragOver(e) { e.preventDefault(); }
-
-    function handleDrop(e, targetSeat) {
-      e.preventDefault();
-      let data = e.dataTransfer.getData("text/plain");
-      let item = selectedCardObj;
-      if (data) {
-        try { item = JSON.parse(data); } catch(err) {}
-      }
-      if (item && item.word) {
-        socket.emit('sendGift', { targetSeat, cardWord: item.word, cardType: item.type });
-        selectedCardObj = null;
-        renderBoard();
-      }
-    }
-
-    function handleCenterDrop(e) {
-      e.preventDefault();
-      let data = e.dataTransfer.getData("text/plain");
-      if (data) {
-        try {
-          let item = JSON.parse(data);
-          if (item && item.fromSeat && item.word) {
-            socket.emit('returnGiftCard', { fromSeat: item.fromSeat, cardWord: item.word });
-          }
-        } catch(err) {}
-      }
-    }
-
-    let localState = {};
-    socket.on('stateUpdate', (state) => {
-      localState = state;
-      renderBoard();
+    ['south', 'north', 'east', 'west'].forEach(seat => {
+      const randIndex = Math.floor(Math.random() * wordList.length);
+      gameState.cards[seat] = wordList[randIndex];
     });
-
-    function renderSeatHeaderHtml(seat) {
-      const state = localState;
-      const isOccupied = state.occupiedSeats && state.occupiedSeats.includes(seat);
-      const isMySeat = state.mySeat === seat;
-      const hasAnySeat = !!state.mySeat;
-      const seatName = state.seatNames ? state.seatNames[seat] : getSeatLabel(seat);
-      const isHorizontal = (seat === 'north' || seat === 'south');
-      const boxClass = isHorizontal ? 'seat-control-box seat-ui-horizontal' : 'seat-control-box seat-ui-vertical';
-
-      if (isMySeat) {
-        return `<div class="${boxClass}" onclick="event.stopPropagation()">
-                  <span class="player-name-display">${seatName}(나)</span>
-                  <div class="btn-group-row">
-                    <button class="seat-act-btn btn-sit" disabled>착석</button>
-                    <button class="seat-act-btn btn-leave" onclick="leaveSeat()">자리 비우기</button>
-                  </div>
-                </div>`;
-      } else if (isOccupied) {
-        return `<div class="${boxClass}" onclick="event.stopPropagation()">
-                  <span class="player-name-display" style="color:#4a4035;">${seatName}</span>
-                  <div class="btn-group-row">
-                    <button class="seat-act-btn btn-sit" disabled>착석</button>
-                    <button class="seat-act-btn btn-leave" disabled>자리 비우기</button>
-                  </div>
-                </div>`;
-      } else {
-        const disableAttr = hasAnySeat ? 'disabled' : '';
-        return `<div class="${boxClass}" onclick="event.stopPropagation()">
-                  <input type="text" id="inline-input-${seat}" class="inline-name-input" placeholder="이름" maxlength="5" ${disableAttr}>
-                  <div class="btn-group-row">
-                    <button class="seat-act-btn btn-sit" onclick="selectSeat('${seat}')" ${disableAttr}>착석</button>
-                    <button class="seat-act-btn btn-leave" disabled>자리 비우기</button>
-                  </div>
-                </div>`;
-      }
+    
+    // 뽑기 수행 시 기본적으로 '나만 보기' 상태로 보안 설정
+    if (gameState.mode === 'reveal') {
+      gameState.mode = 'me';
     }
+    
+    sendStateToAll();
+  });
 
-    function renderBoard() {
-      const state = localState;
-      if (!state.viewMode) return;
+  socket.on('revealCard', () => {
+    gameState.mode = 'reveal';
+    sendStateToAll();
+  });
 
-      document.getElementById('view-board').className = state.viewMode === 'board' ? 'view-btn btn-mode-active' : 'view-btn btn-mode-inactive';
-      document.getElementById('view-grid').className = state.viewMode === 'grid' ? 'view-btn btn-mode-active' : 'view-btn btn-mode-inactive';
-
-      document.getElementById('type-emotion').className = state.cardType === 'emotion' ? 'type-btn btn-type-emotion active' : 'type-btn btn-type-inactive';
-      document.getElementById('type-need').className = state.cardType === 'need' ? 'type-btn btn-type-need active' : 'type-btn btn-type-inactive';
-      document.getElementById('type-both').className = state.cardType === 'both' ? 'type-btn btn-type-both active' : 'type-btn btn-type-inactive';
-
-      document.getElementById('mode1').className = state.mode === 'me' ? 'mode-btn btn-mode-active' : 'mode-btn btn-mode-inactive';
-      document.getElementById('mode2').className = state.mode === 'others' ? 'mode-btn btn-mode-active' : 'mode-btn btn-mode-inactive';
-
-      const container = document.getElementById('main-container');
-
-      if (state.viewMode === 'board') {
-        const isEmotion = state.cardType === 'emotion';
-        
-        let deckTitle = "카드 더미";
-        if (state.cardType === 'emotion') deckTitle = "느낌카드 더미";
-        else if (state.cardType === 'need') deckTitle = "욕구카드 더미";
-        else if (state.cardType === 'both') deckTitle = "느낌+욕구 더미";
-
-        container.innerHTML = `
-          <div class="game-board">
-            <div class="player-table north">${renderSeatHeaderHtml('north')}<div id="card-north" class="card"></div></div>
-            <div class="player-table west">${renderSeatHeaderHtml('west')}<div id="card-west" class="card"></div></div>
-            <div class="player-table center">
-              <div class="center-controls">
-                <div id="center-deck" class="card deck ${isEmotion ? 'card-back-emotion' : 'card-back-need'}" onclick="drawCard()">${deckTitle}<br><small>(뽑기)</small></div>
-                <button class="action-btn" onclick="revealCard()">카드 공개하기</button>
-              </div>
-            </div>
-            <div class="player-table east">${renderSeatHeaderHtml('east')}<div id="card-east" class="card"></div></div>
-            <div class="player-table south">${renderSeatHeaderHtml('south')}<div id="card-south" class="card"></div></div>
-          </div>
-        `;
-
-        ['south', 'north', 'west', 'east'].forEach(seat => {
-          const cardElem = document.getElementById(`card-${seat}`);
-          const cardValue = state.cards[seat];
-          if (!cardValue) {
-            cardElem.className = "card card-none"; cardElem.innerText = "";
-          } else if (cardValue === "???") {
-            cardElem.className = `card ${isEmotion ? 'card-back-emotion' : 'card-back-need'}`; cardElem.innerText = "???";
-          } else {
-            cardElem.className = `card ${isEmotion ? 'card-front-emotion' : 'card-front-need'}`; cardElem.innerText = cardValue;
-          }
-        });
-
-      } else {
-        let gridCardsHtml = state.allCards.map(item => {
-          if (item.isGifted) {
-            return `<div class="mini-card card-none"></div>`;
-          } else {
-            const isSelected = selectedCardObj && selectedCardObj.word === item.word ? 'selected' : '';
-            const cardCls = item.type === 'emotion' ? 'mini-emotion' : 'mini-need';
-            return `<div class="mini-card ${cardCls} ${isSelected}" 
-                         draggable="true" 
-                         ondragstart="handleDragStart(event, '${item.word}', '${item.type}')"
-                         onclick="selectCardToGift('${item.word}', '${item.type}')">${item.word}</div>`;
-          }
-        }).join('');
-
-        function renderGiftSlots(seat, isVertical = false) {
-          const giftList = state.gifts[seat] || [];
-          let slotsHtml = '';
-          
-          for (let i = 0; i < 10; i++) {
-            const item = giftList[i];
-            if (item) {
-              const cls = item.type === 'emotion' ? 'card-front-emotion' : 'card-front-need';
-              slotsHtml += `<div class="card ${cls}" 
-                                 draggable="true"
-                                 ondragstart="e => e.dataTransfer.setData('text/plain', JSON.stringify({fromSeat:'${seat}', word:'${item.word}'}))"
-                                 onclick="returnCard('${seat}', '${item.word}', event)"
-                                 title="클릭 시 중앙으로 반납">${item.word}</div>`;
-            } else {
-              slotsHtml += `<div class="card card-none"></div>`;
-            }
-          }
-          return `<div class="${isVertical ? 'gift-slots-vertical' : 'gift-slots-horizontal'}">${slotsHtml}</div>`;
-        }
-
-        container.innerHTML = `
-          <div class="grid-board">
-            <div class="player-table north" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'north')" onclick="handleSeatClick('north')">
-              ${renderSeatHeaderHtml('north')}
-              ${renderGiftSlots('north', false)}
-            </div>
-            
-            <div class="player-table west" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'west')" onclick="handleSeatClick('west')">
-              ${renderSeatHeaderHtml('west')}
-              ${renderGiftSlots('west', true)}
-            </div>
-
-            <div class="grid-center" ondragover="handleDragOver(event)" ondrop="handleCenterDrop(event)">
-              ${gridCardsHtml}
-            </div>
-
-            <div class="player-table east" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'east')" onclick="handleSeatClick('east')">
-              ${renderSeatHeaderHtml('east')}
-              ${renderGiftSlots('east', true)}
-            </div>
-
-            <div class="player-table south" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'south')" onclick="handleSeatClick('south')">
-              ${renderSeatHeaderHtml('south')}
-              ${renderGiftSlots('south', false)}
-            </div>
-          </div>
-        `;
-      }
+  socket.on('sendGift', (data) => {
+    const { targetSeat, cardWord, cardType } = data;
+    const cardObj = gameState.allCards.find(c => c.word === cardWord);
+    if (cardObj && !cardObj.isGifted) {
+      cardObj.isGifted = true;
+      if (!gameState.gifts[targetSeat]) gameState.gifts[targetSeat] = [];
+      gameState.gifts[targetSeat].push({ word: cardWord, type: cardType });
+      sendStateToAll();
     }
+  });
 
-    function getSeatLabel(s) {
-      const labels = { south: "남쪽", north: "북쪽", east: "동쪽", west: "서쪽" };
-      return labels[s] || s;
+  socket.on('returnGiftCard', (data) => {
+    const { fromSeat, cardWord } = data;
+    if (gameState.gifts[fromSeat]) {
+      gameState.gifts[fromSeat] = gameState.gifts[fromSeat].filter(c => c.word !== cardWord);
+      const cardObj = gameState.allCards.find(c => c.word === cardWord);
+      if (cardObj) cardObj.isGifted = false;
+      sendStateToAll();
     }
-  </script>
-</body>
-</html>
+  });
+
+  socket.on('disconnect', () => {
+    if (socket.seat) {
+      const s = socket.seat;
+      gameState.occupiedSeats = gameState.occupiedSeats.filter(item => item !== s);
+      gameState.seatNames[s] = "";
+      sendStateToAll();
+    }
+  });
+});
+
+function getSeatLabel(s) {
+  const labels = { south: "남쪽", north: "북쪽", east: "동쪽", west: "서쪽" };
+  return labels[s] || s;
+}
+
+const PORT = process.env.PORT || 3000;
+http.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
