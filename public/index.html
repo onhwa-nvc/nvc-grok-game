@@ -2,7 +2,9 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <!-- 손가락 터치 확대(Pinch-to-zoom) 허용 및 최대 3배 확대 설정 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes">
+  
   <!-- PWA & 모바일 웹앱 전체화면 호환 메타 태그 -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -12,12 +14,20 @@
   <script src="/socket.io/socket.io.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: sans-serif; background-color: #f4f1ea; color: #333; height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; user-select: none; }
+    
+    /* 텍스트 크기 조절을 위한 기본 CSS 변수 설정 */
+    :root {
+      --card-font-size: 10px;
+      --card-width: 54px;
+      --card-height: 38px;
+    }
+
+    body { font-family: sans-serif; background-color: #f4f1ea; color: #333; height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
     
     .header { background: #e8e3d9; padding: 6px 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid #d6cfc2; flex-shrink: 0; }
     .header-group { display: flex; align-items: center; gap: 4px; }
     
-    .type-btn, .mode-btn, .view-btn { padding: 5px 8px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 11px; }
+    .type-btn, .mode-btn, .view-btn, .font-btn { padding: 5px 8px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 11px; }
     .btn-type-emotion.active { background: #f8bbd0; color: #880e4f; }
     .btn-type-need.active { background: #b3e5fc; color: #01579b; }
     .btn-type-both.active { background: #d1c4e9; color: #4a148c; }
@@ -25,7 +35,8 @@
     .btn-mode-active { background: #ffe082; color: #5d4037; }
     .btn-mode-inactive { background: #dcd6cd; color: #666; }
     
-    /* 전체 화면 토글 버튼 스타일 */
+    /* 글자 크기 및 전체 화면 버튼 스타일 */
+    .font-btn { background: #795548; color: white; }
     .fullscreen-btn { padding: 5px 8px; border: none; border-radius: 8px; background: #ff9800; color: white; font-weight: bold; font-size: 11px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.15); }
 
     .main-container { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; position: relative; }
@@ -57,16 +68,17 @@
     .east { grid-row: 2; grid-column: 3; }
     .south { grid-row: 3; grid-column: 1 / 4; background: #fbf9f5; }
     
-    .card { width: 54px !important; min-width: 54px !important; height: 38px !important; min-height: 38px !important; border-radius: 4px; font-size: 10px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; padding: 1px; box-shadow: 0 1px 2px rgba(0,0,0,0.08); flex-shrink: 0 !important; word-break: keep-all; }
+    /* 동적 CSS 변수가 적용된 카드 규격 */
+    .card { width: var(--card-width) !important; min-width: var(--card-width) !important; height: var(--card-height) !important; min-height: var(--card-height) !important; border-radius: 4px; font-size: var(--card-font-size); font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; padding: 1px; box-shadow: 0 1px 2px rgba(0,0,0,0.08); flex-shrink: 0 !important; word-break: keep-all; }
     .card-none { background: #f0ede6; border: 1px dashed #d0c9bd; color: transparent; box-shadow: none; }
     .card-back-emotion { background: #f8bbd0; color: #880e4f; border: 1.5px solid #f48fb1; }
     .card-back-need { background: #b3e5fc; color: #01579b; border: 1.5px solid #81d4fa; }
     .card-front-emotion { background: #fff0f5; color: #c2185b; border: 1.5px solid #e91e63; }
     .card-front-need { background: #f0f8ff; color: #0288d1; border: 1.5px solid #03a9f4; }
 
-    .grid-center { grid-row: 2; grid-column: 2; background: #e2ddd3; border-radius: 6px; padding: 4px 2px; overflow-y: auto; overflow-x: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(56px, 1fr)); gap: 3px; align-content: flex-start; justify-items: center; width: 100%; height: 100%; }
+    .grid-center { grid-row: 2; grid-column: 2; background: #e2ddd3; border-radius: 6px; padding: 4px 2px; overflow-y: auto; overflow-x: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--card-width), 1fr)); gap: 3px; align-content: flex-start; justify-items: center; width: 100%; height: 100%; }
     
-    .mini-card { width: 54px !important; min-width: 54px !important; height: 38px !important; min-height: 38px !important; border-radius: 4px; font-size: 10px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.08); transition: transform 0.1s, border 0.1s; flex-shrink: 0 !important; word-break: keep-all; padding: 1px; }
+    .mini-card { width: var(--card-width) !important; min-width: var(--card-width) !important; height: var(--card-height) !important; min-height: var(--card-height) !important; border-radius: 4px; font-size: var(--card-font-size); font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.08); transition: transform 0.1s, border 0.1s; flex-shrink: 0 !important; word-break: keep-all; padding: 1px; }
     .mini-card.selected { transform: scale(1.12); border: 2.5px solid #fbc02d !important; box-shadow: 0 0 8px #fbc02d; z-index: 10; background: #fffde7 !important; }
     .mini-emotion { background: #fff0f5; color: #c2185b; border: 1.5px solid #f48fb1; }
     .mini-need { background: #f0f8ff; color: #0288d1; border: 1.5px solid #81d4fa; }
@@ -82,7 +94,7 @@
     @media (orientation: landscape) and (max-height: 500px) {
       .header { padding: 2px 6px; }
       .header h1 { font-size: 11px !important; }
-      .type-btn, .mode-btn, .view-btn, .fullscreen-btn { padding: 2px 5px; font-size: 9px; border-radius: 5px; }
+      .type-btn, .mode-btn, .view-btn, .fullscreen-btn, .font-btn { padding: 2px 5px; font-size: 9px; border-radius: 5px; }
 
       .game-board, .grid-board { grid-template-rows: 50px 1fr 50px; grid-template-columns: 70px 1fr 70px; gap: 2px; padding: 2px; }
 
@@ -91,9 +103,6 @@
 
       .north { grid-row: 1 !important; grid-column: 2 !important; }
       .south { grid-row: 3 !important; grid-column: 2 !important; }
-
-      .card { width: 48px !important; min-width: 48px !important; height: 32px !important; min-height: 32px !important; font-size: 9px; }
-      .mini-card { width: 48px !important; min-width: 48px !important; height: 32px !important; min-height: 32px !important; font-size: 9px; }
 
       .player-name { font-size: 9px; margin-bottom: 1px; }
       .inline-name-input { font-size: 9px; padding: 1px; }
@@ -123,7 +132,14 @@
     <div class="header-group">
       <button id="mode1" class="mode-btn btn-mode-active" onclick="setMode('me')">나만 보기</button>
       <button id="mode2" class="mode-btn btn-mode-inactive" onclick="setMode('others')">나만 안보기</button>
-      <!-- 전체 화면 모드 토글 버튼 추가 -->
+    </div>
+
+    <!-- 글자 크기 조절 및 전체 화면 컨트롤러 -->
+    <div class="header-group">
+      <span style="font-size: 11px; font-weight: bold; color: #5d4037;">글자:</span>
+      <button class="font-btn" onclick="adjustFontSize(-1)">-</button>
+      <button class="font-btn" onclick="adjustFontSize(0)">기본</button>
+      <button class="font-btn" onclick="adjustFontSize(1)">+</button>
       <button class="fullscreen-btn" onclick="toggleFullScreen()">전체 화면</button>
     </div>
   </div>
@@ -134,13 +150,31 @@
     const socket = io();
     let selectedCardObj = null;
 
-    // 전체 화면 모드 토글 스크립트
+    // 글자 크기 확대/축소 스크립트
+    let currentFontSize = 10;
+    function adjustFontSize(delta) {
+      if (delta === 0) {
+        currentFontSize = 10;
+      } else {
+        currentFontSize += delta;
+        if (currentFontSize < 8) currentFontSize = 8;
+        if (currentFontSize > 16) currentFontSize = 16;
+      }
+      
+      const width = Math.round(54 * (currentFontSize / 10));
+      const height = Math.round(38 * (currentFontSize / 10));
+
+      document.documentElement.style.setProperty('--card-font-size', `${currentFontSize}px`);
+      document.documentElement.style.setProperty('--card-width', `${width}px`);
+      document.documentElement.style.setProperty('--card-height', `${height}px`);
+    }
+
     function toggleFullScreen() {
       if (!document.fullscreenElement && !document.webkitFullscreenElement) {
         let docEl = document.documentElement;
         if (docEl.requestFullscreen) {
           docEl.requestFullscreen();
-        } else if (docEl.webkitRequestFullscreen) { // Safari / iOS 호환
+        } else if (docEl.webkitRequestFullscreen) {
           docEl.webkitRequestFullscreen();
         } else {
           alert("이 브라우저는 전체화면 버튼을 지원하지 않습니다. Safari의 경우 [공유] -> [홈 화면에 추가]를 이용해 주세요!");
