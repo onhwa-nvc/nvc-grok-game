@@ -2,10 +2,8 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <!-- 손가락 터치 확대(Pinch-to-zoom) 허용 및 최대 3배 확대 설정 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes">
   
-  <!-- PWA & 모바일 웹앱 전체화면 호환 메타 태그 -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
@@ -15,19 +13,27 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
-    /* 텍스트 크기 조절을 위한 기본 CSS 변수 설정 */
     :root {
-      --card-font-size: 10px;
-      --card-width: 54px;
-      --card-height: 38px;
+      --card-font-size: 11px;
+      --card-width: 58px;
+      --card-height: 40px;
     }
 
-    body { font-family: sans-serif; background-color: #f4f1ea; color: #333; height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+    body { font-family: sans-serif; background-color: #f4f1ea; color: #333; height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; touch-action: pan-x pan-y; }
     
-    .header { background: #e8e3d9; padding: 6px 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid #d6cfc2; flex-shrink: 0; }
-    .header-group { display: flex; align-items: center; gap: 4px; }
+    .header { background: #e8e3d9; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; border-bottom: 1px solid #d6cfc2; flex-shrink: 0; }
+    .header-group { display: flex; align-items: center; gap: 5px; }
     
-    .type-btn, .mode-btn, .view-btn, .font-btn { padding: 5px 8px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 11px; }
+    .type-btn, .mode-btn, .view-btn, .font-btn, .fullscreen-btn { 
+      padding: 7px 12px; 
+      border: none; 
+      border-radius: 8px; 
+      cursor: pointer; 
+      font-weight: bold; 
+      font-size: 14px; 
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+    
     .btn-type-emotion.active { background: #f8bbd0; color: #880e4f; }
     .btn-type-need.active { background: #b3e5fc; color: #01579b; }
     .btn-type-both.active { background: #d1c4e9; color: #4a148c; }
@@ -35,32 +41,30 @@
     .btn-mode-active { background: #ffe082; color: #5d4037; }
     .btn-mode-inactive { background: #dcd6cd; color: #666; }
     
-    /* 글자 크기 및 전체 화면 버튼 스타일 */
-    .font-btn { background: #795548; color: white; }
-    .fullscreen-btn { padding: 5px 8px; border: none; border-radius: 8px; background: #ff9800; color: white; font-weight: bold; font-size: 11px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.15); }
+    .font-btn { background: #795548; color: white; padding: 5px 10px; font-size: 13px; }
+    .fullscreen-btn { background: #ff9800; color: white; }
 
     .main-container { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; position: relative; }
 
-    /* 세로 모드 레이아웃 */
-    .game-board { flex: 1; display: grid; grid-template-rows: 90px 1fr 90px; grid-template-columns: 80px 1fr 80px; gap: 4px; padding: 4px; height: 100%; width: 100%; min-width: 320px; }
-    .grid-board { flex: 1; display: grid; grid-template-rows: 85px 1fr 85px; grid-template-columns: 80px 1fr 80px; gap: 4px; padding: 4px; height: 100%; width: 100%; min-width: 320px; overflow: hidden; }
+    .game-board { flex: 1; display: grid; grid-template-rows: 95px 1fr 95px; grid-template-columns: 85px 1fr 85px; gap: 4px; padding: 4px; height: 100%; width: 100%; min-width: 320px; }
+    .grid-board { flex: 1; display: grid; grid-template-rows: 90px 1fr 90px; grid-template-columns: 85px 1fr 85px; gap: 4px; padding: 4px; height: 100%; width: 100%; min-width: 320px; overflow: hidden; }
 
     .player-table { background: #ffffff; border-radius: 6px; border: 1px dashed #c8c2b7; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.04); cursor: pointer; overflow: hidden; width: 100%; }
     
-    .seat-ui-vertical { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; margin-bottom: 2px; width: 100%; }
-    .seat-ui-horizontal { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 4px; margin-bottom: 2px; width: 100%; }
+    .seat-ui-vertical { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; margin-bottom: 2px; width: 100%; }
+    .seat-ui-horizontal { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 6px; margin-bottom: 2px; width: 100%; }
 
-    .inline-name-input { padding: 2px 3px; border: 1px solid #ccc; border-radius: 4px; font-size: 10px; text-align: center; outline: none; }
-    .seat-ui-vertical .inline-name-input { width: 54px; }
-    .seat-ui-horizontal .inline-name-input { width: 55px; }
+    .inline-name-input { padding: 4px 5px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px; font-weight: bold; text-align: center; outline: none; }
+    .seat-ui-vertical .inline-name-input { width: 64px; }
+    .seat-ui-horizontal .inline-name-input { width: 70px; }
 
-    .inline-seat-btn { border: none; border-radius: 4px; background: #8d6e63; color: white; font-weight: bold; font-size: 10px; cursor: pointer; text-align: center; }
-    .seat-ui-vertical .inline-seat-btn { width: 54px; padding: 2px 0; }
-    .seat-ui-horizontal .inline-seat-btn { padding: 2px 6px; }
+    .inline-seat-btn { border: none; border-radius: 6px; background: #8d6e63; color: white; font-weight: bold; font-size: 13px; cursor: pointer; text-align: center; }
+    .seat-ui-vertical .inline-seat-btn { width: 64px; padding: 4px 0; }
+    .seat-ui-horizontal .inline-seat-btn { padding: 4px 10px; }
 
-    .inline-leave-btn { padding: 2px 4px; border: none; border-radius: 4px; background: #ef5350; color: white; font-size: 9px; cursor: pointer; }
+    .inline-leave-btn { padding: 4px 8px; border: none; border-radius: 6px; background: #ef5350; color: white; font-size: 12px; font-weight: bold; cursor: pointer; }
 
-    .player-name { font-weight: bold; margin-bottom: 2px; color: #4a4035; font-size: 10px; text-align: center; width: 100%; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .player-name { font-weight: bold; margin-bottom: 2px; color: #4a4035; font-size: 13px; text-align: center; width: 100%; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     
     .north { grid-row: 1; grid-column: 1 / 4; }
     .west { grid-row: 2; grid-column: 1; }
@@ -68,8 +72,7 @@
     .east { grid-row: 2; grid-column: 3; }
     .south { grid-row: 3; grid-column: 1 / 4; background: #fbf9f5; }
     
-    /* 동적 CSS 변수가 적용된 카드 규격 */
-    .card { width: var(--card-width) !important; min-width: var(--card-width) !important; height: var(--card-height) !important; min-height: var(--card-height) !important; border-radius: 4px; font-size: var(--card-font-size); font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; padding: 1px; box-shadow: 0 1px 2px rgba(0,0,0,0.08); flex-shrink: 0 !important; word-break: keep-all; }
+    .card { width: var(--card-width) !important; min-width: var(--card-width) !important; height: var(--card-height) !important; min-height: var(--card-height) !important; border-radius: 5px; font-size: var(--card-font-size); font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; padding: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.08); flex-shrink: 0 !important; word-break: keep-all; }
     .card-none { background: #f0ede6; border: 1px dashed #d0c9bd; color: transparent; box-shadow: none; }
     .card-back-emotion { background: #f8bbd0; color: #880e4f; border: 1.5px solid #f48fb1; }
     .card-back-need { background: #b3e5fc; color: #01579b; border: 1.5px solid #81d4fa; }
@@ -78,7 +81,7 @@
 
     .grid-center { grid-row: 2; grid-column: 2; background: #e2ddd3; border-radius: 6px; padding: 4px 2px; overflow-y: auto; overflow-x: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--card-width), 1fr)); gap: 3px; align-content: flex-start; justify-items: center; width: 100%; height: 100%; }
     
-    .mini-card { width: var(--card-width) !important; min-width: var(--card-width) !important; height: var(--card-height) !important; min-height: var(--card-height) !important; border-radius: 4px; font-size: var(--card-font-size); font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.08); transition: transform 0.1s, border 0.1s; flex-shrink: 0 !important; word-break: keep-all; padding: 1px; }
+    .mini-card { width: var(--card-width) !important; min-width: var(--card-width) !important; height: var(--card-height) !important; min-height: var(--card-height) !important; border-radius: 5px; font-size: var(--card-font-size); font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.08); transition: transform 0.1s, border 0.1s; flex-shrink: 0 !important; word-break: keep-all; padding: 2px; }
     .mini-card.selected { transform: scale(1.12); border: 2.5px solid #fbc02d !important; box-shadow: 0 0 8px #fbc02d; z-index: 10; background: #fffde7 !important; }
     .mini-emotion { background: #fff0f5; color: #c2185b; border: 1.5px solid #f48fb1; }
     .mini-need { background: #f0f8ff; color: #0288d1; border: 1.5px solid #81d4fa; }
@@ -87,16 +90,16 @@
     .gift-slots-vertical { display: flex; flex-direction: column; gap: 3px; overflow-y: auto; overflow-x: hidden; max-height: 100%; padding: 1px; height: 100%; width: 100%; align-items: center; justify-content: safe center; -webkit-overflow-scrolling: touch; }
 
     .deck { cursor: pointer; }
-    .center-controls { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-    .action-btn { padding: 5px 10px; border: none; border-radius: 8px; background: #ffa726; color: white; font-weight: bold; cursor: pointer; font-size: 11px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .center-controls { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .action-btn { padding: 8px 14px; border: none; border-radius: 8px; background: #ffa726; color: white; font-weight: bold; cursor: pointer; font-size: 13px; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
 
-    /* 스마트폰 가로 모드 (Landscape) 전용 */
+    /* 스마트폰 가로 모드 전용 */
     @media (orientation: landscape) and (max-height: 500px) {
-      .header { padding: 2px 6px; }
-      .header h1 { font-size: 11px !important; }
-      .type-btn, .mode-btn, .view-btn, .fullscreen-btn, .font-btn { padding: 2px 5px; font-size: 9px; border-radius: 5px; }
+      .header { padding: 4px 6px; }
+      .header h1 { font-size: 12px !important; }
+      .type-btn, .mode-btn, .view-btn, .fullscreen-btn, .font-btn { padding: 4px 8px; font-size: 11px; border-radius: 6px; }
 
-      .game-board, .grid-board { grid-template-rows: 50px 1fr 50px; grid-template-columns: 70px 1fr 70px; gap: 2px; padding: 2px; }
+      .game-board, .grid-board { grid-template-rows: 55px 1fr 55px; grid-template-columns: 78px 1fr 78px; gap: 2px; padding: 2px; }
 
       .west { grid-row: 1 / 4 !important; grid-column: 1 !important; z-index: 2; }
       .east { grid-row: 1 / 4 !important; grid-column: 3 !important; z-index: 2; }
@@ -104,19 +107,19 @@
       .north { grid-row: 1 !important; grid-column: 2 !important; }
       .south { grid-row: 3 !important; grid-column: 2 !important; }
 
-      .player-name { font-size: 9px; margin-bottom: 1px; }
-      .inline-name-input { font-size: 9px; padding: 1px; }
-      .seat-ui-vertical .inline-name-input, .seat-ui-vertical .inline-seat-btn { width: 42px; }
-      .seat-ui-horizontal .inline-name-input { width: 45px; }
-      .inline-seat-btn { font-size: 9px; }
+      .player-name { font-size: 10px; margin-bottom: 1px; }
+      .inline-name-input { font-size: 10px; padding: 2px; }
+      .seat-ui-vertical .inline-name-input, .seat-ui-vertical .inline-seat-btn { width: 50px; }
+      .seat-ui-horizontal .inline-name-input { width: 50px; }
+      .inline-seat-btn { font-size: 10px; }
 
-      .action-btn { padding: 3px 8px; font-size: 9px; }
+      .action-btn { padding: 4px 10px; font-size: 11px; }
     }
   </style>
 </head>
 <body>
   <div class="header">
-    <h1 style="font-size: 14px; color: #4a4035;">NVC 그로그</h1>
+    <h1 style="font-size: 15px; color: #4a4035;">NVC 그로그</h1>
     
     <div class="header-group">
       <button id="view-board" class="view-btn btn-mode-active" onclick="setViewMode('board')">카드 덱</button>
@@ -134,9 +137,8 @@
       <button id="mode2" class="mode-btn btn-mode-inactive" onclick="setMode('others')">나만 안보기</button>
     </div>
 
-    <!-- 글자 크기 조절 및 전체 화면 컨트롤러 -->
     <div class="header-group">
-      <span style="font-size: 11px; font-weight: bold; color: #5d4037;">글자:</span>
+      <span style="font-size: 12px; font-weight: bold; color: #5d4037;">글자:</span>
       <button class="font-btn" onclick="adjustFontSize(-1)">-</button>
       <button class="font-btn" onclick="adjustFontSize(0)">기본</button>
       <button class="font-btn" onclick="adjustFontSize(1)">+</button>
@@ -150,24 +152,53 @@
     const socket = io();
     let selectedCardObj = null;
 
-    // 글자 크기 확대/축소 스크립트
-    let currentFontSize = 10;
+    let currentFontSize = 11;
     function adjustFontSize(delta) {
       if (delta === 0) {
-        currentFontSize = 10;
+        currentFontSize = 11;
       } else {
         currentFontSize += delta;
         if (currentFontSize < 8) currentFontSize = 8;
-        if (currentFontSize > 16) currentFontSize = 16;
+        if (currentFontSize > 22) currentFontSize = 22;
       }
       
-      const width = Math.round(54 * (currentFontSize / 10));
-      const height = Math.round(38 * (currentFontSize / 10));
+      const width = Math.round(58 * (currentFontSize / 11));
+      const height = Math.round(40 * (currentFontSize / 11));
 
       document.documentElement.style.setProperty('--card-font-size', `${currentFontSize}px`);
       document.documentElement.style.setProperty('--card-width', `${width}px`);
       document.documentElement.style.setProperty('--card-height', `${height}px`);
     }
+
+    // 두 손가락 터치 핀치 제스처(Pinch Zoom) 이벤트 수신기
+    let initialTouchDistance = 0;
+    document.addEventListener('touchstart', function(e) {
+      if (e.touches.length === 2) {
+        initialTouchDistance = Math.hypot(
+          e.touches[0].pageX - e.touches[1].pageX,
+          e.touches[0].pageY - e.touches[1].pageY
+        );
+      }
+    }, { passive: true });
+
+    document.addEventListener('touchmove', function(e) {
+      if (e.touches.length === 2 && initialTouchDistance > 0) {
+        let currentDistance = Math.hypot(
+          e.touches[0].pageX - e.touches[1].pageX,
+          e.touches[0].pageY - e.touches[1].pageY
+        );
+
+        let diff = currentDistance - initialTouchDistance;
+        if (Math.abs(diff) > 25) { // 25px 이상 손가락 간격 변동 시
+          if (diff > 0) {
+            adjustFontSize(1); // 확대
+          } else {
+            adjustFontSize(-1); // 축소
+          }
+          initialTouchDistance = currentDistance;
+        }
+      }
+    }, { passive: true });
 
     function toggleFullScreen() {
       if (!document.fullscreenElement && !document.webkitFullscreenElement) {
