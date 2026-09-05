@@ -9,10 +9,10 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: sans-serif; background-color: #f4f1ea; color: #333; height: 100vh; display: flex; flex-direction: column; overflow: hidden; user-select: none; }
     
-    .header { background: #e8e3d9; padding: 6px 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; border-bottom: 1px solid #d6cfc2; flex-shrink: 0; }
+    .header { background: #e8e3d9; padding: 6px 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid #d6cfc2; flex-shrink: 0; }
     .header-group { display: flex; align-items: center; gap: 4px; }
     
-    .type-btn, .mode-btn, .view-btn { padding: 5px 10px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 11px; }
+    .type-btn, .mode-btn, .view-btn { padding: 5px 8px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 11px; }
     .btn-type-emotion.active { background: #f8bbd0; color: #880e4f; }
     .btn-type-need.active { background: #b3e5fc; color: #01579b; }
     .btn-type-both.active { background: #d1c4e9; color: #4a148c; }
@@ -22,44 +22,44 @@
 
     .main-container { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; position: relative; }
 
-    /* 각 플레이어 테이블 및 카드 영역 */
-    .game-board { flex: 1; display: grid; grid-template-rows: 95px 1fr 95px; grid-template-columns: 85px 1fr 85px; gap: 6px; padding: 6px; height: 100%; width: 100%; min-width: 320px; min-height: 300px; }
-    .player-table { background: #ffffff; border-radius: 8px; border: 1px dashed #c8c2b7; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.04); cursor: pointer; overflow: hidden; }
+    /* 모드 1: 기본 게임판 */
+    .game-board { flex: 1; display: grid; grid-template-rows: 90px 1fr 90px; grid-template-columns: 48px 1fr 48px; gap: 2px; padding: 2px; height: 100%; width: 100%; min-width: 300px; min-height: 300px; }
+    .player-table { background: #ffffff; border-radius: 6px; border: 1px dashed #c8c2b7; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.04); cursor: pointer; overflow: hidden; width: 100%; }
     
-    .seat-ui-box { display: flex; align-items: center; justify-content: center; gap: 3px; margin-bottom: 3px; max-width: 100%; }
-    .inline-name-input { width: 52px; padding: 2px 4px; border: 1px solid #ccc; border-radius: 4px; font-size: 10px; text-align: center; outline: none; }
-    .inline-seat-btn { padding: 2px 5px; border: none; border-radius: 4px; background: #8d6e63; color: white; font-weight: bold; font-size: 10px; cursor: pointer; flex-shrink: 0; }
+    .seat-ui-box { display: flex; align-items: center; justify-content: center; gap: 2px; margin-bottom: 2px; width: 100%; }
+    .inline-name-input { width: 45px; padding: 2px; border: 1px solid #ccc; border-radius: 4px; font-size: 10px; text-align: center; outline: none; }
+    .inline-seat-btn { padding: 2px 4px; border: none; border-radius: 4px; background: #8d6e63; color: white; font-weight: bold; font-size: 10px; cursor: pointer; flex-shrink: 0; }
     .inline-leave-btn { padding: 2px 4px; border: none; border-radius: 4px; background: #ef5350; color: white; font-size: 9px; cursor: pointer; flex-shrink: 0; }
 
-    .player-name { font-weight: bold; margin-bottom: 3px; color: #4a4035; font-size: 11px; text-align: center; width: 100%; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .player-name { font-weight: bold; margin-bottom: 2px; color: #4a4035; font-size: 11px; text-align: center; width: 100%; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     
-    .north { grid-row: 1; grid-column: 2; }
+    .north { grid-row: 1; grid-column: 1 / 4; } /* 전체 폭 차지 */
     .west { grid-row: 2; grid-column: 1; }
     .center { grid-row: 2; grid-column: 2; border: none; background: transparent; box-shadow: none; cursor: default; }
     .east { grid-row: 2; grid-column: 3; }
-    .south { grid-row: 3; grid-column: 2; background: #fbf9f5; }
+    .south { grid-row: 3; grid-column: 1 / 4; background: #fbf9f5; } /* 전체 폭 차지 */
     
-    /* 고정 카드 규격 */
-    .card { width: 62px !important; min-width: 62px !important; height: 42px !important; min-height: 42px !important; border-radius: 5px; font-size: 11px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; padding: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); flex-shrink: 0 !important; word-break: keep-all; }
+    /* 고정 카드 규격 (가로 54px x 세로 38px) */
+    .card { width: 54px !important; min-width: 54px !important; height: 38px !important; min-height: 38px !important; border-radius: 4px; font-size: 10px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; padding: 1px; box-shadow: 0 1px 2px rgba(0,0,0,0.08); flex-shrink: 0 !important; word-break: keep-all; }
     .card-none { background: #f0ede6; border: 1px dashed #d0c9bd; color: transparent; box-shadow: none; }
     .card-back-emotion { background: #f8bbd0; color: #880e4f; border: 1.5px solid #f48fb1; }
     .card-back-need { background: #b3e5fc; color: #01579b; border: 1.5px solid #81d4fa; }
     .card-front-emotion { background: #fff0f5; color: #c2185b; border: 1.5px solid #e91e63; }
     .card-front-need { background: #f0f8ff; color: #0288d1; border: 1.5px solid #03a9f4; }
 
-    /* 전체보기 모드 */
-    .grid-board { flex: 1; display: grid; grid-template-rows: 95px 1fr 95px; grid-template-columns: 72px 1fr 72px; gap: 4px; padding: 4px; height: 100%; width: 100%; min-width: 320px; min-height: 320px; overflow: hidden; }
+    /* 모드 2: 전체보기 모드 (남/북 영역 가로 폭 최대로 확장) */
+    .grid-board { flex: 1; display: grid; grid-template-rows: 85px 1fr 85px; grid-template-columns: 48px 1fr 48px; gap: 2px; padding: 2px; height: 100%; width: 100%; min-width: 300px; min-height: 300px; overflow: hidden; }
     
-    /* 모바일 3줄(3열) 정렬 최적화 */
-    .grid-center { grid-row: 2; grid-column: 2; background: #e2ddd3; border-radius: 8px; padding: 6px 4px; overflow-y: auto; overflow-x: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(56px, 1fr)); gap: 3px; align-content: flex-start; justify-items: center; width: 100%; height: 100%; }
+    .grid-center { grid-row: 2; grid-column: 2; background: #e2ddd3; border-radius: 6px; padding: 4px 2px; overflow-y: auto; overflow-x: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(54px, 1fr)); gap: 2px; align-content: flex-start; justify-items: center; width: 100%; height: 100%; }
     
-    .mini-card { width: 56px !important; min-width: 56px !important; height: 40px !important; min-height: 40px !important; border-radius: 5px; font-size: 11px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.08); transition: transform 0.1s, border 0.1s; flex-shrink: 0 !important; word-break: keep-all; padding: 1px; }
+    .mini-card { width: 54px !important; min-width: 54px !important; height: 38px !important; min-height: 38px !important; border-radius: 4px; font-size: 10px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.08); transition: transform 0.1s, border 0.1s; flex-shrink: 0 !important; word-break: keep-all; padding: 1px; }
     .mini-card.selected { transform: scale(1.12); border: 2.5px solid #fbc02d !important; box-shadow: 0 0 8px #fbc02d; z-index: 10; background: #fffde7 !important; }
     .mini-emotion { background: #fff0f5; color: #c2185b; border: 1.5px solid #f48fb1; }
     .mini-need { background: #f0f8ff; color: #0288d1; border: 1.5px solid #81d4fa; }
 
-    .gift-slots-horizontal { display: flex; gap: 4px; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px; width: 100%; align-items: center; justify-content: safe center; -webkit-overflow-scrolling: touch; }
-    .gift-slots-vertical { display: flex; flex-direction: column; gap: 4px; overflow-y: auto; overflow-x: hidden; max-height: 100%; padding: 2px; height: 100%; width: 100%; align-items: center; justify-content: safe center; -webkit-overflow-scrolling: touch; }
+    /* 남/북 가로 영역: 좌우 여백을 줄이고 화면 전체 너비 활용 */
+    .gift-slots-horizontal { display: flex; gap: 3px; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 1px; width: 100%; align-items: center; justify-content: flex-start; -webkit-overflow-scrolling: touch; }
+    .gift-slots-vertical { display: flex; flex-direction: column; gap: 3px; overflow-y: auto; overflow-x: hidden; max-height: 100%; padding: 1px; height: 100%; width: 100%; align-items: center; justify-content: flex-start; -webkit-overflow-scrolling: touch; }
 
     .deck { cursor: pointer; }
     .center-controls { display: flex; flex-direction: column; align-items: center; gap: 4px; }
