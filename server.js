@@ -82,7 +82,6 @@ function rebuildAllCards() {
     }
     gameState.allCards = list;
   } else if (gameState.cardType === 'both') {
-    // 느낌 카드와 욕구 카드를 각각 따로 섞은 뒤, 느낌 카드를 앞쪽에 욕구 카드를 뒤쪽에 배치하여 분리함
     let ems = EMOTION_WORDS.map(w => ({ word: w, type: 'emotion', isGifted: false }));
     for (let i = ems.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -216,21 +215,41 @@ io.on('connection', (socket) => {
     sendStateToAll();
   });
 
+  // [수정된 선물하기 로직] 빈 슬롯(null 또는 빈자리)을 찾아 순서대로 채움
   socket.on('sendGift', (data) => {
     const { targetSeat, cardWord, cardType } = data;
     const cardObj = gameState.allCards.find(c => c.word === cardWord);
     if (cardObj && !cardObj.isGifted) {
       cardObj.isGifted = true;
       if (!gameState.gifts[targetSeat]) gameState.gifts[targetSeat] = [];
-      gameState.gifts[targetSeat].push({ word: cardWord, type: cardType });
+      
+      // 첫 번째 빈 공간(null이거나 없는 자리)을 찾아 그 자리에 카드를 넣음
+      let placed = false;
+      for (let i = 0; i < 10; i++) {
+        if (!gameState.gifts[targetSeat][i]) {
+          gameState.gifts[targetSeat][i] = { word: cardWord, type: cardType };
+          placed = true;
+          break;
+        }
+      }
+      // 만약 10칸이 꽉 찼다면 맨 뒤에 추가
+      if (!placed) {
+        gameState.gifts[targetSeat].push({ word: cardWord, type: cardType });
+      }
       sendStateToAll();
     }
   });
 
+  // [수정된 카드 반납 로직] 카드를 지울 때 배열을 줄이지 않고 해당 인덱스를 null로 비워둠
   socket.on('returnGiftCard', (data) => {
     const { fromSeat, cardWord } = data;
     if (gameState.gifts[fromSeat]) {
-      gameState.gifts[fromSeat] = gameState.gifts[fromSeat].filter(c => c.word !== cardWord);
+      for (let i = 0; i < gameState.gifts[fromSeat].length; i++) {
+        if (gameState.gifts[fromSeat][i] && gameState.gifts[fromSeat][i].word === cardWord) {
+          gameState.gifts[fromSeat][i] = null; // 자리를 당기지 않고 null로 비워둠
+          break;
+        }
+      }
       const cardObj = gameState.allCards.find(c => c.word === cardWord);
       if (cardObj) cardObj.isGifted = false;
       sendStateToAll();
