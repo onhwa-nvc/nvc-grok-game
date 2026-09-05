@@ -126,6 +126,14 @@ io.on('connection', (socket) => {
     io.emit('roomClosed');
   });
 
+  // [게임 초기화 이벤트] 모든 카드, 선물 슬롯, 카드 덱 상태를 초기화
+  socket.on('resetGame', () => {
+    gameState.cards = { south: "", north: "", east: "", west: "" };
+    gameState.gifts = { south: [], north: [], east: [], west: [] };
+    rebuildAllCards();
+    sendStateToAll();
+  });
+
   socket.on('selectSeat', (data) => {
     if (gameState.isClosed) return;
     const { seat, name } = data;
@@ -165,17 +173,13 @@ io.on('connection', (socket) => {
     sendStateToAll();
   });
 
-  // [수정된 카드 뽑기 로직] 카드를 누른 사람(socket.seat)의 자리에만 카드가 뽑힙니다.
   socket.on('drawCard', () => {
     let targetSeat = socket.seat;
-    
-    // 만약 자리에 앉지 않은 사람이 뽑았다면 기본적으로 south(남쪽)나 첫 번째 빈 자리에 뽑히게 처리하거나 방어 코드를 둡니다.
     if (!targetSeat) {
-      // 자리에 앉지 않았다면 현재 착석한 자리 중 첫 번째 자리에 부여하거나 전체 초기화 후 첫 자리 지정
       if (gameState.occupiedSeats.length > 0) {
         targetSeat = gameState.occupiedSeats[0];
       } else {
-        targetSeat = 'south'; // 기본값
+        targetSeat = 'south';
       }
     }
 
@@ -185,7 +189,6 @@ io.on('connection', (socket) => {
 
     const randIndex = Math.floor(Math.random() * wordList.length);
     
-    // 전체 카드를 초기화한 후, 오직 카드를 뽑은 사람의 자리(targetSeat)에만 카드를 꽂습니다.
     gameState.cards = { south: "", north: "", east: "", west: "" };
     gameState.cards[targetSeat] = wordList[randIndex];
     
