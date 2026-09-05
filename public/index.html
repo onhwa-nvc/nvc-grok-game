@@ -51,12 +51,12 @@
 
     .player-table { background: #ffffff; border-radius: 6px; border: 1px dashed #c8c2b7; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.04); cursor: pointer; overflow: hidden; width: 100%; }
     
-    /* 레이아웃 규격 고정을 위한 통합 컨트롤 박스 */
     .seat-control-box { display: flex; align-items: center; justify-content: center; gap: 3px; width: 100%; margin-bottom: 2px; }
     .seat-ui-vertical { flex-direction: column; }
     .seat-ui-horizontal { flex-direction: row; }
 
     .inline-name-input { padding: 3px 4px; border: 1px solid #ccc; border-radius: 5px; font-size: 11px; font-weight: bold; text-align: center; outline: none; }
+    .inline-name-input:disabled { background-color: #f0f0f0; border-color: #e0e0e0; color: #aaa; }
     .seat-ui-vertical .inline-name-input { width: 62px; }
     .seat-ui-horizontal .inline-name-input { width: 60px; }
 
@@ -332,11 +332,12 @@
       renderBoard();
     });
 
-    /* 착석 및 자리 비우기 2개 버튼 통합 렌더링 함수 */
+    /* 내 자리 유무에 따른 다른 좌석 잠금 제어 */
     function renderSeatHeaderHtml(seat) {
       const state = localState;
       const isOccupied = state.occupiedSeats && state.occupiedSeats.includes(seat);
       const isMySeat = state.mySeat === seat;
+      const hasAnySeat = !!state.mySeat; // 현재 기기(창)에서 이미 어느 자리에 착석했는지 여부
       const seatName = state.seatNames ? state.seatNames[seat] : getSeatLabel(seat);
       const isHorizontal = (seat === 'north' || seat === 'south');
       const boxClass = isHorizontal ? 'seat-control-box seat-ui-horizontal' : 'seat-control-box seat-ui-vertical';
@@ -358,10 +359,12 @@
                   </div>
                 </div>`;
       } else {
+        // 내가 이미 자리를 차지하고 있다면(hasAnySeat=true) 다른 빈 자리는 잠금(disabled)
+        const disableAttr = hasAnySeat ? 'disabled' : '';
         return `<div class="${boxClass}" onclick="event.stopPropagation()">
-                  <input type="text" id="inline-input-${seat}" class="inline-name-input" placeholder="이름" maxlength="5">
+                  <input type="text" id="inline-input-${seat}" class="inline-name-input" placeholder="이름" maxlength="5" ${disableAttr}>
                   <div class="btn-group-row">
-                    <button class="seat-act-btn btn-sit" onclick="selectSeat('${seat}')">착석</button>
+                    <button class="seat-act-btn btn-sit" onclick="selectSeat('${seat}')" ${disableAttr}>착석</button>
                     <button class="seat-act-btn btn-leave" disabled>비우기</button>
                   </div>
                 </div>`;
