@@ -20,12 +20,13 @@
     .btn-mode-active { background: #ffe082; color: #5d4037; }
     .btn-mode-inactive { background: #dcd6cd; color: #666; }
 
-    .seat-select { background: #efebe2; padding: 4px 8px; display: flex; justify-content: center; align-items: center; gap: 6px; flex-wrap: wrap; border-bottom: 1px solid #e0d8cc; flex-shrink: 0; }
-    .name-input { padding: 4px 6px; border-radius: 4px; border: 1px solid #ccc; font-size: 11px; width: 75px; outline: none; }
-    .seat-btn { padding: 4px 8px; border: none; border-radius: 4px; cursor: pointer; background: #fff; color: #333; font-weight: bold; font-size: 11px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+    .seat-select { background: #efebe2; padding: 4px 8px; display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap; border-bottom: 1px solid #e0d8cc; flex-shrink: 0; }
+    .seat-box { display: flex; align-items: center; gap: 3px; background: #ffffff; padding: 2px 4px; border-radius: 6px; border: 1px solid #dcd6cd; }
+    .name-input { padding: 3px 5px; border-radius: 4px; border: 1px solid #ccc; font-size: 11px; width: 60px; outline: none; }
+    .seat-btn { padding: 4px 7px; border: none; border-radius: 4px; cursor: pointer; background: #eee; color: #333; font-weight: bold; font-size: 11px; }
     .seat-btn.my-seat { background: #4caf50; color: white; border: 1px solid #2e7d32; }
     .seat-btn:disabled { background: #ccc; color: #888; cursor: not-allowed; }
-    .leave-btn { padding: 4px 8px; border: none; border-radius: 4px; cursor: pointer; background: #e57373; color: white; font-weight: bold; font-size: 11px; }
+    .leave-btn { padding: 4px 7px; border: none; border-radius: 4px; cursor: pointer; background: #e57373; color: white; font-weight: bold; font-size: 11px; margin-left: 2px; }
 
     .main-container { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; position: relative; }
 
@@ -40,7 +41,7 @@
     .east { grid-row: 2; grid-column: 3; }
     .south { grid-row: 3; grid-column: 2; background: #fbf9f5; }
     
-    /* PC/모바일 절대 가독성 카드 고정 규격 (가로 66px x 세로 44px) */
+    /* PC/모바일 절대 가독성 카드 고정 규격 */
     .card { width: 66px !important; min-width: 66px !important; height: 44px !important; min-height: 44px !important; border-radius: 5px; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; padding: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); flex-shrink: 0 !important; word-break: keep-all; }
     .card-none { background: #f0ede6; border: 1px dashed #d0c9bd; color: transparent; box-shadow: none; }
     .card-back-emotion { background: #f8bbd0; color: #880e4f; border: 1.5px solid #f48fb1; }
@@ -48,10 +49,9 @@
     .card-front-emotion { background: #fff0f5; color: #c2185b; border: 1.5px solid #e91e63; }
     .card-front-need { background: #f0f8ff; color: #0288d1; border: 1.5px solid #03a9f4; }
 
-    /* 모드 2: 전체보기 모드 (창 축소 시에도 레이아웃 파괴 방지) */
+    /* 모드 2: 전체보기 모드 */
     .grid-board { flex: 1; display: grid; grid-template-rows: 95px 1fr 95px; grid-template-columns: 80px 1fr 80px; gap: 4px; padding: 4px; height: 100%; width: 100%; min-width: 320px; min-height: 320px; overflow: hidden; }
     
-    /* 중앙 55장/110장 고정 타일 판 (창 크기에 맞춰 자동 행/열 반응형 정렬) */
     .grid-center { grid-row: 2; grid-column: 2; background: #e2ddd3; border-radius: 8px; padding: 8px; overflow-y: auto; overflow-x: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(66px, 1fr)); gap: 3px; align-content: flex-start; justify-items: center; width: 100%; height: 100%; }
     
     .mini-card { width: 66px !important; min-width: 66px !important; height: 44px !important; min-height: 44px !important; border-radius: 5px; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.08); transition: transform 0.1s, border 0.1s; flex-shrink: 0 !important; word-break: keep-all; padding: 2px; }
@@ -59,10 +59,7 @@
     .mini-emotion { background: #fff0f5; color: #c2185b; border: 1.5px solid #f48fb1; }
     .mini-need { background: #f0f8ff; color: #0288d1; border: 1.5px solid #81d4fa; }
 
-    /* 남/북 가로 스크롤 영역 */
     .gift-slots-horizontal { display: flex; gap: 4px; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px; width: 100%; align-items: center; justify-content: flex-start; -webkit-overflow-scrolling: touch; }
-    
-    /* 동/서 세로 스크롤 영역 */
     .gift-slots-vertical { display: flex; flex-direction: column; gap: 4px; overflow-y: auto; overflow-x: hidden; max-height: 100%; padding: 2px; height: 100%; width: 100%; align-items: center; justify-content: flex-start; -webkit-overflow-scrolling: touch; }
 
     .deck { cursor: pointer; }
@@ -91,14 +88,25 @@
     </div>
   </div>
 
+  <!-- 동서남북 각각 개별 이름 입력 구조로 개선 -->
   <div class="seat-select">
-    <input type="text" id="user-name" class="name-input" placeholder="이름" maxlength="5">
-    <span style="font-size: 11px; color: #5d5346;">내 자리:</span>
-    <button id="seat-south" class="seat-btn" onclick="selectSeat('south')">남쪽</button>
-    <button id="seat-north" class="seat-btn" onclick="selectSeat('north')">북쪽</button>
-    <button id="seat-west" class="seat-btn" onclick="selectSeat('west')">서쪽</button>
-    <button id="seat-east" class="seat-btn" onclick="selectSeat('east')">동쪽</button>
-    <button id="leave-seat" class="leave-btn" onclick="leaveSeat()">비우기</button>
+    <div class="seat-box">
+      <input type="text" id="input-south" class="name-input" placeholder="이름" maxlength="5">
+      <button id="seat-south" class="seat-btn" onclick="selectSeat('south')">남쪽</button>
+    </div>
+    <div class="seat-box">
+      <input type="text" id="input-north" class="name-input" placeholder="이름" maxlength="5">
+      <button id="seat-north" class="seat-btn" onclick="selectSeat('north')">북쪽</button>
+    </div>
+    <div class="seat-box">
+      <input type="text" id="input-west" class="name-input" placeholder="이름" maxlength="5">
+      <button id="seat-west" class="seat-btn" onclick="selectSeat('west')">서쪽</button>
+    </div>
+    <div class="seat-box">
+      <input type="text" id="input-east" class="name-input" placeholder="이름" maxlength="5">
+      <button id="seat-east" class="seat-btn" onclick="selectSeat('east')">동쪽</button>
+    </div>
+    <button id="leave-seat" class="leave-btn" onclick="leaveSeat()">자리 비우기</button>
   </div>
 
   <div class="main-container" id="main-container"></div>
@@ -108,7 +116,8 @@
     let selectedCardObj = null;
 
     function selectSeat(seat) {
-      const name = document.getElementById('user-name').value.trim();
+      const inputElem = document.getElementById(`input-${seat}`);
+      const name = inputElem ? inputElem.value.trim() : "";
       socket.emit('selectSeat', { seat: seat, name: name });
     }
 
@@ -198,20 +207,33 @@
       document.getElementById('mode1').className = state.mode === 'me' ? 'mode-btn btn-mode-active' : 'mode-btn btn-mode-inactive';
       document.getElementById('mode2').className = state.mode === 'others' ? 'mode-btn btn-mode-active' : 'mode-btn btn-mode-inactive';
 
+      // 각 동서남북 입력창 및 버튼 상태 동기화
       ['south', 'north', 'west', 'east'].forEach(seat => {
         const btn = document.getElementById(`seat-${seat}`);
+        const input = document.getElementById(`input-${seat}`);
+        const seatName = state.seatNames[seat];
+
         if (state.mySeat === seat) {
           btn.className = "seat-btn my-seat";
-          btn.innerText = `${getSeatLabel(seat)} (내 자리)`;
+          btn.innerText = `내 자리`;
           btn.disabled = false;
+          if (input && document.activeElement !== input) input.value = seatName !== getSeatLabel(seat) ? seatName : "";
         } else if (state.occupiedSeats.includes(seat)) {
           btn.className = "seat-btn";
-          btn.innerText = getSeatLabel(seat);
+          btn.innerText = seatName;
           btn.disabled = true;
+          if (input) {
+            input.value = seatName;
+            input.disabled = true;
+          }
         } else {
           btn.className = "seat-btn";
           btn.innerText = getSeatLabel(seat);
           btn.disabled = false;
+          if (input) {
+            input.disabled = false;
+            if (document.activeElement !== input && input.value === seatName) input.value = "";
+          }
         }
       });
 
