@@ -3,6 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <!-- PWA & 모바일 웹앱 전체화면 호환 메타 태그 -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
+  
   <title>NVC 그로그 카드 놀이</title>
   <script src="/socket.io/socket.io.js"></script>
   <style>
@@ -19,10 +24,13 @@
     .btn-type-inactive { background: #dcd6cd; color: #666; }
     .btn-mode-active { background: #ffe082; color: #5d4037; }
     .btn-mode-inactive { background: #dcd6cd; color: #666; }
+    
+    /* 전체 화면 토글 버튼 스타일 */
+    .fullscreen-btn { padding: 5px 8px; border: none; border-radius: 8px; background: #ff9800; color: white; font-weight: bold; font-size: 11px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.15); }
 
     .main-container { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; position: relative; }
 
-    /* 기본 세로 모드 레이아웃 */
+    /* 세로 모드 레이아웃 */
     .game-board { flex: 1; display: grid; grid-template-rows: 90px 1fr 90px; grid-template-columns: 80px 1fr 80px; gap: 4px; padding: 4px; height: 100%; width: 100%; min-width: 320px; }
     .grid-board { flex: 1; display: grid; grid-template-rows: 85px 1fr 85px; grid-template-columns: 80px 1fr 80px; gap: 4px; padding: 4px; height: 100%; width: 100%; min-width: 320px; overflow: hidden; }
 
@@ -70,21 +78,17 @@
     .center-controls { display: flex; flex-direction: column; align-items: center; gap: 4px; }
     .action-btn { padding: 5px 10px; border: none; border-radius: 8px; background: #ffa726; color: white; font-weight: bold; cursor: pointer; font-size: 11px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
-    /* =========================================================
-       스마트폰 가로 모드 (Landscape) 전용: 동/서 영역 상하 꽉 채움
-       ========================================================= */
+    /* 스마트폰 가로 모드 (Landscape) 전용 */
     @media (orientation: landscape) and (max-height: 500px) {
       .header { padding: 2px 6px; }
       .header h1 { font-size: 11px !important; }
-      .type-btn, .mode-btn, .view-btn { padding: 2px 5px; font-size: 9px; border-radius: 5px; }
+      .type-btn, .mode-btn, .view-btn, .fullscreen-btn { padding: 2px 5px; font-size: 9px; border-radius: 5px; }
 
       .game-board, .grid-board { grid-template-rows: 50px 1fr 50px; grid-template-columns: 70px 1fr 70px; gap: 2px; padding: 2px; }
 
-      /* 동/서쪽 상하 100% 확장 (Grid Row 1/4) */
       .west { grid-row: 1 / 4 !important; grid-column: 1 !important; z-index: 2; }
       .east { grid-row: 1 / 4 !important; grid-column: 3 !important; z-index: 2; }
 
-      /* 남/북쪽은 중앙열(2열)로 한정배치 */
       .north { grid-row: 1 !important; grid-column: 2 !important; }
       .south { grid-row: 3 !important; grid-column: 2 !important; }
 
@@ -119,6 +123,8 @@
     <div class="header-group">
       <button id="mode1" class="mode-btn btn-mode-active" onclick="setMode('me')">나만 보기</button>
       <button id="mode2" class="mode-btn btn-mode-inactive" onclick="setMode('others')">나만 안보기</button>
+      <!-- 전체 화면 모드 토글 버튼 추가 -->
+      <button class="fullscreen-btn" onclick="toggleFullScreen()">전체 화면</button>
     </div>
   </div>
 
@@ -127,6 +133,26 @@
   <script>
     const socket = io();
     let selectedCardObj = null;
+
+    // 전체 화면 모드 토글 스크립트
+    function toggleFullScreen() {
+      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        let docEl = document.documentElement;
+        if (docEl.requestFullscreen) {
+          docEl.requestFullscreen();
+        } else if (docEl.webkitRequestFullscreen) { // Safari / iOS 호환
+          docEl.webkitRequestFullscreen();
+        } else {
+          alert("이 브라우저는 전체화면 버튼을 지원하지 않습니다. Safari의 경우 [공유] -> [홈 화면에 추가]를 이용해 주세요!");
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+      }
+    }
 
     function selectSeat(seat) {
       const inputElem = document.getElementById(`inline-input-${seat}`);
