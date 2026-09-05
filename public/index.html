@@ -26,11 +26,21 @@
     .game-board { flex: 1; display: grid; grid-template-rows: 90px 1fr 90px; grid-template-columns: 52px 1fr 52px; gap: 2px; padding: 2px; height: 100%; width: 100%; min-width: 300px; min-height: 300px; }
     .player-table { background: #ffffff; border-radius: 6px; border: 1px dashed #c8c2b7; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.04); cursor: pointer; overflow: hidden; width: 100%; }
     
-    /* 세로형 정렬 UI (이름 위, 버튼 아래) */
-    .seat-ui-box { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; margin-bottom: 2px; width: 100%; }
-    .inline-name-input { width: 44px; padding: 2px 0; border: 1px solid #ccc; border-radius: 4px; font-size: 10px; text-align: center; outline: none; }
-    .inline-seat-btn { width: 44px; padding: 2px 0; border: none; border-radius: 4px; background: #8d6e63; color: white; font-weight: bold; font-size: 10px; cursor: pointer; text-align: center; }
-    .inline-leave-btn { padding: 2px 4px; border: none; border-radius: 4px; background: #ef5350; color: white; font-size: 9px; cursor: pointer; margin-top: 1px; }
+    /* 동/서쪽 전용: 세로 정렬 (이름 위, 착석 아래) */
+    .seat-ui-vertical { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; margin-bottom: 2px; width: 100%; }
+    
+    /* 남/북쪽 전용: 가로 정렬 (이름 옆 착석) */
+    .seat-ui-horizontal { display: flex; flex-row: row; align-items: center; justify-content: center; gap: 4px; margin-bottom: 2px; width: 100%; }
+
+    .inline-name-input { padding: 2px 3px; border: 1px solid #ccc; border-radius: 4px; font-size: 10px; text-align: center; outline: none; }
+    .seat-ui-vertical .inline-name-input { width: 44px; }
+    .seat-ui-horizontal .inline-name-input { width: 55px; }
+
+    .inline-seat-btn { border: none; border-radius: 4px; background: #8d6e63; color: white; font-weight: bold; font-size: 10px; cursor: pointer; text-align: center; }
+    .seat-ui-vertical .inline-seat-btn { width: 44px; padding: 2px 0; }
+    .seat-ui-horizontal .inline-seat-btn { padding: 2px 6px; }
+
+    .inline-leave-btn { padding: 2px 4px; border: none; border-radius: 4px; background: #ef5350; color: white; font-size: 9px; cursor: pointer; }
 
     .player-name { font-weight: bold; margin-bottom: 2px; color: #4a4035; font-size: 10px; text-align: center; width: 100%; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     
@@ -171,22 +181,24 @@
       renderBoard();
     });
 
-    // 위-아래 세로 배치 UI 렌더링
+    // 동/서 영역은 세로 정렬(seat-ui-vertical), 남/북 영역은 가로 정렬(seat-ui-horizontal)
     function renderSeatHeaderHtml(seat) {
       const state = localState;
       const isOccupied = state.occupiedSeats && state.occupiedSeats.includes(seat);
       const isMySeat = state.mySeat === seat;
       const seatName = state.seatNames ? state.seatNames[seat] : getSeatLabel(seat);
+      const isHorizontal = (seat === 'north' || seat === 'south');
+      const boxClass = isHorizontal ? 'seat-ui-horizontal' : 'seat-ui-vertical';
 
       if (isMySeat) {
-        return `<div class="seat-ui-box" onclick="event.stopPropagation()">
+        return `<div class="${boxClass}" onclick="event.stopPropagation()">
                   <span class="player-name" style="color:#2e7d32;">${seatName} (나)</span>
                   <button class="inline-leave-btn" onclick="leaveSeat()">비우기</button>
                 </div>`;
       } else if (isOccupied) {
         return `<div class="player-name">${seatName}</div>`;
       } else {
-        return `<div class="seat-ui-box" onclick="event.stopPropagation()">
+        return `<div class="${boxClass}" onclick="event.stopPropagation()">
                   <input type="text" id="inline-input-${seat}" class="inline-name-input" placeholder="이름" maxlength="5">
                   <button class="inline-seat-btn" onclick="selectSeat('${seat}')">착석</button>
                 </div>`;
