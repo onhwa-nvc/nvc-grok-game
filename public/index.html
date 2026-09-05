@@ -22,6 +22,74 @@
 
     body { font-family: sans-serif; background-color: #f4f1ea; color: #333; height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; touch-action: pan-x pan-y; }
     
+    /* 포털 로비 화면 스타일 */
+    .portal-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: #f4f1ea;
+      padding: 20px;
+      text-align: center;
+    }
+    .portal-box {
+      background: white;
+      padding: 30px 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      width: 100%;
+      max-width: 340px;
+    }
+    .portal-box h1 {
+      color: #5d4037;
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+    .portal-box p {
+      color: #666;
+      font-size: 13px;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+    .portal-input {
+      width: 100%;
+      padding: 12px;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      letter-spacing: 4px;
+      border: 2px solid #dcd6cd;
+      border-radius: 8px;
+      outline: none;
+      margin-bottom: 12px;
+    }
+    .portal-input:focus {
+      border-color: #8d6e63;
+    }
+    .portal-btn {
+      width: 100%;
+      padding: 12px;
+      background: #8d6e63;
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .portal-btn:active {
+      background: #6d4c41;
+    }
+    .portal-error {
+      color: #d32f2f;
+      font-size: 12px;
+      font-weight: bold;
+      margin-top: 8px;
+      min-height: 16px;
+    }
+
     .header { background: #e8e3d9; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; border-bottom: 1px solid #d6cfc2; flex-shrink: 0; }
     .header-group { display: flex; align-items: center; gap: 5px; }
     
@@ -156,88 +224,124 @@
   </style>
 </head>
 <body>
-  <div class="header">
-    <h1 style="font-size: 15px; color: #4a4035;">NVC 그로그</h1>
-    
-    <div class="header-group">
-      <button id="view-board" class="view-btn btn-mode-active" onclick="setViewMode('board')">카드 덱</button>
-      <button id="view-grid" class="view-btn btn-mode-inactive" onclick="setViewMode('grid')">전체 보기</button>
-    </div>
-
-    <div class="header-group">
-      <button id="type-emotion" class="type-btn btn-type-emotion active" onclick="setCardType('emotion')">느낌</button>
-      <button id="type-need" class="type-btn btn-type-inactive" onclick="setCardType('need')">욕구</button>
-      <button id="type-both" class="type-btn btn-type-inactive" onclick="setCardType('both')">느낌+욕구</button>
-    </div>
-
-    <div class="header-group">
-      <button id="mode1" class="mode-btn btn-mode-active" onclick="setMode('me')">나만 보기</button>
-      <button id="mode2" class="mode-btn btn-mode-inactive" onclick="setMode('others')">나만 안보기</button>
-    </div>
-
-    <div class="header-group">
-      <span style="font-size: 12px; font-weight: bold; color: #5d4037;">글자:</span>
-      <button class="font-btn" onclick="adjustFontSize(-1)">-</button>
-      <button class="font-btn" onclick="adjustFontSize(0)">기본</button>
-      <button class="font-btn" onclick="adjustFontSize(1)">+</button>
-      <button class="fullscreen-btn" onclick="toggleFullScreen()">전체 화면</button>
-      <button class="reset-btn" onclick="resetGame()">🔄 게임 새로하기</button>
-      <button id="admin-close-btn" class="close-room-btn" style="display:none;" onclick="closeRoom()">🔒 모임 종료</button>
+  <!-- 최초 접속 시 보여지는 포털 로비 화면 -->
+  <div id="portal-screen" class="portal-screen">
+    <div class="portal-box">
+      <h1>NVC 그로그</h1>
+      <p>방장이 알려준 4자리 방 코드를 입력하고<br>입장해 주세요.</p>
+      <input type="text" id="room-code-input" class="portal-input" placeholder="0000" maxlength="4">
+      <button class="portal-btn" onclick="verifyAndEnterRoom()">입장하기</button>
+      <div id="portal-error" class="portal-error"></div>
     </div>
   </div>
 
-  <div class="main-container" id="main-container"></div>
+  <!-- 실제 게임 앱 화면 (인증 전에는 숨김 처리) -->
+  <div id="game-app-screen" style="display: none; flex: 1; flex-direction: column; height: 100vh; height: 100dvh;">
+    <div class="header">
+      <h1 style="font-size: 15px; color: #4a4035;">NVC 그로그</h1>
+      
+      <div class="header-group">
+        <button id="view-board" class="view-btn btn-mode-active" onclick="setViewMode('board')">카드 덱</button>
+        <button id="view-grid" class="view-btn btn-mode-inactive" onclick="setViewMode('grid')">전체 보기</button>
+      </div>
+
+      <div class="header-group">
+        <button id="type-emotion" class="type-btn btn-type-emotion active" onclick="setCardType('emotion')">느낌</button>
+        <button id="type-need" class="type-btn btn-type-inactive" onclick="setCardType('need')">욕구</button>
+        <button id="type-both" class="type-btn btn-type-inactive" onclick="setCardType('both')">느낌+욕구</button>
+      </div>
+
+      <div class="header-group">
+        <button id="mode1" class="mode-btn btn-mode-active" onclick="setMode('me')">나만 보기</button>
+        <button id="mode2" class="mode-btn btn-mode-inactive" onclick="setMode('others')">나만 안보기</button>
+      </div>
+
+      <div class="header-group">
+        <span style="font-size: 12px; font-weight: bold; color: #5d4037;">글자:</span>
+        <button class="font-btn" onclick="adjustFontSize(-1)">-</button>
+        <button class="font-btn" onclick="adjustFontSize(0)">기본</button>
+        <button class="font-btn" onclick="adjustFontSize(1)">+</button>
+        <button class="fullscreen-btn" onclick="toggleFullScreen()">전체 화면</button>
+        <button class="reset-btn" onclick="resetGame()">🔄 게임 새로하기</button>
+        <button id="admin-close-btn" class="close-room-btn" style="display:none;" onclick="closeRoom()">🔒 모임 종료</button>
+      </div>
+    </div>
+
+    <div class="main-container" id="main-container"></div>
+  </div>
 
   <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const roomCode = urlParams.get('room');
-    const isAdmin = urlParams.get('admin') === '1';
-
-    // 방 코드가 없거나 입력하지 않은 경우 접근 거부 화면 표시
-    if (!roomCode) {
-      document.body.innerHTML = `
-        <div style="height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f4f1ea; text-align: center; padding: 20px;">
-          <h1 style="color: #5d4037; font-size: 20px; margin-bottom: 10px;">⚠️ 방 코드가 필요합니다</h1>
-          <p style="color: #666; font-size: 14px; line-height: 1.5;">
-            올바른 참여 링크(방 코드가 포함된 주소)를 통해 접속해 주세요.
-          </p>
-        </div>
-      `;
-      throw new Error("Room code required");
-    }
-
-    const socket = io({
-      query: { roomCode: roomCode }
-    });
-
-    socket.on('invalidRoomCode', () => {
-      document.body.innerHTML = `
-        <div style="height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f4f1ea; text-align: center; padding: 20px;">
-          <h1 style="color: #5d4037; font-size: 20px; margin-bottom: 10px;">❌ 잘못된 방 코드입니다</h1>
-          <p style="color: #666; font-size: 14px; line-height: 1.5;">
-            모임이 종료되었거나 방 코드가 일치하지 않습니다.<br>새로운 링크를 확인해 주세요.
-          </p>
-        </div>
-      `;
-    });
-
+    let socket = null;
     let selectedCardObj = null;
 
-    if (isAdmin) {
-      document.getElementById('admin-close-btn').style.display = 'inline-block';
+    // URL 파라미터에 admin=1이 있는지 확인
+    const urlParams = new URLSearchParams(window.location.search);
+    const isAdmin = urlParams.get('admin') === '1';
+
+    // 포털에서 방 코드 입력 후 입장 버튼을 눌렀을 때
+    async function verifyAndEnterRoom() {
+      const codeInput = document.getElementById('room-code-input').value.trim();
+      const errorDiv = document.getElementById('portal-error');
+
+      if (codeInput.length !== 4) {
+        errorDiv.innerText = "4자리 숫자를 정확히 입력해 주세요.";
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/verify-room', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: codeInput })
+        });
+        const result = await response.json();
+
+        if (result.success) {
+          // 인증 성공 시 로비 숨기고 게임 앱 화면 표시
+          document.getElementById('portal-screen').style.display = 'none';
+          document.getElementById('game-app-screen').style.display = 'flex';
+
+          // 소켓 연결 시작 (방 코드 전달)
+          initSocket(codeInput);
+        } else {
+          errorDiv.innerText = result.message;
+        }
+      } catch (err) {
+        errorDiv.innerText = "서버 통신 중 오류가 발생했습니다.";
+      }
     }
 
-    socket.on('roomClosed', () => {
-      document.body.innerHTML = `
-        <div style="height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f4f1ea; text-align: center; padding: 20px;">
-          <h1 style="color: #5d4037; font-size: 22px; margin-bottom: 12px;">🔒 모임이 종료되었습니다</h1>
-          <p style="color: #666; font-size: 14px; line-height: 1.6;">
-            오늘 NVC 그로그 카드 놀이에 참여해 주셔서 감사합니다.<br>
-            더 이상 앱을 사용할 수 없습니다.
-          </p>
-        </div>
-      `;
-    });
+    function initSocket(roomCode) {
+      socket = io({
+        query: { roomCode: roomCode }
+      });
+
+      if (isAdmin) {
+        document.getElementById('admin-close-btn').style.display = 'inline-block';
+      }
+
+      socket.on('invalidRoomCode', () => {
+        alert("방 코드가 일치하지 않습니다.");
+        location.reload();
+      });
+
+      socket.on('roomClosed', () => {
+        document.body.innerHTML = `
+          <div style="height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f4f1ea; text-align: center; padding: 20px;">
+            <h1 style="color: #5d4037; font-size: 22px; margin-bottom: 12px;">🔒 모임이 종료되었습니다</h1>
+            <p style="color: #666; font-size: 14px; line-height: 1.6;">
+              오늘 NVC 그로그 카드 놀이에 참여해 주셔서 감사합니다.<br>
+              더 이상 앱을 사용할 수 없습니다.
+            </p>
+          </div>
+        `;
+      });
+
+      socket.on('stateUpdate', (state) => {
+        localState = state;
+        renderBoard();
+      });
+    }
 
     function closeRoom() {
       if (confirm("정말로 모임을 종료하시겠습니까?\n종료 후에는 모든 참가자의 접속이 차단되고 앱을 사용할 수 없게 됩니다.")) {
@@ -388,10 +492,6 @@
     }
 
     let localState = {};
-    socket.on('stateUpdate', (state) => {
-      localState = state;
-      renderBoard();
-    });
 
     function renderSeatHeaderHtml(seat) {
       const state = localState;
