@@ -13,6 +13,7 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
+    /* 동적 확대/축소를 위한 핵심 CSS 변수 */
     :root {
       --card-font-size: 11px;
       --card-width: 58px;
@@ -72,7 +73,24 @@
     .east { grid-row: 2; grid-column: 3; }
     .south { grid-row: 3; grid-column: 1 / 4; background: #fbf9f5; }
     
-    .card { width: var(--card-width) !important; min-width: var(--card-width) !important; height: var(--card-height) !important; min-height: var(--card-height) !important; border-radius: 5px; font-size: var(--card-font-size); font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; padding: 2px; box-shadow: 0 1px 2px rgba(0,0,0,0.08); flex-shrink: 0 !important; word-break: keep-all; }
+    /* 동적 CSS 변수 적용 카드 스타일 */
+    .card { 
+      width: var(--card-width) !important; 
+      min-width: var(--card-width) !important; 
+      height: var(--card-height) !important; 
+      min-height: var(--card-height) !important; 
+      border-radius: 5px; 
+      font-size: var(--card-font-size) !important; 
+      font-weight: bold; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      text-align: center; 
+      padding: 2px; 
+      box-shadow: 0 1px 2px rgba(0,0,0,0.08); 
+      flex-shrink: 0 !important; 
+      word-break: keep-all; 
+    }
     .card-none { background: #f0ede6; border: 1px dashed #d0c9bd; color: transparent; box-shadow: none; }
     .card-back-emotion { background: #f8bbd0; color: #880e4f; border: 1.5px solid #f48fb1; }
     .card-back-need { background: #b3e5fc; color: #01579b; border: 1.5px solid #81d4fa; }
@@ -81,7 +99,25 @@
 
     .grid-center { grid-row: 2; grid-column: 2; background: #e2ddd3; border-radius: 6px; padding: 4px 2px; overflow-y: auto; overflow-x: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--card-width), 1fr)); gap: 3px; align-content: flex-start; justify-items: center; width: 100%; height: 100%; }
     
-    .mini-card { width: var(--card-width) !important; min-width: var(--card-width) !important; height: var(--card-height) !important; min-height: var(--card-height) !important; border-radius: 5px; font-size: var(--card-font-size); font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.08); transition: transform 0.1s, border 0.1s; flex-shrink: 0 !important; word-break: keep-all; padding: 2px; }
+    .mini-card { 
+      width: var(--card-width) !important; 
+      min-width: var(--card-width) !important; 
+      height: var(--card-height) !important; 
+      min-height: var(--card-height) !important; 
+      border-radius: 5px; 
+      font-size: var(--card-font-size) !important; 
+      font-weight: bold; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      text-align: center; 
+      cursor: pointer; 
+      box-shadow: 0 1px 2px rgba(0,0,0,0.08); 
+      transition: transform 0.1s, border 0.1s; 
+      flex-shrink: 0 !important; 
+      word-break: keep-all; 
+      padding: 2px; 
+    }
     .mini-card.selected { transform: scale(1.12); border: 2.5px solid #fbc02d !important; box-shadow: 0 0 8px #fbc02d; z-index: 10; background: #fffde7 !important; }
     .mini-emotion { background: #fff0f5; color: #c2185b; border: 1.5px solid #f48fb1; }
     .mini-need { background: #f0f8ff; color: #0288d1; border: 1.5px solid #81d4fa; }
@@ -93,14 +129,13 @@
     .center-controls { display: flex; flex-direction: column; align-items: center; gap: 6px; }
     .action-btn { padding: 8px 14px; border: none; border-radius: 8px; background: #ffa726; color: white; font-weight: bold; cursor: pointer; font-size: 13px; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
 
-    /* 스마트폰 가로 모드(Landscape) 전용 - 남/북 세로 높이 최적화 */
+    /* 스마트폰 가로 모드(Landscape) 전용 최적화 */
     @media (orientation: landscape) and (max-height: 500px) {
       .header { padding: 3px 6px; }
       .header h1 { font-size: 12px !important; }
       .type-btn, .mode-btn, .view-btn, .fullscreen-btn, .font-btn { padding: 3px 6px; font-size: 11px; border-radius: 6px; }
 
-      /* 남/북 영역 높이 62px로 넓히고 여백 슬림화 */
-      .game-board, .grid-board { grid-template-rows: 62px 1fr 62px; grid-template-columns: 78px 1fr 78px; gap: 2px; padding: 2px; }
+      .game-board, .grid-board { grid-template-rows: 62px 1fr 62px; grid-template-columns: 80px 1fr 80px; gap: 2px; padding: 2px; }
 
       .west { grid-row: 1 / 4 !important; grid-column: 1 !important; z-index: 2; }
       .east { grid-row: 1 / 4 !important; grid-column: 3 !important; z-index: 2; }
@@ -110,10 +145,7 @@
 
       .seat-ui-horizontal { margin-bottom: 0px !important; gap: 3px !important; }
 
-      .card { width: 46px !important; min-width: 46px !important; height: 30px !important; min-height: 30px !important; font-size: 9px; }
-      .mini-card { width: 46px !important; min-width: 46px !important; height: 30px !important; min-height: 30px !important; font-size: 9px; }
-
-      .player-name { font-size: 9px; margin-bottom: 0px; }
+      .player-name { font-size: 10px; margin-bottom: 0px; }
       .inline-name-input { font-size: 9px; padding: 1px; }
       .seat-ui-vertical .inline-name-input, .seat-ui-vertical .inline-seat-btn { width: 48px; }
       .seat-ui-horizontal .inline-name-input { width: 48px; }
@@ -158,6 +190,7 @@
     const socket = io();
     let selectedCardObj = null;
 
+    // 동적 카드 및 글씨 크기 조절 함수
     let currentFontSize = 11;
     function adjustFontSize(delta) {
       if (delta === 0) {
@@ -176,6 +209,7 @@
       document.documentElement.style.setProperty('--card-height', `${height}px`);
     }
 
+    // 손가락 터치 핀치 제스처
     let initialTouchDistance = 0;
     document.addEventListener('touchstart', function(e) {
       if (e.touches.length === 2) {
