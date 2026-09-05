@@ -3,7 +3,6 @@ const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 
-// 방 상태 (모임 종료 여부 포함)
 let gameState = {
   isClosed: false,
   viewMode: 'board',
@@ -16,7 +15,6 @@ let gameState = {
   allCards: []
 };
 
-// 모임 종료 시 표시할 안내 HTML
 const closedHtml = `
 <!DOCTYPE html>
 <html lang="ko" class="notranslate" translate="no">
@@ -38,7 +36,6 @@ const closedHtml = `
 </html>
 `;
 
-// 모임 종료 시 접속을 HTTP 레벨에서 원천 차단
 app.use((req, res, next) => {
   if (gameState.isClosed) {
     return res.send(closedHtml);
@@ -124,7 +121,6 @@ io.on('connection', (socket) => {
 
   sendStateToAll();
 
-  // 방장 전용: 모임 종료
   socket.on('closeRoom', () => {
     gameState.isClosed = true;
     io.emit('roomClosed');
@@ -169,12 +165,16 @@ io.on('connection', (socket) => {
     sendStateToAll();
   });
 
+  // [수정된 카드 뽑기 로직] 사람이 앉아 있는 자리(occupiedSeats)에만 카드가 뽑히도록 변경
   socket.on('drawCard', () => {
     let wordList = EMOTION_WORDS;
     if (gameState.cardType === 'need') wordList = NEED_WORDS;
     else if (gameState.cardType === 'both') wordList = EMOTION_WORDS.concat(NEED_WORDS);
 
-    ['south', 'north', 'east', 'west'].forEach(seat => {
+    // 모든 자리를 비운 뒤, 현재 착석한 자리들에만 각각 카드를 한 장씩 부여합니다.
+    gameState.cards = { south: "", north: "", east: "", west: "" };
+    
+    gameState.occupiedSeats.forEach(seat => {
       const randIndex = Math.floor(Math.random() * wordList.length);
       gameState.cards[seat] = wordList[randIndex];
     });
