@@ -13,7 +13,6 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
-    /* 동적 확대/축소를 위한 핵심 CSS 변수 */
     :root {
       --card-font-size: 11px;
       --card-width: 58px;
@@ -52,20 +51,23 @@
 
     .player-table { background: #ffffff; border-radius: 6px; border: 1px dashed #c8c2b7; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.04); cursor: pointer; overflow: hidden; width: 100%; }
     
-    .seat-ui-vertical { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; margin-bottom: 2px; width: 100%; }
-    .seat-ui-horizontal { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 6px; margin-bottom: 2px; width: 100%; }
+    /* 레이아웃 규격 고정을 위한 통합 컨트롤 박스 */
+    .seat-control-box { display: flex; align-items: center; justify-content: center; gap: 3px; width: 100%; margin-bottom: 2px; }
+    .seat-ui-vertical { flex-direction: column; }
+    .seat-ui-horizontal { flex-direction: row; }
 
-    .inline-name-input { padding: 4px 5px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px; font-weight: bold; text-align: center; outline: none; }
-    .seat-ui-vertical .inline-name-input { width: 64px; }
-    .seat-ui-horizontal .inline-name-input { width: 70px; }
+    .inline-name-input { padding: 3px 4px; border: 1px solid #ccc; border-radius: 5px; font-size: 11px; font-weight: bold; text-align: center; outline: none; }
+    .seat-ui-vertical .inline-name-input { width: 62px; }
+    .seat-ui-horizontal .inline-name-input { width: 60px; }
 
-    .inline-seat-btn { border: none; border-radius: 6px; background: #8d6e63; color: white; font-weight: bold; font-size: 13px; cursor: pointer; text-align: center; }
-    .seat-ui-vertical .inline-seat-btn { width: 64px; padding: 4px 0; }
-    .seat-ui-horizontal .inline-seat-btn { padding: 4px 10px; }
+    .btn-group-row { display: flex; gap: 2px; align-items: center; }
 
-    .inline-leave-btn { padding: 4px 8px; border: none; border-radius: 6px; background: #ef5350; color: white; font-size: 12px; font-weight: bold; cursor: pointer; }
+    .seat-act-btn { border: none; border-radius: 4px; padding: 3px 5px; font-size: 10px; font-weight: bold; cursor: pointer; text-align: center; white-space: nowrap; }
+    .btn-sit { background: #8d6e63; color: white; }
+    .btn-leave { background: #ef5350; color: white; }
+    .seat-act-btn:disabled { background: #e0e0e0 !important; color: #a0a0a0 !important; cursor: not-allowed; }
 
-    .player-name { font-weight: bold; margin-bottom: 2px; color: #4a4035; font-size: 13px; text-align: center; width: 100%; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .player-name-display { font-weight: bold; color: #2e7d32; font-size: 11px; text-align: center; }
     
     .north { grid-row: 1; grid-column: 1 / 4; }
     .west { grid-row: 2; grid-column: 1; }
@@ -73,7 +75,6 @@
     .east { grid-row: 2; grid-column: 3; }
     .south { grid-row: 3; grid-column: 1 / 4; background: #fbf9f5; }
     
-    /* 동적 CSS 변수 적용 카드 스타일 */
     .card { 
       width: var(--card-width) !important; 
       min-width: var(--card-width) !important; 
@@ -129,7 +130,7 @@
     .center-controls { display: flex; flex-direction: column; align-items: center; gap: 6px; }
     .action-btn { padding: 8px 14px; border: none; border-radius: 8px; background: #ffa726; color: white; font-weight: bold; cursor: pointer; font-size: 13px; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
 
-    /* 스마트폰 가로 모드(Landscape) 전용 최적화 */
+    /* 스마트폰 가로 모드 (Landscape) */
     @media (orientation: landscape) and (max-height: 500px) {
       .header { padding: 3px 6px; }
       .header h1 { font-size: 12px !important; }
@@ -143,13 +144,10 @@
       .north { grid-row: 1 !important; grid-column: 2 !important; padding: 1px !important; }
       .south { grid-row: 3 !important; grid-column: 2 !important; padding: 1px !important; }
 
-      .seat-ui-horizontal { margin-bottom: 0px !important; gap: 3px !important; }
-
-      .player-name { font-size: 10px; margin-bottom: 0px; }
       .inline-name-input { font-size: 9px; padding: 1px; }
-      .seat-ui-vertical .inline-name-input, .seat-ui-vertical .inline-seat-btn { width: 48px; }
+      .seat-ui-vertical .inline-name-input { width: 48px; }
       .seat-ui-horizontal .inline-name-input { width: 48px; }
-      .inline-seat-btn { font-size: 9px; padding: 2px 4px !important; }
+      .seat-act-btn { font-size: 8px; padding: 2px 3px; }
 
       .action-btn { padding: 3px 8px; font-size: 10px; }
     }
@@ -190,7 +188,6 @@
     const socket = io();
     let selectedCardObj = null;
 
-    // 동적 카드 및 글씨 크기 조절 함수
     let currentFontSize = 11;
     function adjustFontSize(delta) {
       if (delta === 0) {
@@ -209,7 +206,6 @@
       document.documentElement.style.setProperty('--card-height', `${height}px`);
     }
 
-    // 손가락 터치 핀치 제스처
     let initialTouchDistance = 0;
     document.addEventListener('touchstart', function(e) {
       if (e.touches.length === 2) {
@@ -336,25 +332,38 @@
       renderBoard();
     });
 
+    /* 착석 및 자리 비우기 2개 버튼 통합 렌더링 함수 */
     function renderSeatHeaderHtml(seat) {
       const state = localState;
       const isOccupied = state.occupiedSeats && state.occupiedSeats.includes(seat);
       const isMySeat = state.mySeat === seat;
       const seatName = state.seatNames ? state.seatNames[seat] : getSeatLabel(seat);
       const isHorizontal = (seat === 'north' || seat === 'south');
-      const boxClass = isHorizontal ? 'seat-ui-horizontal' : 'seat-ui-vertical';
+      const boxClass = isHorizontal ? 'seat-control-box seat-ui-horizontal' : 'seat-control-box seat-ui-vertical';
 
       if (isMySeat) {
         return `<div class="${boxClass}" onclick="event.stopPropagation()">
-                  <span class="player-name" style="color:#2e7d32;">${seatName} (나)</span>
-                  <button class="inline-leave-btn" onclick="leaveSeat()">비우기</button>
+                  <span class="player-name-display">${seatName}(나)</span>
+                  <div class="btn-group-row">
+                    <button class="seat-act-btn btn-sit" disabled>착석</button>
+                    <button class="seat-act-btn btn-leave" onclick="leaveSeat()">비우기</button>
+                  </div>
                 </div>`;
       } else if (isOccupied) {
-        return `<div class="player-name">${seatName}</div>`;
+        return `<div class="${boxClass}" onclick="event.stopPropagation()">
+                  <span class="player-name-display" style="color:#4a4035;">${seatName}</span>
+                  <div class="btn-group-row">
+                    <button class="seat-act-btn btn-sit" disabled>착석</button>
+                    <button class="seat-act-btn btn-leave" disabled>비우기</button>
+                  </div>
+                </div>`;
       } else {
         return `<div class="${boxClass}" onclick="event.stopPropagation()">
                   <input type="text" id="inline-input-${seat}" class="inline-name-input" placeholder="이름" maxlength="5">
-                  <button class="inline-seat-btn" onclick="selectSeat('${seat}')">착석</button>
+                  <div class="btn-group-row">
+                    <button class="seat-act-btn btn-sit" onclick="selectSeat('${seat}')">착석</button>
+                    <button class="seat-act-btn btn-leave" disabled>비우기</button>
+                  </div>
                 </div>`;
       }
     }
