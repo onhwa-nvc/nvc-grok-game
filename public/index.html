@@ -189,11 +189,39 @@
   <div class="main-container" id="main-container"></div>
 
   <script>
-    const socket = io();
-    let selectedCardObj = null;
-
     const urlParams = new URLSearchParams(window.location.search);
+    const roomCode = urlParams.get('room');
     const isAdmin = urlParams.get('admin') === '1';
+
+    // 방 코드가 없거나 입력하지 않은 경우 접근 거부 화면 표시
+    if (!roomCode) {
+      document.body.innerHTML = `
+        <div style="height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f4f1ea; text-align: center; padding: 20px;">
+          <h1 style="color: #5d4037; font-size: 20px; margin-bottom: 10px;">⚠️ 방 코드가 필요합니다</h1>
+          <p style="color: #666; font-size: 14px; line-height: 1.5;">
+            올바른 참여 링크(방 코드가 포함된 주소)를 통해 접속해 주세요.
+          </p>
+        </div>
+      `;
+      throw new Error("Room code required");
+    }
+
+    const socket = io({
+      query: { roomCode: roomCode }
+    });
+
+    socket.on('invalidRoomCode', () => {
+      document.body.innerHTML = `
+        <div style="height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f4f1ea; text-align: center; padding: 20px;">
+          <h1 style="color: #5d4037; font-size: 20px; margin-bottom: 10px;">❌ 잘못된 방 코드입니다</h1>
+          <p style="color: #666; font-size: 14px; line-height: 1.5;">
+            모임이 종료되었거나 방 코드가 일치하지 않습니다.<br>새로운 링크를 확인해 주세요.
+          </p>
+        </div>
+      `;
+    });
+
+    let selectedCardObj = null;
 
     if (isAdmin) {
       document.getElementById('admin-close-btn').style.display = 'inline-block';
@@ -467,7 +495,6 @@
           }
         }).join('');
 
-        // [개선된 선물 슬롯 렌더링 함수] 10개의 고정 슬롯을 유지하여 터치 시 해당 위치만 정확히 비워지도록 함
         function renderGiftSlots(seat, isVertical = false) {
           const giftList = state.gifts[seat] || [];
           let slotsHtml = '';
@@ -498,6 +525,10 @@
             <div class="player-table west" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'west')" onclick="handleSeatClick('west')">
               ${renderSeatHeaderHtml('west')}
               ${renderGiftSlots('west', true)}
+            </div>
+
+            <div class="grid-center" ondragover="handleDragOver(event)" ondrop="handleCenterDrop(event)">
+              ${gridCardsHtml}
             </div>
 
             <div class="grid-center" ondragover="handleDragOver(event)" ondrop="handleCenterDrop(event)">
