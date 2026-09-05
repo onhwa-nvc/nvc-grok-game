@@ -67,21 +67,34 @@ const NEED_WORDS = [
 ];
 
 function rebuildAllCards() {
-  let list = [];
   if (gameState.cardType === 'emotion') {
-    list = EMOTION_WORDS.map(w => ({ word: w, type: 'emotion', isGifted: false }));
+    let list = EMOTION_WORDS.map(w => ({ word: w, type: 'emotion', isGifted: false }));
+    for (let i = list.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [list[i], list[j]] = [list[j], list[i]];
+    }
+    gameState.allCards = list;
   } else if (gameState.cardType === 'need') {
-    list = NEED_WORDS.map(w => ({ word: w, type: 'need', isGifted: false }));
+    let list = NEED_WORDS.map(w => ({ word: w, type: 'need', isGifted: false }));
+    for (let i = list.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [list[i], list[j]] = [list[j], list[i]];
+    }
+    gameState.allCards = list;
   } else if (gameState.cardType === 'both') {
-    const ems = EMOTION_WORDS.map(w => ({ word: w, type: 'emotion', isGifted: false }));
-    const nds = NEED_WORDS.map(w => ({ word: w, type: 'need', isGifted: false }));
-    list = ems.concat(nds);
+    // 느낌 카드와 욕구 카드를 각각 따로 섞은 뒤, 느낌 카드를 앞쪽에 욕구 카드를 뒤쪽에 배치하여 분리함
+    let ems = EMOTION_WORDS.map(w => ({ word: w, type: 'emotion', isGifted: false }));
+    for (let i = ems.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [ems[i], ems[j]] = [ems[j], ems[i]];
+    }
+    let nds = NEED_WORDS.map(w => ({ word: w, type: 'need', isGifted: false }));
+    for (let i = nds.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [nds[i], nds[j]] = [nds[j], nds[i]];
+    }
+    gameState.allCards = ems.concat(nds);
   }
-  for (let i = list.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [list[i], list[j]] = [list[j], list[i]];
-  }
-  gameState.allCards = list;
 }
 
 rebuildAllCards();
@@ -126,7 +139,6 @@ io.on('connection', (socket) => {
     io.emit('roomClosed');
   });
 
-  // [게임 초기화 이벤트] 모든 카드, 선물 슬롯, 카드 덱 상태를 초기화
   socket.on('resetGame', () => {
     gameState.cards = { south: "", north: "", east: "", west: "" };
     gameState.gifts = { south: [], north: [], east: [], west: [] };
