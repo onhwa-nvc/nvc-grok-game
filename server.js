@@ -2,11 +2,12 @@ const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
+const path = require('path');
 
-// 서버가 켜질 때마다 매번 무작위 4자리 방 코드 생성 (예: "4821")
+// 서버가 켜질 때마다 매번 무작위 4자리 방 코드 생성
 const ROOM_CODE = Math.floor(1000 + Math.random() * 9000).toString();
 console.log(`========================================`);
-console.log(`🎲 이번 모임의 4자리 방 코드: [ ${ROOM_CODE} ]`);
+console.log(`🎲 오늘의 포털 방 코드: [ ${ROOM_CODE} ]`);
 console.log(`========================================`);
 
 let gameState = {
@@ -47,6 +48,17 @@ app.use((req, res, next) => {
     return res.send(closedHtml);
   }
   next();
+});
+
+// 클라이언트가 보낸 방 코드가 맞는지 체크하는 API 엔드포인트
+app.use(express.json());
+app.post('/api/verify-room', (req, res) => {
+  const { code } = req.body;
+  if (code === ROOM_CODE) {
+    res.json({ success: true });
+  } else {
+    res.json({ success: false, message: '방 코드가 올바르지 않습니다.' });
+  }
 });
 
 app.use(express.static('public'));
@@ -137,7 +149,7 @@ io.on('connection', (socket) => {
     return;
   }
 
-  // 클라이언트가 보낸 방 코드 검증
+  // Socket 통신에서도 방 코드 재확인
   const clientRoomCode = socket.handshake.query.roomCode;
   if (clientRoomCode !== ROOM_CODE) {
     socket.emit('invalidRoomCode');
