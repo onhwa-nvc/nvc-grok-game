@@ -3,48 +3,6 @@ const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 
-// 방 상태
-let gameState = {
-  isClosed: false,
-  viewMode: 'board',
-  cardType: 'emotion',
-  mode: 'me',
-  cards: { south: "", north: "", east: "", west: "" },
-  gifts: { south: [], north: [], east: [], west: [] },
-  occupiedSeats: [],
-  seatNames: { south: "", north: "", east: "", west: "" },
-  allCards: []
-};
-
-// 모임이 종료되었을 때 접속하면 보여줄 안내 HTML
-const closedHtml = `
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>모임 종료</title>
-</head>
-<body style="background-color: #f4f1ea; font-family: sans-serif; display: flex; height: 100vh; justify-content: center; align-items: center; margin: 0;">
-  <div style="text-align: center; padding: 20px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-    <h1 style="color: #5d4037; font-size: 20px; margin-bottom: 10px;">🔒 모임이 종료되었습니다</h1>
-    <p style="color: #666; font-size: 14px; line-height: 1.5;">
-      오늘 NVC 그로그 카드 놀이에 참여해 주셔서 감사합니다.<br>
-      현재 모임이 종료되어 더 이상 이용하실 수 없습니다.
-    </p>
-  </div>
-</body>
-</html>
-`;
-
-// 접속 차단 미들웨어 (모임 종료 시 index.html 대신 안내 화면 반환)
-app.use((req, res, next) => {
-  if (gameState.isClosed) {
-    return res.send(closedHtml);
-  }
-  next();
-});
-
 app.use(express.static('public'));
 
 const EMOTION_WORDS = [
@@ -67,6 +25,17 @@ const NEED_WORDS = [
   "영적연결", "아름다움", "조화", "평화", "질서", "영감",
   "신체적생존", "공기", "음식", "물", "주거", "운동", "휴식", "안전", "보호", "접촉"
 ];
+
+let gameState = {
+  viewMode: 'board',
+  cardType: 'emotion',
+  mode: 'me',
+  cards: { south: "", north: "", east: "", west: "" },
+  gifts: { south: [], north: [], east: [], west: [] },
+  occupiedSeats: [],
+  seatNames: { south: "", north: "", east: "", west: "" },
+  allCards: []
+};
 
 function rebuildAllCards() {
   let list = [];
@@ -115,22 +84,9 @@ function sendStateToAll() {
 
 io.on('connection', (socket) => {
   socket.seat = null;
-
-  if (gameState.isClosed) {
-    socket.emit('roomClosed');
-    return;
-  }
-
   sendStateToAll();
 
-  // 방장 전용: 모임 종료 버튼 클릭 시
-  socket.on('closeRoom', () => {
-    gameState.isClosed = true;
-    io.emit('roomClosed');
-  });
-
   socket.on('selectSeat', (data) => {
-    if (gameState.isClosed) return;
     const { seat, name } = data;
     if (gameState.occupiedSeats.includes(seat)) return;
     
