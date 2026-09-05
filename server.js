@@ -5,7 +5,6 @@ const io = require('socket.io')(http);
 
 app.use(express.static('public'));
 
-// 64개 느낌카드 단어 리스트
 const EMOTION_WORDS = [
   "걱정되는", "답답한", "두려운", "부담스러운", "불안한", "서운한", "속상한", "슬픈",
   "외로운", "우울한", "억울한", "지친", "화난", "당황스러운", "미안한", "부끄러운",
@@ -17,22 +16,21 @@ const EMOTION_WORDS = [
   "흥미로운", "호기심나는", "충만한", "연민을느끼는", "자랑스러운", "황홀한", "아늑한", "편안한"
 ];
 
-// 54개 욕구카드 단어 리스트
 const NEED_WORDS = [
   "자율성", "선택", "자유", "꿈", "목표", "공간", "독립",
   "축하", "애도", "기억", "성찰", "명예",
   "진실성", "진정성", "창의성", "자기형성", "자존감", "의미",
-  "상호의존", "수용", "전달", "공감", "사랑", "소속감", "배려", "친밀함", "존중", "지지", "신뢰", "understanding", "협동", "안전", "연결", "소통",
+  "상호의존", "수용", "전달", "공감", "사랑", "소속감", "배려", "친밀함", "존중", "지지", "신뢰", "이해", "협동", "안전", "연결", "소통",
   "놀이", "재미", "즐거움", "휴식", "유머",
   "영적연결", "아름다움", "조화", "평화", "질서", "영감",
   "신체적생존", "공기", "음식", "물", "주거", "운동", "휴식", "안전", "보호", "접촉"
 ];
 
-// 게임 전체 공유 상태
 let gameState = {
-  viewMode: 'board', // 'board'(카드덱 모드) 또는 'grid'(전체보기 모드)
-  cardType: 'emotion', // 'emotion', 'need', 'both'
-  mode: 'me', // 'me'(나만 보기) 또는 'others'(나만 안보기)
+  isClosed: false, // 모임 종료 여부
+  viewMode: 'board',
+  cardType: 'emotion',
+  mode: 'me',
   cards: { south: "", north: "", east: "", west: "" },
   gifts: { south: [], north: [], east: [], west: [] },
   occupiedSeats: [],
@@ -40,7 +38,6 @@ let gameState = {
   allCards: []
 };
 
-// 카드 덱 믹스 및 초기화
 function rebuildAllCards() {
   let list = [];
   if (gameState.cardType === 'emotion') {
@@ -52,7 +49,6 @@ function rebuildAllCards() {
     const nds = NEED_WORDS.map(w => ({ word: w, type: 'need', isGifted: false }));
     list = ems.concat(nds);
   }
-  // 셔플
   for (let i = list.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [list[i], list[j]] = [list[j], list[i]];
@@ -62,7 +58,6 @@ function rebuildAllCards() {
 
 rebuildAllCards();
 
-// 각 클라이언트 관점에 맞춘 상태 전송
 function sendStateToAll() {
   io.sockets.sockets.forEach((socket) => {
     let mySeat = socket.seat || null;
@@ -90,10 +85,23 @@ function sendStateToAll() {
 
 io.on('connection', (socket) => {
   socket.seat = null;
+
+  // 종료된 모임 접속 차단
+  if (gameState.isClosed) {
+    socket.emit('roomClosed');
+    return;
+  }
+
   sendStateToAll();
 
-  // 자리 선택
+  // 방장 전용: 모임 종료
+  socket.on('closeRoom', () => {
+    gameState.isClosed = true;
+    io.emit('roomClosed');
+  });
+
   socket.on('selectSeat', (data) => {
+    if (gameState.isClosed) return;
     const { seat, name } = data;
     if (gameState.occupiedSeats.includes(seat)) return;
     
@@ -103,7 +111,6 @@ io.on('connection', (socket) => {
     sendStateToAll();
   });
 
-  // 자리 비우기
   socket.on('leaveSeat', () => {
     if (socket.seat) {
       const s = socket.seat;
@@ -114,13 +121,11 @@ io.on('connection', (socket) => {
     }
   });
 
-  // 뷰 모드 변경 (카드덱 / 전체보기)
   socket.on('setViewMode', (mode) => {
     gameState.viewMode = mode;
     sendStateToAll();
   });
 
-  // 카드 종류 변경 (느낌 / 욕구 / 느낌+욕구)
   socket.on('setCardType', (type) => {
     gameState.cardType = type;
     gameState.cards = { south: "", north: "", east: "", west: "" };
@@ -129,13 +134,11 @@ io.on('connection', (socket) => {
     sendStateToAll();
   });
 
-  // 카드 보기 모드 변경 (나만 보기 / 나만 안보기)
   socket.on('setMode', (mode) => {
     gameState.mode = mode;
     sendStateToAll();
   });
 
-  // 카드 뽑기
   socket.on('drawCard', () => {
     let wordList = EMOTION_WORDS;
     if (gameState.cardType === 'need') wordList = NEED_WORDS;
@@ -148,13 +151,11 @@ io.on('connection', (socket) => {
     sendStateToAll();
   });
 
-  // 카드 공개하기
   socket.on('revealCard', () => {
     gameState.mode = 'reveal';
     sendStateToAll();
   });
 
-  // 카드 선물하기 (전체보기 모드)
   socket.on('sendGift', (data) => {
     const { targetSeat, cardWord, cardType } = data;
     const cardObj = gameState.allCards.find(c => c.word === cardWord);
@@ -166,7 +167,6 @@ io.on('connection', (socket) => {
     }
   });
 
-  // 선물한 카드 반납하기
   socket.on('returnGiftCard', (data) => {
     const { fromSeat, cardWord } = data;
     if (gameState.gifts[fromSeat]) {
@@ -177,7 +177,6 @@ io.on('connection', (socket) => {
     }
   });
 
-  // 접속 종료
   socket.on('disconnect', () => {
     if (socket.seat) {
       const s = socket.seat;
