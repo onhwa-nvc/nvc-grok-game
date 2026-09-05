@@ -3,6 +3,12 @@ const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
 
+// 서버가 켜질 때마다 매번 무작위 4자리 방 코드 생성 (예: "4821")
+const ROOM_CODE = Math.floor(1000 + Math.random() * 9000).toString();
+console.log(`========================================`);
+console.log(`🎲 이번 모임의 4자리 방 코드: [ ${ROOM_CODE} ]`);
+console.log(`========================================`);
+
 let gameState = {
   isClosed: false,
   viewMode: 'board',
@@ -131,6 +137,13 @@ io.on('connection', (socket) => {
     return;
   }
 
+  // 클라이언트가 보낸 방 코드 검증
+  const clientRoomCode = socket.handshake.query.roomCode;
+  if (clientRoomCode !== ROOM_CODE) {
+    socket.emit('invalidRoomCode');
+    return;
+  }
+
   sendStateToAll();
 
   socket.on('closeRoom', () => {
@@ -215,7 +228,6 @@ io.on('connection', (socket) => {
     sendStateToAll();
   });
 
-  // [수정된 선물하기 로직] 빈 슬롯(null 또는 빈자리)을 찾아 순서대로 채움
   socket.on('sendGift', (data) => {
     const { targetSeat, cardWord, cardType } = data;
     const cardObj = gameState.allCards.find(c => c.word === cardWord);
@@ -223,7 +235,6 @@ io.on('connection', (socket) => {
       cardObj.isGifted = true;
       if (!gameState.gifts[targetSeat]) gameState.gifts[targetSeat] = [];
       
-      // 첫 번째 빈 공간(null이거나 없는 자리)을 찾아 그 자리에 카드를 넣음
       let placed = false;
       for (let i = 0; i < 10; i++) {
         if (!gameState.gifts[targetSeat][i]) {
@@ -232,7 +243,6 @@ io.on('connection', (socket) => {
           break;
         }
       }
-      // 만약 10칸이 꽉 찼다면 맨 뒤에 추가
       if (!placed) {
         gameState.gifts[targetSeat].push({ word: cardWord, type: cardType });
       }
@@ -240,13 +250,12 @@ io.on('connection', (socket) => {
     }
   });
 
-  // [수정된 카드 반납 로직] 카드를 지울 때 배열을 줄이지 않고 해당 인덱스를 null로 비워둠
   socket.on('returnGiftCard', (data) => {
     const { fromSeat, cardWord } = data;
     if (gameState.gifts[fromSeat]) {
       for (let i = 0; i < gameState.gifts[fromSeat].length; i++) {
         if (gameState.gifts[fromSeat][i] && gameState.gifts[fromSeat][i].word === cardWord) {
-          gameState.gifts[fromSeat][i] = null; // 자리를 당기지 않고 null로 비워둠
+          gameState.gifts[fromSeat][i] = null;
           break;
         }
       }
