@@ -26,7 +26,6 @@
     .game-board { flex: 1; display: grid; grid-template-rows: 95px 1fr 95px; grid-template-columns: 85px 1fr 85px; gap: 6px; padding: 6px; height: 100%; width: 100%; min-width: 320px; min-height: 300px; }
     .player-table { background: #ffffff; border-radius: 8px; border: 1px dashed #c8c2b7; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.04); cursor: pointer; overflow: hidden; }
     
-    /* 개인 영역 내 이름 및 자리잡기 UI 정중앙 정렬 */
     .seat-ui-box { display: flex; align-items: center; justify-content: center; gap: 3px; margin-bottom: 3px; max-width: 100%; }
     .inline-name-input { width: 52px; padding: 2px 4px; border: 1px solid #ccc; border-radius: 4px; font-size: 10px; text-align: center; outline: none; }
     .inline-seat-btn { padding: 2px 5px; border: none; border-radius: 4px; background: #8d6e63; color: white; font-weight: bold; font-size: 10px; cursor: pointer; flex-shrink: 0; }
@@ -41,7 +40,7 @@
     .south { grid-row: 3; grid-column: 2; background: #fbf9f5; }
     
     /* 고정 카드 규격 */
-    .card { width: 66px !important; min-width: 66px !important; height: 44px !important; min-height: 44px !important; border-radius: 5px; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; padding: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); flex-shrink: 0 !important; word-break: keep-all; }
+    .card { width: 62px !important; min-width: 62px !important; height: 42px !important; min-height: 42px !important; border-radius: 5px; font-size: 11px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; padding: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); flex-shrink: 0 !important; word-break: keep-all; }
     .card-none { background: #f0ede6; border: 1px dashed #d0c9bd; color: transparent; box-shadow: none; }
     .card-back-emotion { background: #f8bbd0; color: #880e4f; border: 1.5px solid #f48fb1; }
     .card-back-need { background: #b3e5fc; color: #01579b; border: 1.5px solid #81d4fa; }
@@ -49,18 +48,18 @@
     .card-front-need { background: #f0f8ff; color: #0288d1; border: 1.5px solid #03a9f4; }
 
     /* 전체보기 모드 */
-    .grid-board { flex: 1; display: grid; grid-template-rows: 95px 1fr 95px; grid-template-columns: 80px 1fr 80px; gap: 4px; padding: 4px; height: 100%; width: 100%; min-width: 320px; min-height: 320px; overflow: hidden; }
+    .grid-board { flex: 1; display: grid; grid-template-rows: 95px 1fr 95px; grid-template-columns: 72px 1fr 72px; gap: 4px; padding: 4px; height: 100%; width: 100%; min-width: 320px; min-height: 320px; overflow: hidden; }
     
-    .grid-center { grid-row: 2; grid-column: 2; background: #e2ddd3; border-radius: 8px; padding: 8px; overflow-y: auto; overflow-x: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(66px, 1fr)); gap: 3px; align-content: flex-start; justify-items: center; width: 100%; height: 100%; }
+    /* 모바일 3줄(3열) 정렬 최적화 */
+    .grid-center { grid-row: 2; grid-column: 2; background: #e2ddd3; border-radius: 8px; padding: 6px 4px; overflow-y: auto; overflow-x: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(56px, 1fr)); gap: 3px; align-content: flex-start; justify-items: center; width: 100%; height: 100%; }
     
-    .mini-card { width: 66px !important; min-width: 66px !important; height: 44px !important; min-height: 44px !important; border-radius: 5px; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.08); transition: transform 0.1s, border 0.1s; flex-shrink: 0 !important; word-break: keep-all; padding: 2px; }
+    .mini-card { width: 56px !important; min-width: 56px !important; height: 40px !important; min-height: 40px !important; border-radius: 5px; font-size: 11px; font-weight: bold; display: flex; align-items: center; justify-content: center; text-align: center; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.08); transition: transform 0.1s, border 0.1s; flex-shrink: 0 !important; word-break: keep-all; padding: 1px; }
     .mini-card.selected { transform: scale(1.12); border: 2.5px solid #fbc02d !important; box-shadow: 0 0 8px #fbc02d; z-index: 10; background: #fffde7 !important; }
     .mini-emotion { background: #fff0f5; color: #c2185b; border: 1.5px solid #f48fb1; }
     .mini-need { background: #f0f8ff; color: #0288d1; border: 1.5px solid #81d4fa; }
 
-    /* 개인 영역 슬롯 정중앙(Center) 정렬 수정 */
-    .gift-slots-horizontal { display: flex; gap: 4px; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px; width: 100%; align-items: center; justify-content: center; -webkit-overflow-scrolling: touch; }
-    .gift-slots-vertical { display: flex; flex-direction: column; gap: 4px; overflow-y: auto; overflow-x: hidden; max-height: 100%; padding: 2px; height: 100%; width: 100%; align-items: center; justify-content: center; -webkit-overflow-scrolling: touch; }
+    .gift-slots-horizontal { display: flex; gap: 4px; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding: 2px; width: 100%; align-items: center; justify-content: safe center; -webkit-overflow-scrolling: touch; }
+    .gift-slots-vertical { display: flex; flex-direction: column; gap: 4px; overflow-y: auto; overflow-x: hidden; max-height: 100%; padding: 2px; height: 100%; width: 100%; align-items: center; justify-content: safe center; -webkit-overflow-scrolling: touch; }
 
     .deck { cursor: pointer; }
     .center-controls { display: flex; flex-direction: column; align-items: center; gap: 4px; }
