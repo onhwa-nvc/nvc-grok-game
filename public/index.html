@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   
-  <title>세계 영성 플랫폼</title>
+  <title>NVC 테스트 공간</title>
   <script src="/socket.io/socket.io.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -22,7 +22,7 @@
 
     body { font-family: sans-serif; background-color: #f4f1ea; color: #333; height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; touch-action: pan-x pan-y; }
     
-    /* 플랫폼 메인 포털 허브 스타일 */
+    /* 대문 로비 스타일 (테스트용) */
     .portal-screen {
       display: flex;
       flex-direction: column;
@@ -50,7 +50,7 @@
     }
     .portal-box h1 {
       color: #5d4037;
-      font-size: 20px;
+      font-size: 19px;
       margin-bottom: 6px;
     }
     .portal-box p {
@@ -236,37 +236,37 @@
   </style>
 </head>
 <body>
-  <!-- 플랫폼 메인 포털 로비 화면 -->
+  <!-- 테스트용 메인 로비 화면 -->
   <div id="portal-screen" class="portal-screen">
     <div class="portal-wrapper">
       <div class="portal-box">
-        <h1 style="color: #4a4035;">✨ 세계 영성 플랫폼</h1>
-        <p>환영합니다! 참여할 프로그램의 방 코드를 입력해 주세요.</p>
+        <h1 style="color: #4a4035;">🧪 소소한 실험실</h1>
+        <p>테스트 중인 공간입니다. 방 코드를 입력하고 입장해 주세요.</p>
       </div>
 
-      <!-- 활성화된 카드 놀이 방 입장 카드 -->
+      <!-- 카드 놀이 방 입장 카드 -->
       <div class="portal-box">
         <h1>🃏 NVC 그로그 카드 놀이</h1>
-        <p>방장이 안내해 준 4자리 방 코드를 입력하세요.</p>
+        <p>전달받은 4자리 방 코드를 입력하세요.</p>
         <input type="text" id="room-code-input" class="portal-input" placeholder="0000" maxlength="4">
-        <button class="portal-btn" onclick="verifyAndEnterRoom()">카드 놀이 입장하기</button>
+        <button class="portal-btn" onclick="verifyAndEnterRoom()">입장하기</button>
         <div id="portal-error" class="portal-error"></div>
       </div>
 
-      <!-- 추후 추가될 영성 서비스 공간 안내 카드 -->
+      <!-- 테스트 중인 개인 공간 안내 카드 -->
       <div class="portal-box coming-soon-card">
-        <h1 style="color: #795548;">🧘‍♀️ 개인 명상실 (준비 중)</h1>
-        <p>고요한 내면을 가꾸는 명상 공간이 곧 열립니다.</p>
+        <h1 style="color: #795548;">🧘‍♂️ 개인 명상실 (구상중)</h1>
+        <p>나만의 휴식을 위한 공간</p>
       </div>
 
       <div class="portal-box coming-soon-card">
-        <h1 style="color: #795548;">📝 감사 글쓰기 (준비 중)</h1>
-        <p>하루의 축복과 감사를 기록하는 공간입니다.</p>
+        <h1 style="color: #795548;">📝 감사 일기 (구상중)</h1>
+        <p>가볍게 기록하는 일상 기록장</p>
       </div>
     </div>
   </div>
 
-  <!-- 실제 카드 게임 앱 화면 (인증 후 진입) -->
+  <!-- 실제 카드 게임 앱 화면 -->
   <div id="game-app-screen" style="display: none; flex: 1; flex-direction: column; height: 100vh; height: 100dvh;">
     <div class="header">
       <h1 style="font-size: 15px; color: #4a4035;">NVC 그로그</h1>
@@ -351,15 +351,14 @@
         location.reload();
       });
 
-      // 카드 게임 방만 종료되고, 플랫폼 대문이나 다른 서비스는 유지되도록 처리
       socket.on('roomClosed', () => {
         document.getElementById('game-app-screen').innerHTML = `
           <div style="height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f4f1ea; text-align: center; padding: 20px;">
-            <h1 style="color: #5d4037; font-size: 22px; margin-bottom: 12px;">🔒 카드 놀이 모임이 종료되었습니다</h1>
+            <h1 style="color: #5d4037; font-size: 22px; margin-bottom: 12px;">🔒 카드 놀이가 종료되었습니다</h1>
             <p style="color: #666; font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
-              오늘 함께해 주셔서 감사합니다.<br>메인 플랫폼으로 돌아가 다른 영성 서비스를 둘러보세요.
+              수고하셨습니다!<br>버튼을 누르면 테스트 대문으로 돌아갑니다.
             </p>
-            <button onclick="location.reload()" style="padding: 10px 20px; background: #8d6e63; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">메인 로비로 돌아가기</button>
+            <button onclick="location.reload()" style="padding: 10px 20px; background: #8d6e63; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">대문으로 돌아가기</button>
           </div>
         `;
       });
