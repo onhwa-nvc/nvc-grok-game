@@ -2,12 +2,10 @@ const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
-const path = require('path');
 
-// 서버가 켜질 때마다 매번 무작위 4자리 방 코드 생성
 const ROOM_CODE = Math.floor(1000 + Math.random() * 9000).toString();
 console.log(`========================================`);
-console.log(`🎲 오늘의 포털 방 코드: [ ${ROOM_CODE} ]`);
+console.log(`🎲 오늘의 카드 게임 방 코드: [ ${ROOM_CODE} ]`);
 console.log(`========================================`);
 
 let gameState = {
@@ -18,41 +16,17 @@ let gameState = {
   cards: { south: "", north: "", east: "", west: "" },
   gifts: { south: [], north: [], east: [], west: [] },
   occupiedSeats: [],
-  seatNames: { south: "", north: "", east: "", west: "" },
+  seatNames: { south: "", north: "", east: "", west: "", center: "" },
   allCards: []
 };
 
-const closedHtml = `
-<!DOCTYPE html>
-<html lang="ko" class="notranslate" translate="no">
-<head>
-  <meta charset="UTF-8">
-  <meta name="google" content="notranslate">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>모임 종료</title>
-</head>
-<body style="background-color: #f4f1ea; font-family: sans-serif; display: flex; height: 100vh; justify-content: center; align-items: center; margin: 0;">
-  <div style="text-align: center; padding: 25px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-    <h1 style="color: #5d4037; font-size: 20px; margin-bottom: 10px;">🔒 모임이 종료되었습니다</h1>
-    <p style="color: #666; font-size: 14px; line-height: 1.5;">
-      오늘 NVC 그로그 카드 놀이에 참여해 주셔서 감사합니다.<br>
-      현재 모임이 종료되어 더 이상 이용하실 수 없습니다.
-    </p>
-  </div>
-</body>
-</html>
-`;
-
-app.use((req, res, next) => {
-  if (gameState.isClosed) {
-    return res.send(closedHtml);
-  }
-  next();
-});
-
-// 클라이언트가 보낸 방 코드가 맞는지 체크하는 API 엔드포인트
+// 플랫폼 전체 대문 페이지는 종료되지 않도록 유지하고, 카드 게임 방 내부 상태만 관리
 app.use(express.json());
+
 app.post('/api/verify-room', (req, res) => {
+  if (gameState.isClosed) {
+    return res.json({ success: false, message: '현재 카드 게임 모임이 종료되었습니다.' });
+  }
   const { code } = req.body;
   if (code === ROOM_CODE) {
     res.json({ success: true });
@@ -144,14 +118,8 @@ function sendStateToAll() {
 io.on('connection', (socket) => {
   socket.seat = null;
 
-  if (gameState.isClosed) {
-    socket.emit('roomClosed');
-    return;
-  }
-
-  // Socket 통신에서도 방 코드 재확인
   const clientRoomCode = socket.handshake.query.roomCode;
-  if (clientRoomCode !== ROOM_CODE) {
+  if (gameState.isClosed || clientRoomCode !== ROOM_CODE) {
     socket.emit('invalidRoomCode');
     return;
   }
