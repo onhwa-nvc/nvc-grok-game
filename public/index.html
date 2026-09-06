@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="mobile-web-app-capable" content="yes">
   
-  <title>NVC 그로그 카드 놀이</title>
+  <title>세계 영성 플랫폼</title>
   <script src="/socket.io/socket.io.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -22,7 +22,7 @@
 
     body { font-family: sans-serif; background-color: #f4f1ea; color: #333; height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; touch-action: pan-x pan-y; }
     
-    /* 포털 로비 화면 스타일 */
+    /* 플랫폼 메인 포털 허브 스타일 */
     .portal-screen {
       display: flex;
       flex-direction: column;
@@ -32,47 +32,54 @@
       background: #f4f1ea;
       padding: 20px;
       text-align: center;
+      overflow-y: auto;
+    }
+    .portal-wrapper {
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
     }
     .portal-box {
       background: white;
-      padding: 30px 25px;
+      padding: 25px 20px;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      width: 100%;
-      max-width: 340px;
+      border: 1px solid #e0dbd0;
     }
     .portal-box h1 {
       color: #5d4037;
-      font-size: 22px;
-      margin-bottom: 8px;
+      font-size: 20px;
+      margin-bottom: 6px;
     }
     .portal-box p {
       color: #666;
       font-size: 13px;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       line-height: 1.4;
     }
     .portal-input {
       width: 100%;
-      padding: 12px;
-      font-size: 18px;
+      padding: 10px;
+      font-size: 16px;
       font-weight: bold;
       text-align: center;
-      letter-spacing: 4px;
+      letter-spacing: 3px;
       border: 2px solid #dcd6cd;
       border-radius: 8px;
       outline: none;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
     .portal-input:focus {
       border-color: #8d6e63;
     }
     .portal-btn {
       width: 100%;
-      padding: 12px;
+      padding: 11px;
       background: #8d6e63;
       color: white;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: bold;
       border: none;
       border-radius: 8px;
@@ -86,8 +93,13 @@
       color: #d32f2f;
       font-size: 12px;
       font-weight: bold;
-      margin-top: 8px;
+      margin-top: 6px;
       min-height: 16px;
+    }
+    .coming-soon-card {
+      background: #faf8f5;
+      border: 1px dashed #d6cfc2;
+      opacity: 0.8;
     }
 
     .header { background: #e8e3d9; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; border-bottom: 1px solid #d6cfc2; flex-shrink: 0; }
@@ -224,18 +236,37 @@
   </style>
 </head>
 <body>
-  <!-- 최초 접속 시 보여지는 포털 로비 화면 -->
+  <!-- 플랫폼 메인 포털 로비 화면 -->
   <div id="portal-screen" class="portal-screen">
-    <div class="portal-box">
-      <h1>NVC 그로그</h1>
-      <p>방장이 알려준 4자리 방 코드를 입력하고<br>입장해 주세요.</p>
-      <input type="text" id="room-code-input" class="portal-input" placeholder="0000" maxlength="4">
-      <button class="portal-btn" onclick="verifyAndEnterRoom()">입장하기</button>
-      <div id="portal-error" class="portal-error"></div>
+    <div class="portal-wrapper">
+      <div class="portal-box">
+        <h1 style="color: #4a4035;">✨ 세계 영성 플랫폼</h1>
+        <p>환영합니다! 참여할 프로그램의 방 코드를 입력해 주세요.</p>
+      </div>
+
+      <!-- 활성화된 카드 놀이 방 입장 카드 -->
+      <div class="portal-box">
+        <h1>🃏 NVC 그로그 카드 놀이</h1>
+        <p>방장이 안내해 준 4자리 방 코드를 입력하세요.</p>
+        <input type="text" id="room-code-input" class="portal-input" placeholder="0000" maxlength="4">
+        <button class="portal-btn" onclick="verifyAndEnterRoom()">카드 놀이 입장하기</button>
+        <div id="portal-error" class="portal-error"></div>
+      </div>
+
+      <!-- 추후 추가될 영성 서비스 공간 안내 카드 -->
+      <div class="portal-box coming-soon-card">
+        <h1 style="color: #795548;">🧘‍♀️ 개인 명상실 (준비 중)</h1>
+        <p>고요한 내면을 가꾸는 명상 공간이 곧 열립니다.</p>
+      </div>
+
+      <div class="portal-box coming-soon-card">
+        <h1 style="color: #795548;">📝 감사 글쓰기 (준비 중)</h1>
+        <p>하루의 축복과 감사를 기록하는 공간입니다.</p>
+      </div>
     </div>
   </div>
 
-  <!-- 실제 게임 앱 화면 (인증 전에는 숨김 처리) -->
+  <!-- 실제 카드 게임 앱 화면 (인증 후 진입) -->
   <div id="game-app-screen" style="display: none; flex: 1; flex-direction: column; height: 100vh; height: 100dvh;">
     <div class="header">
       <h1 style="font-size: 15px; color: #4a4035;">NVC 그로그</h1>
@@ -274,11 +305,9 @@
     let socket = null;
     let selectedCardObj = null;
 
-    // URL 파라미터에 admin=1이 있는지 확인
     const urlParams = new URLSearchParams(window.location.search);
     const isAdmin = urlParams.get('admin') === '1';
 
-    // 포털에서 방 코드 입력 후 입장 버튼을 눌렀을 때
     async function verifyAndEnterRoom() {
       const codeInput = document.getElementById('room-code-input').value.trim();
       const errorDiv = document.getElementById('portal-error');
@@ -297,11 +326,8 @@
         const result = await response.json();
 
         if (result.success) {
-          // 인증 성공 시 로비 숨기고 게임 앱 화면 표시
           document.getElementById('portal-screen').style.display = 'none';
           document.getElementById('game-app-screen').style.display = 'flex';
-
-          // 소켓 연결 시작 (방 코드 전달)
           initSocket(codeInput);
         } else {
           errorDiv.innerText = result.message;
@@ -321,18 +347,19 @@
       }
 
       socket.on('invalidRoomCode', () => {
-        alert("방 코드가 일치하지 않습니다.");
+        alert("방 코드가 일치하지 않거나 모임이 종료되었습니다.");
         location.reload();
       });
 
+      // 카드 게임 방만 종료되고, 플랫폼 대문이나 다른 서비스는 유지되도록 처리
       socket.on('roomClosed', () => {
-        document.body.innerHTML = `
+        document.getElementById('game-app-screen').innerHTML = `
           <div style="height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f4f1ea; text-align: center; padding: 20px;">
-            <h1 style="color: #5d4037; font-size: 22px; margin-bottom: 12px;">🔒 모임이 종료되었습니다</h1>
-            <p style="color: #666; font-size: 14px; line-height: 1.6;">
-              오늘 NVC 그로그 카드 놀이에 참여해 주셔서 감사합니다.<br>
-              더 이상 앱을 사용할 수 없습니다.
+            <h1 style="color: #5d4037; font-size: 22px; margin-bottom: 12px;">🔒 카드 놀이 모임이 종료되었습니다</h1>
+            <p style="color: #666; font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
+              오늘 함께해 주셔서 감사합니다.<br>메인 플랫폼으로 돌아가 다른 영성 서비스를 둘러보세요.
             </p>
+            <button onclick="location.reload()" style="padding: 10px 20px; background: #8d6e63; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">메인 로비로 돌아가기</button>
           </div>
         `;
       });
@@ -344,7 +371,7 @@
     }
 
     function closeRoom() {
-      if (confirm("정말로 모임을 종료하시겠습니까?\n종료 후에는 모든 참가자의 접속이 차단되고 앱을 사용할 수 없게 됩니다.")) {
+      if (confirm("정말로 모임을 종료하시겠습니까?\n종료 후에는 모든 참가자의 카드 세션이 닫히게 됩니다.")) {
         socket.emit('closeRoom');
       }
     }
@@ -408,7 +435,7 @@
         } else if (docEl.webkitRequestFullscreen) {
           docEl.webkitRequestFullscreen();
         } else {
-          alert("이 브라우저는 전체화면 버튼을 지원하지 않습니다. Safari의 경우 [공유] -> [홈 화면에 추가]를 이용해 주세요!");
+          alert("이 브라우저는 전체화면 버튼을 지원하지 않습니다.");
         }
       } else {
         if (document.exitFullscreen) {
@@ -625,10 +652,6 @@
             <div class="player-table west" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'west')" onclick="handleSeatClick('west')">
               ${renderSeatHeaderHtml('west')}
               ${renderGiftSlots('west', true)}
-            </div>
-
-            <div class="grid-center" ondragover="handleDragOver(event)" ondrop="handleCenterDrop(event)">
-              ${gridCardsHtml}
             </div>
 
             <div class="grid-center" ondragover="handleDragOver(event)" ondrop="handleCenterDrop(event)">
