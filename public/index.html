@@ -20,16 +20,15 @@
       --card-height: 40px;
     }
 
-    body { font-family: sans-serif; background-color: #f4f1ea; color: #333; height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; touch-action: pan-x pan-y; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f2eee3; color: #333; height: 100vh; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; touch-action: pan-x pan-y; }
     
-    /* 대문 로비 스타일 (테스트용) */
     .portal-screen {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
-      background: #f4f1ea;
+      background: #f2eee3;
       padding: 20px;
       text-align: center;
       overflow-y: auto;
@@ -44,12 +43,12 @@
     .portal-box {
       background: white;
       padding: 25px 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      border: 1px solid #e0dbd0;
+      border-radius: 14px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      border: 1px solid #e2ded4;
     }
     .portal-box h1 {
-      color: #5d4037;
+      color: #4a3b32;
       font-size: 19px;
       margin-bottom: 6px;
     }
@@ -61,34 +60,35 @@
     }
     .portal-input {
       width: 100%;
-      padding: 10px;
-      font-size: 16px;
+      padding: 12px;
+      font-size: 18px;
       font-weight: bold;
       text-align: center;
-      letter-spacing: 3px;
-      border: 2px solid #dcd6cd;
-      border-radius: 8px;
+      letter-spacing: 4px;
+      border: 2px solid #d5cebf;
+      border-radius: 10px;
       outline: none;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      background: #faf8f5;
     }
     .portal-input:focus {
       border-color: #8d6e63;
+      background: #fff;
     }
     .portal-btn {
       width: 100%;
-      padding: 11px;
-      background: #8d6e63;
+      padding: 12px;
+      background: linear-gradient(135deg, #8d6e63, #6d4c41);
       color: white;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: bold;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 3px 8px rgba(109,76,65,0.25);
+      transition: transform 0.1s, opacity 0.1s;
     }
-    .portal-btn:active {
-      background: #6d4c41;
-    }
+    .portal-btn:active { transform: scale(0.98); opacity: 0.9; }
     .portal-error {
       color: #d32f2f;
       font-size: 12px;
@@ -102,37 +102,54 @@
       opacity: 0.8;
     }
 
-    .header { background: #e8e3d9; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; border-bottom: 1px solid #d6cfc2; flex-shrink: 0; }
-    .header-group { display: flex; align-items: center; gap: 5px; }
+    .header { 
+      background: #e6dfd1; 
+      padding: 8px 12px; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      flex-wrap: wrap; 
+      gap: 8px; 
+      border-bottom: 1px solid #d4ccc0; 
+      flex-shrink: 0; 
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+    .header-group { display: flex; align-items: center; gap: 6px; }
     
     .type-btn, .mode-btn, .view-btn, .font-btn, .fullscreen-btn, .close-room-btn, .reset-btn { 
-      padding: 7px 12px; 
+      padding: 6px 11px; 
       border: none; 
       border-radius: 8px; 
       cursor: pointer; 
-      font-weight: bold; 
-      font-size: 14px; 
-      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+      font-weight: 600; 
+      font-size: 13px; 
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      transition: all 0.15s ease;
+    }
+    .type-btn:active, .mode-btn:active, .view-btn:active, .font-btn:active, .fullscreen-btn:active, .reset-btn:active {
+      transform: translateY(1px);
+      box-shadow: none;
     }
     
-    .btn-type-emotion.active { background: #f8bbd0; color: #880e4f; }
-    .btn-type-need.active { background: #b3e5fc; color: #01579b; }
-    .btn-type-both.active { background: #d1c4e9; color: #4a148c; }
-    .btn-type-inactive { background: #dcd6cd; color: #666; }
-    .btn-mode-active { background: #ffe082; color: #5d4037; }
-    .btn-mode-inactive { background: #dcd6cd; color: #666; }
+    .btn-type-emotion.active { background: #f8bbd0; color: #880e4f; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
+    .btn-type-need.active { background: #b3e5fc; color: #01579b; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
+    .btn-type-both.active { background: #d1c4e9; color: #4a148c; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
+    .btn-type-inactive { background: #dcd4c5; color: #666; }
+
+    .btn-mode-active { background: #ffe082; color: #5d4037; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
+    .btn-mode-inactive { background: #dcd4c5; color: #666; }
     
-    .font-btn { background: #795548; color: white; padding: 5px 10px; font-size: 13px; }
-    .fullscreen-btn { background: #ff9800; color: white; }
-    .reset-btn { background: #607d8b; color: white; }
-    .close-room-btn { background: #d32f2f; color: white; }
+    .font-btn { background: #795548; color: white; padding: 4px 9px; font-size: 12px; }
+    .fullscreen-btn { background: #fb8c00; color: white; }
+    .reset-btn { background: #546e7a; color: white; }
+    .close-room-btn { background: #e53935; color: white; }
 
     .main-container { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; position: relative; }
 
     .game-board { flex: 1; display: grid; grid-template-rows: 95px 1fr 95px; grid-template-columns: 85px 1fr 85px; gap: 4px; padding: 4px; height: 100%; width: 100%; min-width: 320px; }
     .grid-board { flex: 1; display: grid; grid-template-rows: 90px 1fr 90px; grid-template-columns: 85px 1fr 85px; gap: 4px; padding: 4px; height: 100%; width: 100%; min-width: 320px; overflow: hidden; }
 
-    .player-table { background: #ffffff; border-radius: 6px; border: 1px dashed #c8c2b7; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.04); cursor: pointer; overflow: hidden; width: 100%; }
+    .player-table { background: #ffffff; border-radius: 8px; border: 1px solid #e0dabf; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2px; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.04); cursor: pointer; overflow: hidden; width: 100%; }
     
     .seat-control-box { display: flex; align-items: center; justify-content: center; gap: 3px; width: 100%; margin-bottom: 2px; }
     .seat-ui-vertical { flex-direction: column; }
@@ -154,16 +171,26 @@
     
     .north { grid-row: 1; grid-column: 1 / 4; }
     .west { grid-row: 2; grid-column: 1; }
-    .center { grid-row: 2; grid-column: 2; border: none; background: transparent; box-shadow: none; cursor: default; }
+    
+    .center { 
+      grid-row: 2; 
+      grid-column: 2; 
+      border: 2px solid #d5ccb8; 
+      background: linear-gradient(145deg, #eae3d2, #dcd4c0); 
+      border-radius: 12px; 
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.06); 
+      cursor: default; 
+    }
+    
     .east { grid-row: 2; grid-column: 3; }
-    .south { grid-row: 3; grid-column: 1 / 4; background: #fbf9f5; }
+    .south { grid-row: 3; grid-column: 1 / 4; background: #faf7f0; }
     
     .card { 
       width: var(--card-width) !important; 
       min-width: var(--card-width) !important; 
       height: var(--card-height) !important; 
       min-height: var(--card-height) !important; 
-      border-radius: 5px; 
+      border-radius: 6px; 
       font-size: var(--card-font-size) !important; 
       font-weight: bold; 
       display: flex; 
@@ -171,7 +198,7 @@
       justify-content: center; 
       text-align: center; 
       padding: 2px; 
-      box-shadow: 0 1px 2px rgba(0,0,0,0.08); 
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
       flex-shrink: 0 !important; 
       word-break: keep-all; 
     }
@@ -181,14 +208,14 @@
     .card-front-emotion { background: #fff0f5; color: #c2185b; border: 1.5px solid #e91e63; }
     .card-front-need { background: #f0f8ff; color: #0288d1; border: 1.5px solid #03a9f4; }
 
-    .grid-center { grid-row: 2; grid-column: 2; background: #e2ddd3; border-radius: 6px; padding: 4px 2px; overflow-y: auto; overflow-x: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--card-width), 1fr)); gap: 3px; align-content: flex-start; justify-items: center; width: 100%; height: 100%; }
+    .grid-center { grid-row: 2; grid-column: 2; background: #ded6c2; border-radius: 8px; border: 2px solid #d0c6b0; padding: 6px 4px; overflow-y: auto; overflow-x: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--card-width), 1fr)); gap: 4px; align-content: flex-start; justify-items: center; width: 100%; height: 100%; box-shadow: inset 0 2px 5px rgba(0,0,0,0.06); }
     
     .mini-card { 
       width: var(--card-width) !important; 
       min-width: var(--card-width) !important; 
       height: var(--card-height) !important; 
       min-height: var(--card-height) !important; 
-      border-radius: 5px; 
+      border-radius: 6px; 
       font-size: var(--card-font-size) !important; 
       font-weight: bold; 
       display: flex; 
@@ -196,7 +223,7 @@
       justify-content: center; 
       text-align: center; 
       cursor: pointer; 
-      box-shadow: 0 1px 2px rgba(0,0,0,0.08); 
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
       transition: transform 0.1s, border 0.1s; 
       flex-shrink: 0 !important; 
       word-break: keep-all; 
@@ -210,8 +237,9 @@
     .gift-slots-vertical { display: flex; flex-direction: column; gap: 3px; overflow-y: auto; overflow-x: hidden; max-height: 100%; padding: 1px; height: 100%; width: 100%; align-items: center; justify-content: safe center; -webkit-overflow-scrolling: touch; }
 
     .deck { cursor: pointer; }
-    .center-controls { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-    .action-btn { padding: 8px 14px; border: none; border-radius: 8px; background: #ffa726; color: white; font-weight: bold; cursor: pointer; font-size: 13px; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+    .center-controls { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 6px; }
+    .action-btn { padding: 7px 12px; border: none; border-radius: 8px; background: #fb8c00; color: white; font-weight: bold; cursor: pointer; font-size: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); transition: transform 0.1s; }
+    .action-btn:active { transform: scale(0.97); }
 
     @media (orientation: landscape) and (max-height: 500px) {
       .header { padding: 3px 6px; }
@@ -236,15 +264,13 @@
   </style>
 </head>
 <body>
-  <!-- 테스트용 메인 로비 화면 -->
   <div id="portal-screen" class="portal-screen">
     <div class="portal-wrapper">
       <div class="portal-box">
-        <h1 style="color: #4a4035;">🧪 소소한 실험실</h1>
+        <h1 style="color: #4a3b32;">🧪 소소한 실험실</h1>
         <p>테스트 중인 공간입니다. 방 코드를 입력하고 입장해 주세요.</p>
       </div>
 
-      <!-- 카드 놀이 방 입장 카드 -->
       <div class="portal-box">
         <h1>🃏 NVC 그로그 카드 놀이</h1>
         <p>전달받은 4자리 방 코드를 입력하세요.</p>
@@ -253,7 +279,6 @@
         <div id="portal-error" class="portal-error"></div>
       </div>
 
-      <!-- 테스트 중인 개인 공간 안내 카드 -->
       <div class="portal-box coming-soon-card">
         <h1 style="color: #795548;">🧘‍♂️ 개인 명상실 (구상중)</h1>
         <p>나만의 휴식을 위한 공간</p>
@@ -266,14 +291,14 @@
     </div>
   </div>
 
-  <!-- 실제 카드 게임 앱 화면 -->
   <div id="game-app-screen" style="display: none; flex: 1; flex-direction: column; height: 100vh; height: 100dvh;">
     <div class="header">
-      <h1 style="font-size: 15px; color: #4a4035;">NVC 그로그</h1>
+      <h1 style="font-size: 15px; color: #4a3b32; font-weight: 700;">NVC 그로그</h1>
       
-      <div class="header-group">
-        <button id="view-board" class="view-btn btn-mode-active" onclick="setViewMode('board')">카드 덱</button>
-        <button id="view-grid" class="view-btn btn-mode-inactive" onclick="setViewMode('grid')">전체 보기</button>
+      <!-- '카드 덱'에서 '카드 더미'로 문구 변경 -->
+      <div class="header-group" style="background: rgba(0,0,0,0.03); padding: 3px; border-radius: 10px;">
+        <button id="view-board" class="view-btn btn-mode-active" onclick="setViewMode('board')">카드 더미</button>
+        <button id="view-grid" class="view-btn btn-mode-inactive" onclick="setViewMode('grid')">카드 전체보기</button>
       </div>
 
       <div class="header-group">
@@ -282,7 +307,7 @@
         <button id="type-both" class="type-btn btn-type-inactive" onclick="setCardType('both')">느낌+욕구</button>
       </div>
 
-      <div class="header-group">
+      <div class="header-group" style="background: rgba(0,0,0,0.03); padding: 3px; border-radius: 10px;">
         <button id="mode1" class="mode-btn btn-mode-active" onclick="setMode('me')">나만 보기</button>
         <button id="mode2" class="mode-btn btn-mode-inactive" onclick="setMode('others')">나만 안보기</button>
       </div>
@@ -353,12 +378,12 @@
 
       socket.on('roomClosed', () => {
         document.getElementById('game-app-screen').innerHTML = `
-          <div style="height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f4f1ea; text-align: center; padding: 20px;">
-            <h1 style="color: #5d4037; font-size: 22px; margin-bottom: 12px;">🔒 카드 놀이가 종료되었습니다</h1>
+          <div style="height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f2eee3; text-align: center; padding: 20px;">
+            <h1 style="color: #4a3b32; font-size: 22px; margin-bottom: 12px;">🔒 카드 놀이가 종료되었습니다</h1>
             <p style="color: #666; font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
               수고하셨습니다!<br>버튼을 누르면 테스트 대문으로 돌아갑니다.
             </p>
-            <button onclick="location.reload()" style="padding: 10px 20px; background: #8d6e63; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">대문으로 돌아가기</button>
+            <button onclick="location.reload()" style="padding: 10px 20px; background: #8d6e63; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">대문으로 돌아가기</button>
           </div>
         `;
       });
@@ -538,7 +563,7 @@
                 </div>`;
       } else if (isOccupied) {
         return `<div class="${boxClass}" onclick="event.stopPropagation()">
-                  <span class="player-name-display" style="color:#4a4035;">${seatName}</span>
+                  <span class="player-name-display" style="color:#4a3b32;">${seatName}</span>
                   <div class="btn-group-row">
                     <button class="seat-act-btn btn-sit" disabled>착석</button>
                     <button class="seat-act-btn btn-leave" disabled>자리 비우기</button>
