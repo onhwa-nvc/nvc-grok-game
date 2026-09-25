@@ -1,5 +1,5 @@
 {
-  "name": "nvc-card-game",
+  "name": "nvc-grok-game",
   "version": "1.0.0",
   "description": "NVC Grok Card Game",
   "main": "server.js",
