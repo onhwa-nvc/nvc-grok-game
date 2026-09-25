@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>테스트 공간 - 함께하는 여정</title>
     <style>
         * { box-sizing: border-box; }
@@ -175,7 +175,6 @@
                 <div class="card-arrow">›</div>
             </div>
 
-            <!-- 일반 유저는 참여 모달로 연결 -->
             <div class="card-box cardgame-card" onclick="openParticipantModal()">
                 <div class="card-left">
                     <div class="card-icon-circle" style="color: #7c6f9f;">🃏</div>
@@ -229,19 +228,15 @@
                     <span>감사일기</span>
                 </button>
             </div>
-            <!-- 우측 하단 열쇠 아이콘 (오직 방장만 아는 관리자 인증 통로) -->
             <button class="admin-corner-btn" onclick="openPasswordModal()" title="관리자 인증">🔑</button>
         </div>
     </div>
 
-    <!-- 관리자 비밀번호 입력 팝업 -->
     <div id="passwordModal" class="modal-overlay" onclick="closePasswordModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <h3 style="color: #7c6f9f;">🔐 관리자 인증</h3>
             <p>방장 비밀번호를 입력해주세요</p>
-            
             <input type="password" id="adminPwInput" class="room-code-input" placeholder="비밀번호 입력" maxlength="20">
-            
             <div class="modal-btn-group">
                 <button class="modal-btn btn-cancel" onclick="closePasswordModal()">취소</button>
                 <button class="modal-btn btn-enter" onclick="verifyAdminPassword()">확인</button>
@@ -249,14 +244,11 @@
         </div>
     </div>
 
-    <!-- 방장 전용: 방 코드 생성 및 개설 팝업 -->
     <div id="hostModal" class="modal-overlay" onclick="closeHostModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <h3 style="color: #7c6f9f;">✨ 방장 미팅룸 개설</h3>
-            <p>세션에 사용할 <b>4자리 방 코드</b>를 생성하세요.<br>(이 코드를 참여자에게 알려주세요)</p>
-            
-            <input type="text" id="customRoomCodeInput" class="room-code-input" placeholder="예: 5821" maxlength="6">
-            
+            <p>세션에 사용할 <b>방 코드</b>를 설정하세요.</p>
+            <input type="text" id="customRoomCodeInput" class="room-code-input" placeholder="예: 1234" maxlength="6">
             <div class="modal-btn-group">
                 <button class="modal-btn btn-cancel" onclick="generateRandomCode()">랜덤 생성</button>
                 <button class="modal-btn btn-enter" onclick="enterAsHost()">방 만들기 및 입장</button>
@@ -264,14 +256,11 @@
         </div>
     </div>
 
-    <!-- 일반 참여자 전용: 방 코드 입력 팝업 -->
     <div id="roomModal" class="modal-overlay" onclick="closeRoomModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <h3>방 참여하기</h3>
-            <p>방장에게 공유받은 4자리 방 코드를 입력하세요</p>
-            
-            <input type="text" id="roomCodeInput" class="room-code-input" placeholder="예: 5821" maxlength="6">
-            
+            <p>방장에게 공유받은 방 코드를 입력하세요</p>
+            <input type="text" id="roomCodeInput" class="room-code-input" placeholder="예: 1234" maxlength="6">
             <div class="modal-btn-group">
                 <button class="modal-btn btn-cancel" onclick="closeRoomModal()">취소</button>
                 <button class="modal-btn btn-enter" onclick="confirmEnterRoom()">입장하기</button>
@@ -280,7 +269,6 @@
     </div>
 
     <script>
-        // 방장 비밀번호 설정 (0318)
         const ADMIN_PASSWORD = "0318"; 
 
         function openPasswordModal() {
@@ -289,13 +277,10 @@
             document.getElementById('adminPwInput').focus();
         }
 
-        function closePasswordModal() {
-            document.getElementById('passwordModal').style.display = "none";
-        }
+        function closePasswordModal() { document.getElementById('passwordModal').style.display = "none"; }
 
         function verifyAdminPassword() {
             const inputPw = document.getElementById('adminPwInput').value;
-
             if (inputPw === ADMIN_PASSWORD) {
                 closePasswordModal();
                 const randomCode = Math.floor(1000 + Math.random() * 9000).toString();
@@ -309,24 +294,14 @@
             }
         }
 
-        function closeHostModal() {
-            document.getElementById('hostModal').style.display = "none";
-        }
-
+        function closeHostModal() { document.getElementById('hostModal').style.display = "none"; }
         function generateRandomCode() {
-            const randomCode = Math.floor(1000 + Math.random() * 9000).toString();
-            document.getElementById('customRoomCodeInput').value = randomCode;
+            document.getElementById('customRoomCodeInput').value = Math.floor(1000 + Math.random() * 9000).toString();
         }
 
-        // 방장이 방을 만들 때: 세션 상태를 브라우저 전체에 안전하게 기록하고 입장
         function enterAsHost() {
             const code = document.getElementById('customRoomCodeInput').value.trim();
-            if (!code) {
-                alert("방 코드를 입력해주세요!");
-                return;
-            }
-            // 세션 기록 (브라우저 간 테스트를 위해 localStorage와 sessionStorage 동시 활용)
-            localStorage.setItem("nvc_active_room_" + code, "true");
+            if (!code) { alert("방 코드를 입력해주세요!"); return; }
             closeHostModal();
             location.href = 'game.html?room=' + code;
         }
@@ -337,26 +312,11 @@
             document.getElementById('roomCodeInput').focus();
         }
 
-        function closeRoomModal() {
-            document.getElementById('roomModal').style.display = "none";
-        }
+        function closeRoomModal() { document.getElementById('roomModal').style.display = "none"; }
 
-        // 참여자가 방에 들어올 때 검증
         function confirmEnterRoom() {
             const code = document.getElementById('roomCodeInput').value.trim();
-            if (!code) {
-                alert("방 코드를 입력해주세요!");
-                return;
-            }
-
-            // [보안 및 연동 검증] 방장이 생성한 방 코드이거나, 테스트용 마스터 코드(1234)일 때만 통과
-            const isValid = localStorage.getItem("nvc_active_room_" + code) || code === "1234";
-
-            if (!isValid) {
-                alert("존재하지 않거나 유효하지 않은 방 코드입니다. 방장에게 올바른 코드를 확인해 주세요!");
-                return;
-            }
-
+            if (!code) { alert("방 코드를 입력해주세요!"); return; }
             location.href = 'game.html?room=' + code;
         }
     </script>
