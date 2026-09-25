@@ -21,14 +21,15 @@ const activeRooms = new Set();
 io.on('connection', (socket) => {
     console.log(`사용자 접속됨: ${socket.id}`);
 
-    socket.on('createRoom', () => {
-        let roomCode;
-        do {
-            roomCode = Math.floor(1000 + Math.random() * 9000).toString();
-        } while (activeRooms.has(roomCode));
+    // 방장이 지정한 커스텀 코드로 방 생성
+    socket.on('createCustomRoom', (roomCode) => {
+        if (activeRooms.has(roomCode)) {
+            socket.emit('roomCreateError', "이미 사용 중인 방 코드입니다. 다른 코드를 입력해주세요.");
+            return;
+        }
 
         activeRooms.add(roomCode);
-        console.log(`방 생성됨: ${roomCode}`);
+        console.log(`관리자 모드: 방 [${roomCode}] 생성됨`);
         socket.emit('roomCreated', roomCode);
     });
 
