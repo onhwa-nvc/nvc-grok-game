@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NVC 그로그 카드 놀이 - 로비</title>
+    <title>NVC 그로그 카드 놀이 - 메인 로비</title>
     <script src="/socket.io/socket.io.js"></script>
     <style>
         * { box-sizing: border-box; }
@@ -14,45 +14,63 @@
             display: flex; justify-content: center; align-items: center;
             min-height: 100vh; min-height: 100dvh;
         }
-        .lobby-card {
+        .lobby-container {
             background: #ffffff;
-            padding: 30px;
+            padding: 35px 30px;
             border-radius: 16px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             border: 1px solid #e6ded1;
-            width: 90%; max-width: 400px;
+            width: 90%; max-width: 420px;
             text-align: center;
         }
-        h2 { color: #334155; margin-bottom: 20px; }
-        .btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        h1 { color: #334155; font-size: 22px; margin-bottom: 8px; }
+        p { color: #64748b; font-size: 13px; margin-bottom: 24px; }
+        
+        .menu-section {
+            display: flex; flex-direction: column; gap: 14px;
+        }
         .input-box {
             width: 100%; padding: 12px;
             border: 1px solid #cbd5e1; border-radius: 10px;
             font-size: 15px; text-align: center; outline: none;
+            background-color: #f8fafc;
         }
-        .action-btn {
+        .input-box:focus { border-color: #be185d; background-color: #fff; }
+
+        .main-btn {
             background-color: #be185d; color: #ffffff;
-            border: none; border-radius: 10px; padding: 12px;
+            border: none; border-radius: 10px; padding: 13px;
             font-size: 15px; font-weight: bold; cursor: pointer;
             transition: background-color 0.2s;
         }
-        .action-btn:hover { background-color: #9d174d; }
+        .main-btn:hover { background-color: #9d174d; }
+
         .sub-btn {
             background-color: #f1f5f9; color: #475569;
             border: 1px solid #cbd5e1;
         }
         .sub-btn:hover { background-color: #e2e8f0; }
+
+        .divider {
+            margin: 8px 0; border-top: 1px dashed #cbd5e1;
+        }
     </style>
 </head>
 <body>
 
-    <div class="lobby-card">
-        <h2>NVC 그로그 카드 놀이</h2>
-        <div class="btn-group">
-            <button class="action-btn" onclick="createRoom()">방 만들기 (방장)</button>
-            <div style="margin: 10px 0; border-top: 1px dashed #cbd5e1;"></div>
+    <div class="lobby-container">
+        <h1>NVC 그로그 카드 놀이</h1>
+        <p>마음을 나누는 따뜻한 소통 공간</p>
+
+        <div class="menu-section">
+            <!-- 방장으로 새 방 만들기 -->
+            <button class="main-btn" onclick="createRoom()">새 방 만들기 (방장)</button>
+            
+            <div class="divider"></div>
+
+            <!-- 참여자로 방 코드 입력 후 입장 -->
             <input type="text" id="roomCodeInput" class="input-box" placeholder="4자리 방 코드 입력">
-            <button class="action-btn sub-btn" onclick="joinRoom()">방 입장하기</button>
+            <button class="main-btn sub-btn" onclick="joinRoom()">방 입장하기</button>
         </div>
     </div>
 
@@ -63,12 +81,12 @@
         });
 
         function createRoom() {
-            // 방장 권한으로 새 방 생성 요청
+            // 서버에 새 방 생성 요청
             socket.emit('createRoom');
         }
 
+        // 서버로부터 방 코드를 받으면 호스트(방장) 권한을 가지고 게임방으로 이동
         socket.on('roomCreated', (roomCode) => {
-            // 방 생성 성공 시 방장 권한 토큰과 함께 게임방으로 이동
             location.href = `game.html?room=${roomCode}&host=true`;
         });
 
@@ -78,10 +96,11 @@
                 alert("방 코드를 입력해주세요!");
                 return;
             }
-            // 방 존재 여부 확인 후 입장
+            // 서버에 방 존재 여부 확인 요청
             socket.emit('checkRoomExists', code);
         }
 
+        // 서버의 방 검증 결과 수신
         socket.on('roomCheckResult', (data) => {
             if (data.exists) {
                 location.href = `game.html?room=${data.roomCode}`;
