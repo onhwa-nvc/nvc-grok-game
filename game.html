@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NVC 그로그 카드 놀이</title>
-    <!-- 실시간 소켓 라이브러리 -->
     <script src="/socket.io/socket.io.js"></script>
     <style>
         * { box-sizing: border-box; }
@@ -23,7 +22,7 @@
             border-radius: 0;
             display: flex; flex-direction: column;
             justify-content: space-between;
-            padding: 6px;
+            padding: 8px;
             overflow: hidden;
         }
 
@@ -38,23 +37,24 @@
 
         .top-control-bar {
             display: flex; justify-content: center; align-items: center;
-            flex-wrap: wrap; gap: 4px; background: #ffffff;
-            padding: 6px 8px; border-radius: 10px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;
+            flex-wrap: wrap; gap: 6px; background: #ffffff;
+            padding: 8px 12px; border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;
             z-index: 20; width: 100%; flex-shrink: 0;
         }
 
-        .control-group { display: flex; gap: 3px; align-items: center; }
-        .control-group.mode-group { background-color: #f1f5f9; padding: 2px 4px; border-radius: 6px; }
-        .control-label { font-size: 10px; font-weight: bold; color: #334155; }
+        .control-group { display: flex; gap: 4px; align-items: center; }
+        .control-group.mode-group { background-color: #f1f5f9; padding: 4px 8px; border-radius: 8px; border: 1px solid #cbd5e1; }
+        .control-label { font-size: 11px; font-weight: bold; color: #334155; }
 
         .mode-btn, .select-deck-btn, .view-all-btn, .fullscreen-btn, .font-zoom-btn, .lobby-back-btn {
-            font-size: 10.5px; font-weight: bold; padding: 4px 7px; border-radius: 6px;
-            border: 1px solid #cbd5e1; cursor: pointer; background-color: #ffffff; color: #475569;
+            font-size: 11px; font-weight: bold; padding: 5px 10px; border-radius: 8px;
+            border: 1px solid #cbd5e1; cursor: pointer; transition: all 0.2s;
+            background-color: #ffffff; color: #475569;
         }
 
         .lobby-back-btn { background-color: #f3ede2; color: #78716c; border-color: #d6c9b4; }
-        .room-badge { background-color: #fdf2f8; color: #be185d; border: 1px solid #f472b6; font-size: 10.5px; font-weight: bold; padding: 4px 6px; border-radius: 6px; }
+        .room-badge { background-color: #fdf2f8; color: #be185d; border: 1px solid #f472b6; font-size: 11px; font-weight: bold; padding: 5px 8px; border-radius: 8px; }
 
         .mode-btn.active, .select-deck-btn.active { background-color: #64748b; color: #ffffff; border-color: #64748b; }
         .btn-feeling-active { background-color: #be185d !important; color: #ffffff !important; border-color: #be185d !important; }
@@ -62,99 +62,99 @@
 
         .game-board-layout {
             display: grid;
-            grid-template-columns: 110px 1fr 110px;
-            grid-template-rows: 110px 1fr 110px;
-            gap: 4px; flex-grow: 1; width: 100%; min-height: 0; margin: 2px 0;
+            grid-template-columns: 140px 1fr 140px;
+            grid-template-rows: 135px 1fr 135px;
+            gap: 8px; flex-grow: 1; width: 100%; min-height: 0; margin: 4px 0;
             align-items: center; justify-items: center;
         }
 
         .table-area {
-            background-color: #ffffff; border: 1px solid #e6ded1; border-radius: 8px;
-            padding: 3px; display: flex; align-items: center; justify-content: center; gap: 4px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02); width: 100%; height: 100%; min-height: 0; overflow: auto;
+            background-color: #ffffff; border: 1px solid #e6ded1; border-radius: 10px;
+            padding: 6px; display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03); width: 100%; height: 100%; min-height: 0; overflow: auto;
         }
 
-        .area-north { grid-column: 2; grid-row: 1; width: 100%; height: 110px; flex-direction: row; }
-        .area-south { grid-column: 2; grid-row: 3; width: 100%; height: 110px; flex-direction: row; }
-        .area-west { grid-column: 1; grid-row: 1 / span 3; width: 110px; height: 100%; flex-direction: column; }
-        .area-east { grid-column: 3; grid-row: 1 / span 3; width: 110px; height: 100%; flex-direction: column; }
+        .area-north { grid-column: 2; grid-row: 1; width: 100%; height: 135px; flex-direction: row; }
+        .area-south { grid-column: 2; grid-row: 3; width: 100%; height: 135px; flex-direction: row; }
+        .area-west { grid-column: 1; grid-row: 1 / span 3; width: 140px; height: 100%; flex-direction: column; }
+        .area-east { grid-column: 3; grid-row: 1 / span 3; width: 140px; height: 100%; flex-direction: column; }
 
         .center-area-wrapper {
             grid-column: 2; grid-row: 2; display: flex; justify-content: center; align-items: center;
-            width: 100%; height: 100%; min-height: 0; padding: 2px; overflow: hidden;
+            width: 100%; height: 100%; min-height: 0; padding: 4px; overflow: hidden;
         }
 
         .center-deck-slot {
-            width: 95px; height: 125px; background-color: #ffffff; border: 2px dashed #cbd5e1;
-            border-radius: 10px; display: flex; flex-direction: column; justify-content: center;
-            align-items: center; text-align: center; cursor: pointer; padding: 4px; box-shadow: 0 3px 10px rgba(0,0,0,0.03);
+            width: 120px; height: 150px; background-color: #ffffff; border: 2px dashed #cbd5e1;
+            border-radius: 12px; display: flex; flex-direction: column; justify-content: center;
+            align-items: center; text-align: center; cursor: pointer; padding: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
         }
         .center-deck-slot.active-feeling { background-color: #fdf2f8; border: 2px solid #be185d; color: #be185d; }
         .center-deck-slot.active-need { background-color: #f0f9ff; border: 2px solid #0284c7; color: #0284c7; }
 
         .center-board-area {
             width: 100%; height: 100%; background-color: #ffffff; border: 1px solid #e2e8f0;
-            border-radius: 8px; padding: 3px; display: grid; grid-template-columns: repeat(auto-fill, minmax(58px, 1fr));
-            grid-auto-rows: 28px; gap: 2px; overflow-y: auto; align-content: start;
+            border-radius: 10px; padding: 6px; display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+            grid-auto-rows: 36px; gap: 4px; overflow-y: auto; align-content: start;
         }
 
         .board-card-item {
-            border-radius: 4px; height: 28px; display: flex; justify-content: center; align-items: center;
-            font-size: 10px; font-weight: bold; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+            border-radius: 5px; height: 36px; display: flex; justify-content: center; align-items: center;
+            font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
         .board-card-item.selected-feeling { background-color: #f472b6 !important; color: #ffffff !important; border: 2px solid #831843 !important; }
         .board-card-item.selected-need { background-color: #38bdf8 !important; color: #ffffff !important; border: 2px solid #0369a1 !important; }
-        .board-card-empty { height: 28px; background-color: transparent; border: 1px dashed transparent; pointer-events: none; }
+        .board-card-empty { height: 36px; background-color: transparent; border: 1px dashed transparent; pointer-events: none; }
 
-        .name-badge { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 2px 3px; text-align: center; width: 72px; flex-shrink: 0; }
+        .name-badge { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 4px 6px; text-align: center; width: 90px; flex-shrink: 0; }
         .badge-north-active { background-color: #f0fdf4 !important; border-color: #bbf7d0 !important; }
         .badge-south-active { background-color: #fefce8 !important; border-color: #fef08a !important; }
         .badge-west-active  { background-color: #faf5ff !important; border-color: #e9d5ff !important; }
         .badge-east-active  { background-color: #fff1f2 !important; border-color: #fecdd3 !important; }
 
-        .seat-name { font-size: 10px; font-weight: bold; color: #334155; }
-        .seat-btn { font-size: 8.5px; padding: 1px 2px; background-color: #ffffff; border-radius: 3px; border: 1px solid #cbd5e1; cursor: pointer; margin-top: 1px; }
+        .seat-name { font-size: 12px; font-weight: bold; color: #334155; }
+        .seat-btn { font-size: 10px; padding: 2px 4px; background-color: #ffffff; border-radius: 3px; border: 1px solid #cbd5e1; cursor: pointer; margin-top: 2px; }
 
         .card-slot {
-            width: 82px; height: 82px; border-radius: 8px; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; text-align: center; cursor: pointer; padding: 3px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.04); white-space: nowrap; flex-shrink: 0;
+            width: 105px; height: 105px; border-radius: 12px; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center; cursor: pointer; padding: 6px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.04); white-space: nowrap; flex-shrink: 0;
         }
         .game-container.mode-board .card-slot { display: none; }
 
         .gift-box-grid { display: none; }
         .game-container.mode-board .gift-box-grid {
-            display: flex; flex-direction: row; flex-wrap: wrap; gap: 2px; width: 100%; max-width: 250px; max-height: 75px; overflow-y: auto;
+            display: flex; flex-direction: row; flex-wrap: wrap; gap: 4px; width: 100%; max-width: 340px; max-height: 90px; overflow-y: auto;
         }
         .game-container.mode-board .area-west .gift-box-grid,
         .game-container.mode-board .area-east .gift-box-grid {
-            flex-direction: column; max-width: 60px; max-height: 160px;
+            flex-direction: column; max-width: 80px; max-height: 200px;
         }
         .gift-slot {
-            background-color: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 3px;
-            min-width: 35px; height: 24px; display: flex; justify-content: center; align-items: center; font-size: 9.5px; font-weight: bold; cursor: pointer;
+            background-color: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 4px;
+            min-width: 45px; height: 32px; display: flex; justify-content: center; align-items: center; font-size: 11px; font-weight: bold; cursor: pointer;
         }
         .gift-slot.has-feeling { background-color: #fdf2f8 !important; border: 1px solid #be185d !important; color: #be185d !important; }
         .gift-slot.has-need { background-color: #f0f9ff !important; border: 1px solid #0284c7 !important; color: #0284c7 !important; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.4); display: none; justify-content: center; align-items: center; z-index: 100; }
-        .modal-content { background-color: #ffffff; width: 92vw; max-width: 750px; height: 80vh; max-height: 650px; border-radius: 14px; display: flex; flex-direction: column; overflow: hidden; }
-        .modal-header { padding: 10px 14px; background-color: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
-        .modal-body { padding: 10px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 5px; }
-        .all-card-item { border-radius: 5px; height: 36px; display: flex; justify-content: center; align-items: center; font-size: 12px; font-weight: bold; }
+        .modal-content { background-color: #ffffff; width: 90vw; max-width: 750px; height: 80vh; max-height: 650px; border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; }
+        .modal-header { padding: 12px 20px; background-color: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+        .modal-body { padding: 14px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(95px, 1fr)); gap: 8px; }
+        .all-card-item { border-radius: 6px; height: 46px; display: flex; justify-content: center; align-items: center; font-size: 14px; font-weight: bold; }
 
         @media (max-width: 768px) {
             .game-board-layout {
-                grid-template-columns: 78px 1fr 78px;
-                grid-template-rows: 98px 1fr 98px;
-                gap: 2px;
+                grid-template-columns: 95px 1fr 95px;
+                grid-template-rows: 120px 1fr 120px;
+                gap: 4px;
             }
-            .area-north { height: 98px; }
-            .area-south { height: 98px; }
-            .area-west { width: 78px; }
-            .area-east { width: 78px; }
-            .card-slot { width: 66px; height: 66px; }
-            .name-badge { width: 62px; }
+            .area-north { height: 120px; }
+            .area-south { height: 120px; }
+            .area-west { width: 95px; }
+            .area-east { width: 95px; }
+            .card-slot { width: 85px; height: 85px; }
+            .name-badge { width: 80px; }
         }
     </style>
 </head>
@@ -162,69 +162,71 @@
 
     <div class="game-container" id="gameContainer">
         <div class="top-control-bar">
-            <button class="lobby-back-btn" onclick="location.href='index.html'">← 로비</button>
-            <div id="roomDisplayBadge" class="room-badge">방: 로딩중</div>
+            <button class="lobby-back-btn" onclick="location.href='index.html'">← 로비로</button>
+            <div id="roomDisplayBadge" class="room-badge">방 코드: 로딩중</div>
             <div class="control-group mode-group">
-                <button id="btnModePrivate" class="mode-btn active" onclick="switchGameMode('private')">나만보기</button>
-                <button id="btnModePublic" class="mode-btn" onclick="switchGameMode('public')">공개</button>
-                <button id="btnModeBoard" class="mode-btn" onclick="switchGameMode('board')">전체펼치기</button>
+                <span class="control-label">게임선택:</span>
+                <button id="btnModePrivate" class="mode-btn active" onclick="switchGameMode('private')">나만 보기</button>
+                <button id="btnModePublic" class="mode-btn" onclick="switchGameMode('public')">나만 안 보기</button>
+                <button id="btnModeBoard" class="mode-btn" onclick="switchGameMode('board')">전체카드 펼치기</button>
             </div>
             <div class="control-group">
+                <span class="control-label">카드선택:</span>
                 <button id="btnDeckFeeling" class="select-deck-btn" onclick="selectActivity('feeling')">느낌</button>
                 <button id="btnDeckNeed" class="select-deck-btn" onclick="selectActivity('need')">욕구</button>
             </div>
-            <button class="view-all-btn" onclick="openAllCardsModal('feeling')">전체보기</button>
-            <button id="btnFontZoom" class="font-zoom-btn" onclick="toggleFontZoom()">🔍 A+</button>
-            <button class="fullscreen-btn" onclick="toggleFullScreen()">전체화면</button>
+            <button class="view-all-btn" onclick="openAllCardsModal('feeling')">카드 전체보기</button>
+            <button id="btnFontZoom" class="font-zoom-btn" onclick="toggleFontZoom()">글씨 🔍 A+</button>
+            <button class="fullscreen-btn" onclick="toggleFullScreen()">전체 화면</button>
         </div>
 
         <div class="game-board-layout">
             <div id="table-north" class="table-area area-north" onclick="handleTableClick('north')">
                 <div class="name-badge" id="badge-north">
-                    <div class="seat-name">북쪽</div>
-                    <button class="seat-btn" onclick="event.stopPropagation(); toggleSitDown('north', '북쪽')">착석</button>
+                    <div class="seat-name">북쪽 자리</div>
+                    <button class="seat-btn" onclick="event.stopPropagation(); toggleSitDown('north', '북쪽')">착석하기</button>
                 </div>
                 <div class="card-slot" id="slot-north" onclick="event.stopPropagation(); handleCardSlotClick('north')">
-                    <span style="font-size:9.5px; color:#94a3b8;">없음</span>
+                    <span style="font-size:11px; color:#94a3b8;">카드 없음</span>
                 </div>
                 <div class="gift-box-grid" id="giftGrid-north"></div>
             </div>
 
             <div id="table-west" class="table-area area-west" onclick="handleTableClick('west')">
                 <div class="name-badge" id="badge-west">
-                    <div class="seat-name">서쪽</div>
-                    <button class="seat-btn" onclick="event.stopPropagation(); toggleSitDown('west', '서쪽')">착석</button>
+                    <div class="seat-name">서쪽 자리</div>
+                    <button class="seat-btn" onclick="event.stopPropagation(); toggleSitDown('west', '서쪽')">착석하기</button>
                 </div>
                 <div class="card-slot" id="slot-west" onclick="event.stopPropagation(); handleCardSlotClick('west')">
-                    <span style="font-size:9.5px; color:#94a3b8;">없음</span>
+                    <span style="font-size:11px; color:#94a3b8;">카드 없음</span>
                 </div>
                 <div class="gift-box-grid" id="giftGrid-west"></div>
             </div>
 
             <div class="center-area-wrapper" id="centerAreaContainer">
                 <div id="centerDeckSlot" class="center-deck-slot" onclick="handleCenterDeckClick()">
-                    <span id="centerDeckText" style="font-size: 11px; font-weight: bold; color: #94a3b8;">상단에서<br>카드선택</span>
+                    <span id="centerDeckText" style="font-size: 13px; font-weight: bold; color: #94a3b8;">상단에서 카드선택을<br>진행해주세요</span>
                 </div>
             </div>
 
             <div id="table-east" class="table-area area-east" onclick="handleTableClick('east')">
                 <div class="name-badge" id="badge-east">
-                    <div class="seat-name">동쪽</div>
-                    <button class="seat-btn" onclick="event.stopPropagation(); toggleSitDown('east', '동쪽')">착석</button>
+                    <div class="seat-name">동쪽 자리</div>
+                    <button class="seat-btn" onclick="event.stopPropagation(); toggleSitDown('east', '동쪽')">착석하기</button>
                 </div>
                 <div class="card-slot" id="slot-east" onclick="event.stopPropagation(); handleCardSlotClick('east')">
-                    <span style="font-size:9.5px; color:#94a3b8;">없음</span>
+                    <span style="font-size:11px; color:#94a3b8;">카드 없음</span>
                 </div>
                 <div class="gift-box-grid" id="giftGrid-east"></div>
             </div>
 
             <div id="table-south" class="table-area area-south" onclick="handleTableClick('south')">
                 <div class="name-badge" id="badge-south">
-                    <div class="seat-name">남쪽</div>
-                    <button class="seat-btn" onclick="event.stopPropagation(); toggleSitDown('south', '남쪽')">착석</button>
+                    <div class="seat-name">남쪽 자리</div>
+                    <button class="seat-btn" onclick="event.stopPropagation(); toggleSitDown('south', '남쪽')">착석하기</button>
                 </div>
                 <div class="card-slot" id="slot-south" onclick="event.stopPropagation(); handleCardSlotClick('south')">
-                    <span style="font-size:9.5px; color:#94a3b8;">없음</span>
+                    <span style="font-size:11px; color:#94a3b8;">카드 없음</span>
                 </div>
                 <div class="gift-box-grid" id="giftGrid-south"></div>
             </div>
@@ -234,7 +236,7 @@
     <div id="allCardsModal" class="modal-overlay" onclick="closeAllCardsModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-header">
-                <b id="modalTitle" style="font-size: 13px; color: #334155;">NVC 전체 카드 목록</b>
+                <b id="modalTitle" style="font-size: 15px; color: #334155;">NVC 전체 카드 목록</b>
                 <button style="background:none; border:none; font-weight:bold; cursor:pointer;" onclick="closeAllCardsModal()">✕ 닫기</button>
             </div>
             <div class="modal-body" id="modalCardGrid"></div>
@@ -244,14 +246,12 @@
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const roomCode = urlParams.get('room') || '1234';
-        document.getElementById('roomDisplayBadge').innerText = `방: ${roomCode}`;
+        document.getElementById('roomDisplayBadge').innerText = `방 코드: ${roomCode}`;
 
-        // 공용 Render 서버 소켓 연결 설정
         const socket = io(window.location.origin, {
             path: '/socket.io',
             transports: ['websocket', 'polling']
         });
-        
         socket.emit('joinRoom', roomCode);
 
         const feelingPool = [
@@ -448,7 +448,7 @@
             const centerContainer = document.getElementById('centerAreaContainer');
             if (gameState.gameMode === 'board') {
                 if (!gameState.selectedActivity) {
-                    centerContainer.innerHTML = `<div class="center-deck-slot"><span style="font-size:10px; color:#94a3b8;">상단에서<br>카드선택</span></div>`;
+                    centerContainer.innerHTML = `<div class="center-deck-slot"><span style="font-size:12px; color:#94a3b8;">상단에서 카드선택을<br>진행해주세요</span></div>`;
                 } else {
                     const pool = gameState.selectedActivity === 'feeling' ? feelingPool : needPool;
                     let usedCards = [];
@@ -471,13 +471,13 @@
                     centerContainer.innerHTML = boardHTML;
                 }
             } else {
-                let deckText = "상단에서<br>카드선택", deckClass = "center-deck-slot";
+                let deckText = "상단에서 카드선택을<br>진행해주세요", deckClass = "center-deck-slot";
                 if (gameState.selectedActivity === 'feeling') {
                     deckClass = "center-deck-slot active-feeling";
-                    deckText = "<b>느낌 덱</b><br><span style='font-size:9.5px;'>뽑기</span>";
+                    deckText = "<b>느낌 카드덱</b><br><span style='font-size:11px;'>터치해서 카드 뽑기</span>";
                 } else if (gameState.selectedActivity === 'need') {
                     deckClass = "center-deck-slot active-need";
-                    deckText = "<b>욕구 덱</b><br><span style='font-size:9.5px;'>뽑기</span>";
+                    deckText = "<b>욕구 카드덱</b><br><span style='font-size:11px;'>터치해서 카드 뽑기</span>";
                 }
                 centerContainer.innerHTML = `<div class="${deckClass}" onclick="handleCenterDeckClick()"><span>${deckText}</span></div>`;
             }
@@ -494,13 +494,13 @@
                 if (seatInfo.occupant) {
                     badge.className = `name-badge badge-${seat}-active`;
                     if (seat === mySeat) {
-                        badge.innerHTML = `<div class="seat-name">${seatInfo.name} (나)</div><button class="seat-btn" onclick="event.stopPropagation(); toggleSitDown('${seat}', '${seatNameKor}')">비우기</button>`;
+                        badge.innerHTML = `<div class="seat-name">${seatInfo.name} (나)</div><button class="seat-btn" onclick="event.stopPropagation(); toggleSitDown('${seat}', '${seatNameKor}')">자리 비우기</button>`;
                     } else {
-                        badge.innerHTML = `<div class="seat-name">${seatInfo.name}</div><div style="font-size:8.5px; color:#64748b;">(참가중)</div>`;
+                        badge.innerHTML = `<div class="seat-name">${seatInfo.name}</div><div style="font-size:10px; color:#64748b;">(참가중)</div>`;
                     }
                 } else {
                     badge.className = "name-badge";
-                    badge.innerHTML = `<div class="seat-name">${seatNameKor}</div><button class="seat-btn" onclick="event.stopPropagation(); toggleSitDown('${seat}', '${seatNameKor}')">착석</button>`;
+                    badge.innerHTML = `<div class="seat-name">${seatNameKor} 자리</div><button class="seat-btn" onclick="event.stopPropagation(); toggleSitDown('${seat}', '${seatNameKor}')">착석하기</button>`;
                 }
 
                 let gridHTML = "";
@@ -518,7 +518,7 @@
 
                 if (gameState.gameMode !== 'board') {
                     if (!cardData.card) {
-                        slot.innerHTML = `<span style="font-size:9.5px; color:#94a3b8;">없음</span>`;
+                        slot.innerHTML = `<span style="font-size:11px; color:#94a3b8;">카드 없음</span>`;
                         slot.style.borderColor = "#cbd5e1"; slot.style.backgroundColor = "#f8fafc";
                     } else {
                         const isFeeling = cardData.type === 'feeling';
@@ -527,15 +527,15 @@
 
                         if (seat === mySeat) {
                             if (gameState.gameMode === 'private') {
-                                slot.innerHTML = cardData.revealed ? `<span style="font-size:8.5px; color:#ef4444;">[공개]</span><b>${cardData.card}</b>` : `<b>${cardData.card}</b><span style="font-size:8.5px; color:${isFeeling?'#be185d':'#0284c7'};">(공개)</span>`;
+                                slot.innerHTML = cardData.revealed ? `<span style="font-size:10px; color:#ef4444;">[공개됨]</span><b>${cardData.card}</b>` : `<b>${cardData.card}</b><span style="font-size:10px; color:${isFeeling?'#be185d':'#0284c7'};">(터치해 공개)</span>`;
                             } else {
-                                slot.innerHTML = cardData.selfRevealed ? `<b>${cardData.card}</b>` : `<b style="font-size:15px;">??</b><span style="font-size:8.5px;">(내카드)</span>`;
+                                slot.innerHTML = cardData.selfRevealed ? `<b>${cardData.card}</b>` : `<b style="font-size:18px;">??</b><span style="font-size:10px;">(내 카드)</span>`;
                             }
                         } else {
                             if (gameState.gameMode === 'private') {
-                                slot.innerHTML = cardData.revealed ? `<span style="font-size:8.5px; color:#ef4444;">[공개]</span><b>${cardData.card}</b>` : `<b style="font-size:13px;">??</b>`;
+                                slot.innerHTML = cardData.revealed ? `<span style="font-size:10px; color:#ef4444;">[공개]</span><b>${cardData.card}</b>` : `<b style="font-size:16px;">??</b>`;
                             } else {
-                                slot.innerHTML = `<span style="font-size:8.5px;">[${seatInfo.name || '상대'}]</span><b>${cardData.card}</b>`;
+                                slot.innerHTML = `<span style="font-size:10px;">[${seatInfo.name || '상대'}]</span><b>${cardData.card}</b>`;
                             }
                         }
                     }
