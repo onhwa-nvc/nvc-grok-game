@@ -78,11 +78,14 @@
             position: relative;
         }
         .modal-card h3 { color: #1e293b; margin-top: 0; margin-bottom: 16px; }
+        
+        /* 확실하게 입력 가능하도록 수정된 입력창 스타일 */
         .input-box {
             width: 100%; padding: 12px;
             border: 2px solid #cbd5e1; border-radius: 10px;
-            font-size: 15px; text-align: center; outline: none; margin-bottom: 12px;
-            background-color: #f8fafc;
+            font-size: 16px; text-align: center; outline: none; margin-bottom: 12px;
+            background-color: #f8fafc; color: #1e293b;
+            letter-spacing: 2px;
         }
         .input-box:focus { border-color: #be185d; background-color: #fff; }
 
@@ -146,6 +149,7 @@
                 <span style="position:absolute; top:-10px; left:50%; transform:translateX(-50%); background:#fff; padding:0 8px; font-size:11px; color:#94a3b8;">또는</span>
             </div>
             
+            <!-- 실제 입력 가능한 input 태그로 교체 완료 -->
             <input type="text" id="roomCodeInput" class="input-box" placeholder="4자리 방 코드 입력" maxlength="4" onkeydown="if(event.key==='Enter') joinRoom()">
             <button class="action-btn sub-btn" onclick="joinRoom()">방 입장하기</button>
         </div>
