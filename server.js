@@ -1,208 +1,66 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NVC 소통 플랫폼 - 메인 로비</title>
-    <script src="/socket.io/socket.io.js"></script>
-    <style>
-        * { box-sizing: border-box; }
-        body {
-            margin: 0; padding: 0;
-            background-color: #fcf9f2;
-            font-family: 'Malgun Gothic', sans-serif;
-            display: flex; justify-content: center; align-items: center;
-            min-height: 100vh; min-height: 100dvh;
-        }
-        .lobby-wrapper {
-            width: 90%; max-width: 650px;
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            border: 1px solid #e6ded1;
-            text-align: center;
-        }
-        h1 { color: #1e293b; font-size: 24px; margin-bottom: 6px; }
-        .subtitle { color: #64748b; font-size: 13px; margin-bottom: 24px; }
+const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
+const path = require('path');
 
-        /* 공지창 스타일 */
-        .notice-box {
-            background-color: #fdf2f8;
-            border: 1px solid #f472b6;
-            border-radius: 12px;
-            padding: 12px 16px;
-            margin-bottom: 24px;
-            text-align: left;
-            font-size: 13px;
-            color: #be185d;
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
+});
+
+const PORT = process.env.PORT || 3000;
+
+app.use(express.static(path.join(__dirname)));
+
+const activeRooms = new Set();
+
+io.on('connection', (socket) => {
+    console.log(`사용자 접속됨: ${socket.id}`);
+
+    socket.on('createRoom', () => {
+        let roomCode;
+        do {
+            roomCode = Math.floor(1000 + Math.random() * 9000).toString();
+        } while (activeRooms.has(roomCode));
+
+        activeRooms.add(roomCode);
+        console.log(`방 생성됨: ${roomCode}`);
+        socket.emit('roomCreated', roomCode);
+    });
+
+    socket.on('checkRoomExists', (roomCode) => {
+        const trimmedCode = roomCode.trim();
+        const exists = activeRooms.has(trimmedCode);
+        socket.emit('roomCheckResult', { exists, roomCode: trimmedCode });
+    });
+
+    socket.on('joinRoom', (roomCode) => {
+        socket.join(roomCode);
+        console.log(`사용자(${socket.id})가 방 [${roomCode}]에 입장했습니다.`);
+    });
+
+    socket.on('updateGameState', (data) => {
+        const { roomCode, gameState } = data;
+        io.to(roomCode).emit('gameStateUpdate', gameState);
+    });
+
+    socket.on('destroyRoom', (roomCode) => {
+        if (activeRooms.has(roomCode)) {
+            activeRooms.delete(roomCode);
+            console.log(`방 [${roomCode}]이 방장에 의해 종료되었습니다.`);
+            io.to(roomCode).emit('roomDestroyed');
         }
-        .notice-box b { display: block; margin-bottom: 4px; font-size: 14px; }
+    });
 
-        /* 3개의 방 카드 그리드 */
-        .rooms-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-        .room-card {
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
-            border-radius: 14px;
-            padding: 20px 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex; flex-direction: column; align-items: center; gap: 8px;
-        }
-        .room-card:hover {
-            border-color: #be185d;
-            background-color: #fff;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-        .room-icon { font-size: 28px; }
-        .room-title { font-size: 14px; font-weight: bold; color: #334155; }
+    socket.on('disconnect', () => {
+        console.log(`사용자 연결 끊김: ${socket.id}`);
+    });
+});
 
-        /* 모달 팝업 */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background-color: rgba(0,0,0,0.4);
-            display: none; justify-content: center; align-items: center;
-            z-index: 100;
-        }
-        .modal-card {
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 16px;
-            width: 90%; max-width: 380px;
-            text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            position: relative;
-        }
-        .modal-card h3 { color: #1e293b; margin-top: 0; margin-bottom: 16px; }
-        .input-box {
-            width: 100%; padding: 12px;
-            border: 2px solid #cbd5e1; border-radius: 10px;
-            font-size: 15px; text-align: center; outline: none; margin-bottom: 12px;
-            background-color: #f8fafc;
-        }
-        .input-box:focus { border-color: #be185d; background-color: #fff; }
-
-        .action-btn {
-            width: 100%;
-            background-color: #be185d; color: #ffffff;
-            border: none; border-radius: 10px; padding: 12px;
-            font-size: 15px; font-weight: bold; cursor: pointer;
-            transition: background-color 0.2s; margin-bottom: 8px;
-        }
-        .action-btn:hover { background-color: #9d174d; }
-        .sub-btn { background-color: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
-        .sub-btn:hover { background-color: #e2e8f0; color: #1e293b; }
-        .close-btn {
-            position: absolute; top: 12px; right: 15px;
-            background: none; border: none; font-size: 16px; font-weight: bold; cursor: pointer; color: #94a3b8;
-        }
-        .close-btn:hover { color: #1e293b; }
-
-        @media (max-width: 600px) {
-            .rooms-grid { grid-template-columns: 1fr; }
-        }
-    </style>
-</head>
-<body>
-
-    <div class="lobby-wrapper">
-        <h1>NVC 소통 공간</h1>
-        <div class="subtitle">마음을 나누고 공감하는 온라인 대화 플랫폼</div>
-
-        <!-- 공지창 -->
-        <div class="notice-box">
-            <b>📢 공지사항</b>
-            - 방장은 관리자 모드(비밀번호 0318)를 통해 방을 개설할 수 있습니다.<br>
-            - 게임 종료 시 방장이 [방 종료하기]를 누르면 안전하게 방이 닫힙니다.
-        </div>
-
-        <!-- 3개의 방 메뉴 -->
-        <div class="rooms-grid">
-            <div class="room-card" onclick="openGrogModal()">
-                <div class="room-icon">🃏</div>
-                <div class="room-title">그로그 카드 놀이</div>
-            </div>
-            <div class="room-card" onclick="alert('준비 중인 방입니다.')">
-                <div class="room-icon">💬</div>
-                <div class="room-title">감정 카드 나누기</div>
-            </div>
-            <div class="room-card" onclick="alert('준비 중인 방입니다.')">
-                <div class="room-icon">🤝</div>
-                <div class="room-title">욕구 연결 워크숍</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 그로그 카드 놀이 입장/생성 팝업 모달 -->
-    <div id="grogModal" class="modal-overlay" onclick="closeGrogModal(event)">
-        <div class="modal-card" onclick="event.stopPropagation()">
-            <button class="close-btn" onclick="closeGrogModal()">✕</button>
-            <h3>🃏 그로그 카드 놀이</h3>
-            
-            <button class="action-btn" onclick="requestHostMode()">👑 방장 모드 (방 만들기)</button>
-            
-            <div style="margin: 14px 0; border-top: 1px dashed #cbd5e1; position: relative;">
-                <span style="position:absolute; top:-10px; left:50%; transform:translateX(-50%); background:#fff; padding:0 8px; font-size:11px; color:#94a3b8;">또는</span>
-            </div>
-            
-            <input type="text" id="roomCodeInput" class="input-box" placeholder="4자리 방 코드 입력" maxlength="4" onkeydown="if(event.key==='Enter') joinRoom()">
-            <button class="action-btn sub-btn" onclick="joinRoom()">방 입장하기</button>
-        </div>
-    </div>
-
-    <script>
-        const socket = io(window.location.origin, {
-            path: '/socket.io',
-            transports: ['websocket', 'polling']
-        });
-
-        function openGrogModal() {
-            document.getElementById('grogModal').style.display = "flex";
-        }
-
-        function closeGrogModal() {
-            document.getElementById('grogModal').style.display = "none";
-        }
-
-        // 방장 모드 진입 시 관리자 비밀번호(0318) 확인
-        function requestHostMode() {
-            const pwd = prompt("관리자 비밀번호를 입력하세요:");
-            if (pwd === null) return;
-            if (pwd === "0318") {
-                socket.emit('createRoom');
-            } else {
-                alert("비밀번호가 일치하지 않습니다!");
-            }
-        }
-
-        socket.on('roomCreated', (roomCode) => {
-            // 방장 권한(host=true)을 부여받고 게임방으로 이동
-            location.href = `game.html?room=${roomCode}&host=true`;
-        });
-
-        function joinRoom() {
-            const code = document.getElementById('roomCodeInput').value.trim();
-            if (!code || code.length < 4) {
-                alert("올바른 4자리 방 코드를 입력해주세요!");
-                return;
-            }
-            socket.emit('checkRoomExists', code);
-        }
-
-        socket.on('roomCheckResult', (data) => {
-            if (data.exists) {
-                location.href = `game.html?room=${data.roomCode}`;
-            } else {
-                alert("존재하지 않거나 방장에 의해 종료된 방입니다.");
-            }
-        });
-    </script>
-</body>
-</html>
+server.listen(PORT, () => {
+    console.log(`서버가 포트 ${PORT}에서 정상적으로 실행 중입니다.`);
+});
