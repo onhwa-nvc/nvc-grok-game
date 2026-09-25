@@ -16,15 +16,15 @@
         }
         .lobby-container {
             background: #ffffff;
-            padding: 35px 30px;
+            padding: 40px 30px;
             border-radius: 16px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             border: 1px solid #e6ded1;
             width: 90%; max-width: 420px;
             text-align: center;
         }
-        h1 { color: #334155; font-size: 22px; margin-bottom: 8px; }
-        p { color: #64748b; font-size: 13px; margin-bottom: 24px; }
+        h1 { color: #334155; font-size: 24px; margin-bottom: 8px; }
+        p { color: #64748b; font-size: 13px; margin-bottom: 30px; }
         
         .menu-section {
             display: flex; flex-direction: column; gap: 14px;
@@ -39,7 +39,7 @@
 
         .main-btn {
             background-color: #be185d; color: #ffffff;
-            border: none; border-radius: 10px; padding: 13px;
+            border: none; border-radius: 10px; padding: 14px;
             font-size: 15px; font-weight: bold; cursor: pointer;
             transition: background-color 0.2s;
         }
@@ -52,7 +52,7 @@
         .sub-btn:hover { background-color: #e2e8f0; }
 
         .divider {
-            margin: 8px 0; border-top: 1px dashed #cbd5e1;
+            margin: 10px 0; border-top: 1px dashed #cbd5e1;
         }
     </style>
 </head>
@@ -81,12 +81,11 @@
         });
 
         function createRoom() {
-            // 서버에 새 방 생성 요청
             socket.emit('createRoom');
         }
 
-        // 서버로부터 방 코드를 받으면 호스트(방장) 권한을 가지고 게임방으로 이동
         socket.on('roomCreated', (roomCode) => {
+            // 방장 권한(host=true)을 가지고 게임방으로 이동
             location.href = `game.html?room=${roomCode}&host=true`;
         });
 
@@ -96,11 +95,9 @@
                 alert("방 코드를 입력해주세요!");
                 return;
             }
-            // 서버에 방 존재 여부 확인 요청
             socket.emit('checkRoomExists', code);
         }
 
-        // 서버의 방 검증 결과 수신
         socket.on('roomCheckResult', (data) => {
             if (data.exists) {
                 location.href = `game.html?room=${data.roomCode}`;
