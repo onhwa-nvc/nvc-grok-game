@@ -79,7 +79,6 @@
         }
         .modal-card h3 { color: #1e293b; margin-top: 0; margin-bottom: 16px; }
         
-        /* 확실하게 입력 가능하도록 수정된 입력창 스타일 */
         .input-box {
             width: 100%; padding: 12px;
             border: 2px solid #cbd5e1; border-radius: 10px;
@@ -118,7 +117,7 @@
 
         <div class="notice-box">
             <b>📢 공지사항</b>
-            - 방장은 관리자 모드(비밀번호 0318)를 통해 방을 개설할 수 있습니다.<br>
+            - 방장은 관리자 모드(비밀번호 0318)를 통해 방 코드를 직접 설정하고 개설할 수 있습니다.<br>
             - 게임 종료 시 방장이 [방 종료하기]를 누르면 안전하게 방이 닫힙니다.
         </div>
 
@@ -149,7 +148,6 @@
                 <span style="position:absolute; top:-10px; left:50%; transform:translateX(-50%); background:#fff; padding:0 8px; font-size:11px; color:#94a3b8;">또는</span>
             </div>
             
-            <!-- 실제 입력 가능한 input 태그로 교체 완료 -->
             <input type="text" id="roomCodeInput" class="input-box" placeholder="4자리 방 코드 입력" maxlength="4" onkeydown="if(event.key==='Enter') joinRoom()">
             <button class="action-btn sub-btn" onclick="joinRoom()">방 입장하기</button>
         </div>
@@ -169,24 +167,44 @@
             document.getElementById('grogModal').style.display = "none";
         }
 
+        // 관리자 인증 및 직접 방 코드 설정 기능
         function requestHostMode() {
             const pwd = prompt("관리자 비밀번호를 입력하세요:");
             if (pwd === null) return;
+            
             if (pwd === "0318") {
-                socket.emit('createRoom');
+                alert("관리자 확인되었습니다. 관리자 모드로 진입합니다.");
+                
+                const customCode = prompt("사용할 4자리 방 코드를 입력해주세요 (예: 1234):");
+                if (customCode === null) return;
+                
+                const trimmedCode = customCode.trim();
+                if (!trimmedCode || trimmedCode.length < 2) {
+                    alert("방 코드는 최소 2자리 이상 입력해주세요!");
+                    return;
+                }
+                
+                // 서버에 방 생성 및 커스텀 코드 등록 요청
+                socket.emit('createCustomRoom', trimmedCode);
             } else {
                 alert("비밀번호가 일치하지 않습니다!");
             }
         }
 
+        // 서버에서 방 생성 성공 응답을 받았을 때
         socket.on('roomCreated', (roomCode) => {
             location.href = `game.html?room=${roomCode}&host=true`;
         });
 
+        // 이미 존재하는 방 코드이거나 중복될 때
+        socket.on('roomCreateError', (msg) => {
+            alert(msg);
+        });
+
         function joinRoom() {
             const code = document.getElementById('roomCodeInput').value.trim();
-            if (!code || code.length < 4) {
-                alert("올바른 4자리 방 코드를 입력해주세요!");
+            if (!code) {
+                alert("방 코드를 입력해주세요!");
                 return;
             }
             socket.emit('checkRoomExists', code);
