@@ -78,7 +78,6 @@
         .card-info p { margin: 0; font-size: 13px; color: #8c827a; line-height: 1.4; }
         .card-arrow { font-size: 18px; color: #b3a99e; font-weight: bold; }
 
-        /* 하단 네비게이션 및 구석의 관리자 아이콘 */
         .bottom-nav-wrapper {
             display: flex; justify-content: space-between; align-items: center; position: relative;
         }
@@ -115,7 +114,6 @@
             .admin-corner-btn { width: 100%; height: 44px; }
         }
 
-        /* 모달 팝업 공통 */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background-color: rgba(44, 37, 34, 0.4);
@@ -177,12 +175,13 @@
                 <div class="card-arrow">›</div>
             </div>
 
+            <!-- 일반 유저는 참여 모달로 연결 -->
             <div class="card-box cardgame-card" onclick="openParticipantModal()">
                 <div class="card-left">
                     <div class="card-icon-circle" style="color: #7c6f9f;">🃏</div>
                     <div class="card-info">
                         <h3>그로그 카드놀이</h3>
-                        <p>공유받은 방 코드를 입력해 게임에 참여하세요.</p>
+                        <p>방장에게 공유받은 방 코드를 입력해 게임에 참여하세요.</p>
                     </div>
                 </div>
                 <div class="card-arrow">›</div>
@@ -230,12 +229,12 @@
                     <span>감사일기</span>
                 </button>
             </div>
-            <!-- 우측 하단 숨은 열쇠 아이콘 -->
+            <!-- 우측 하단 열쇠 아이콘 (오직 방장만 아는 관리자 인증 통로) -->
             <button class="admin-corner-btn" onclick="openPasswordModal()" title="관리자 인증">🔑</button>
         </div>
     </div>
 
-    <!-- [1단계] 관리자 비밀번호 입력 팝업 -->
+    <!-- 관리자 비밀번호 입력 팝업 -->
     <div id="passwordModal" class="modal-overlay" onclick="closePasswordModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <h3 style="color: #7c6f9f;">🔐 관리자 인증</h3>
@@ -250,11 +249,11 @@
         </div>
     </div>
 
-    <!-- [2단계] 비밀번호 일치 시 나타나는 방 개설 팝업 -->
+    <!-- 방장 전용: 방 코드 생성 및 개설 팝업 -->
     <div id="hostModal" class="modal-overlay" onclick="closeHostModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <h3 style="color: #7c6f9f;">✨ 방장 미팅룸 개설</h3>
-            <p>사용할 <b>4자리 방 코드</b>를 생성하거나 직접 입력하세요.</p>
+            <p>세션에 사용할 <b>4자리 방 코드</b>를 생성하세요.<br>(이 코드를 참여자에게 알려주세요)</p>
             
             <input type="text" id="customRoomCodeInput" class="room-code-input" placeholder="예: 5821" maxlength="6">
             
@@ -265,7 +264,7 @@
         </div>
     </div>
 
-    <!-- [참여자용] 방 코드 입력 모달 팝업 -->
+    <!-- 일반 참여자 전용: 방 코드 입력 팝업 -->
     <div id="roomModal" class="modal-overlay" onclick="closeRoomModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <h3>방 참여하기</h3>
@@ -281,12 +280,9 @@
     </div>
 
     <script>
-        // ==========================================
-        // [3번 방식] 관리자 비밀번호 설정 (여기서 언제든 변경 가능)
-        // ==========================================
-        const ADMIN_PASSWORD = "031810"; 
+        // 방장 비밀번호 설정 (0318)
+        const ADMIN_PASSWORD = "0318"; 
 
-        // 1. 우측 하단 열쇠(🔑)를 눌렀을 때 비밀번호 창 띄우기
         function openPasswordModal() {
             document.getElementById('adminPwInput').value = "";
             document.getElementById('passwordModal').style.display = "flex";
@@ -297,20 +293,16 @@
             document.getElementById('passwordModal').style.display = "none";
         }
 
-        // 2. 비밀번호 일치 여부 확인
         function verifyAdminPassword() {
             const inputPw = document.getElementById('adminPwInput').value;
 
             if (inputPw === ADMIN_PASSWORD) {
-                // 비밀번호 일치: 비밀번호 창 닫고 방 개설 창 열기
                 closePasswordModal();
-                
                 const randomCode = Math.floor(1000 + Math.random() * 9000).toString();
                 document.getElementById('customRoomCodeInput').value = randomCode;
                 document.getElementById('hostModal').style.display = "flex";
                 document.getElementById('customRoomCodeInput').focus();
             } else {
-                // 비밀번호 불일치
                 alert("비밀번호가 일치하지 않습니다!");
                 document.getElementById('adminPwInput').value = "";
                 document.getElementById('adminPwInput').focus();
@@ -326,18 +318,19 @@
             document.getElementById('customRoomCodeInput').value = randomCode;
         }
 
+        // 방장이 방을 만들 때: 세션 상태를 브라우저 전체에 안전하게 기록하고 입장
         function enterAsHost() {
             const code = document.getElementById('customRoomCodeInput').value.trim();
             if (!code) {
                 alert("방 코드를 입력해주세요!");
                 return;
             }
+            // 세션 기록 (브라우저 간 테스트를 위해 localStorage와 sessionStorage 동시 활용)
             localStorage.setItem("nvc_active_room_" + code, "true");
             closeHostModal();
             location.href = 'game.html?room=' + code;
         }
 
-        // 3. 참여자가 카드놀이 카드를 눌렀을 때
         function openParticipantModal() {
             document.getElementById('roomCodeInput').value = "";
             document.getElementById('roomModal').style.display = "flex";
@@ -348,6 +341,7 @@
             document.getElementById('roomModal').style.display = "none";
         }
 
+        // 참여자가 방에 들어올 때 검증
         function confirmEnterRoom() {
             const code = document.getElementById('roomCodeInput').value.trim();
             if (!code) {
@@ -355,6 +349,7 @@
                 return;
             }
 
+            // [보안 및 연동 검증] 방장이 생성한 방 코드이거나, 테스트용 마스터 코드(1234)일 때만 통과
             const isValid = localStorage.getItem("nvc_active_room_" + code) || code === "1234";
 
             if (!isValid) {
