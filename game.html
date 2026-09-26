@@ -239,14 +239,31 @@
         .game-container.font-zoom-in .seat-name { font-size: 14px !important; }
         .game-container.font-zoom-in .board-card-item { font-size: 13px !important; }
 
-        /* 선물 보관함 그리드 (PC 기본) */
+        /* [수정] PC(컴퓨터) 화면 펼치기 모드에서 남북쪽 선물보관함 5칸씩 2줄 (위 5, 아래 5) 형태로 쾌적하게 배치 */
         .gift-box-grid { display: none; }
-        .game-container.mode-board .gift-box-grid {
-            display: flex; flex-direction: row; flex-wrap: wrap; gap: 3px; width: 100%; max-width: 320px; max-height: 90px; overflow-y: auto;
+        .game-container.mode-board .area-north .gift-box-grid,
+        .game-container.mode-board .area-south .gift-box-grid {
+            display: grid !important;
+            grid-template-columns: repeat(5, minmax(62px, 1fr)) !important;
+            grid-template-rows: repeat(2, 42px) !important;
+            gap: 4px !important;
+            max-width: 440px !important;
+            max-height: none !important;
+            overflow-y: visible !important;
         }
+        .game-container.mode-board .area-north .gift-slot,
+        .game-container.mode-board .area-south .gift-slot {
+            min-width: 0 !important;
+            width: 100% !important;
+            height: 42px !important;
+            font-size: 13px !important;
+            font-weight: bold !important;
+            padding: 2px !important;
+        }
+
         .game-container.mode-board .area-west .gift-box-grid,
         .game-container.mode-board .area-east .gift-box-grid {
-            flex-direction: column; flex-wrap: nowrap; max-width: 75px; max-height: 220px;
+            display: flex; flex-direction: column; flex-wrap: nowrap; max-width: 75px; max-height: 220px; overflow-y: auto;
         }
 
         .gift-slot {
@@ -324,7 +341,6 @@
                 height: 34px !important;
             }
 
-            /* 남북쪽 선물보관함 5칸씩 2줄 (위 5, 아래 5) 및 카드 크기 */
             .game-container.mode-board .area-north .gift-box-grid,
             .game-container.mode-board .area-south .gift-box-grid {
                 display: grid !important;
@@ -376,12 +392,11 @@
             .seat-name { font-size: 10px; }
             .seat-btn { font-size: 8px; padding: 2px 3px; }
 
-            /* [수정] 폰 가로 모드에서 남북쪽 선물보관함 세로 폭을 살짝 줄여서 쾌적하게 배치 (위 5칸, 아래 5칸 형태 유지) */
             .game-container.mode-board .area-north .gift-box-grid,
             .game-container.mode-board .area-south .gift-box-grid {
                 display: grid !important;
-                grid-template-columns: repeat(5, minmax(58px, 1fr)) !important; /* 가로 칸 폭 적당히 조절 */
-                grid-template-rows: repeat(2, 33px) !important; /* 세로 높이를 40px에서 33px로 살짝 축소 */
+                grid-template-columns: repeat(5, minmax(58px, 1fr)) !important;
+                grid-template-rows: repeat(2, 33px) !important;
                 gap: 2px !important;
                 max-width: 360px !important;
                 max-height: none !important;
@@ -391,8 +406,8 @@
             .game-container.mode-board .area-south .gift-slot {
                 min-width: 0 !important;
                 width: 100% !important;
-                height: 33px !important; /* 슬롯 세로 높이 축소 반영 */
-                font-size: 11px !important; /* 글씨 크기 적당하게 정돈 */
+                height: 33px !important;
+                font-size: 11px !important;
                 font-weight: bold !important;
                 padding: 1px !important;
             }
