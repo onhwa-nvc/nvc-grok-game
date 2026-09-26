@@ -324,14 +324,14 @@
                 height: 34px !important;
             }
 
-            /* [수정] 폰 세로 모드에서 남북쪽 선물보관함 카드 크기와 글씨 대폭 확대 (위 5칸, 아래 5칸 형태 유지) */
+            /* 남북쪽 선물보관함 5칸씩 2줄 (위 5, 아래 5) 및 카드 크기 확대 */
             .game-container.mode-board .area-north .gift-box-grid,
             .game-container.mode-board .area-south .gift-box-grid {
                 display: grid !important;
-                grid-template-columns: repeat(5, minmax(50px, 1fr)) !important; /* 칸당 가로 폭 확장 */
-                grid-template-rows: repeat(2, 38px) !important; /* 칸당 높이 확장 (기존 26px -> 38px) */
+                grid-template-columns: repeat(5, minmax(50px, 1fr)) !important;
+                grid-template-rows: repeat(2, 38px) !important;
                 gap: 3px !important;
-                max-width: 290px !important; /* 남북 테이블 여백 안에서 꽉 차게 확장 */
+                max-width: 290px !important;
                 max-height: none !important;
                 overflow-y: visible !important;
             }
@@ -340,7 +340,7 @@
                 min-width: 0 !important;
                 width: 100% !important;
                 height: 38px !important;
-                font-size: 13px !important; /* 카드 글씨 크기 큼직하게 상향 */
+                font-size: 13px !important;
                 font-weight: bold !important;
                 padding: 2px !important;
             }
@@ -375,6 +375,27 @@
             .name-badge { width: 65px; padding: 3px; }
             .seat-name { font-size: 10px; }
             .seat-btn { font-size: 8px; padding: 2px 3px; }
+
+            /* [수정] 폰 가로 모드에서 남북쪽 선물보관함 카드도 위 5칸, 아래 5칸(2행 5열)로 배치하고 크기 대폭 확대 */
+            .game-container.mode-board .area-north .gift-box-grid,
+            .game-container.mode-board .area-south .gift-box-grid {
+                display: grid !important;
+                grid-template-columns: repeat(5, minmax(44px, 1fr)) !important;
+                grid-template-rows: repeat(2, 34px) !important;
+                gap: 2px !important;
+                max-width: 250px !important;
+                max-height: none !important;
+                overflow-y: visible !important;
+            }
+            .game-container.mode-board .area-north .gift-slot,
+            .game-container.mode-board .area-south .gift-slot {
+                min-width: 0 !important;
+                width: 100% !important;
+                height: 34px !important;
+                font-size: 11px !important;
+                font-weight: bold !important;
+                padding: 1px !important;
+            }
         }
     </style>
 </head>
