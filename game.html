@@ -293,7 +293,7 @@
 
             .game-board-layout {
                 grid-template-columns: 80px 1fr 80px;
-                grid-template-rows: 125px 1fr 125px; /* 남북 영역 높이 살짝 확대 */
+                grid-template-rows: 125px 1fr 125px;
                 gap: 4px; width: 100%; margin: 2px 0;
             }
             .table-area { padding: 4px; gap: 6px; width: 100%; justify-content: center; }
@@ -324,14 +324,14 @@
                 height: 34px !important;
             }
 
-            /* [수정] 폰 세로 모드에서 남북쪽 펼치기 보관함(gift-box-grid)을 정확히 위 5칸, 아래 5칸(2행 5열)로 배치 */
+            /* [수정] 폰 세로 모드에서 남북쪽 선물보관함 카드 크기와 글씨 대폭 확대 (위 5칸, 아래 5칸 형태 유지) */
             .game-container.mode-board .area-north .gift-box-grid,
             .game-container.mode-board .area-south .gift-box-grid {
                 display: grid !important;
-                grid-template-columns: repeat(5, minmax(36px, 1fr)) !important;
-                grid-template-rows: repeat(2, 26px) !important;
-                gap: 2px !important;
-                max-width: 220px !important;
+                grid-template-columns: repeat(5, minmax(50px, 1fr)) !important; /* 칸당 가로 폭 확장 */
+                grid-template-rows: repeat(2, 38px) !important; /* 칸당 높이 확장 (기존 26px -> 38px) */
+                gap: 3px !important;
+                max-width: 290px !important; /* 남북 테이블 여백 안에서 꽉 차게 확장 */
                 max-height: none !important;
                 overflow-y: visible !important;
             }
@@ -339,9 +339,10 @@
             .game-container.mode-board .area-south .gift-slot {
                 min-width: 0 !important;
                 width: 100% !important;
-                height: 26px !important;
-                font-size: 10px !important;
-                padding: 1px !important;
+                height: 38px !important;
+                font-size: 13px !important; /* 카드 글씨 크기 큼직하게 상향 */
+                font-weight: bold !important;
+                padding: 2px !important;
             }
         }
 
