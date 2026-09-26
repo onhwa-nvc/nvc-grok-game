@@ -31,7 +31,7 @@
             transition: all 0.2s ease;
         }
 
-        /* [사용자 수동 전체보기 모드 토글 클래스] */
+        /* [사용자 수동 전체보기 모드 토글 클래스 (브라우저 풀스크린 실패시 대비용 fallback)] */
         .game-container.user-fullscreen-active {
             position: fixed !important;
             top: 0 !important; left: 0 !important;
@@ -694,8 +694,37 @@
 
         window.addEventListener('beforeunload', () => { leaveMySeat(); });
 
+        // 브라우저 전체화면 상태 변경 감지 이벤트 (사용자가 브라우저 제어로 전체화면을 나갔을 때 상태 동기화)
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement && isUserFullscreen) {
+                isUserFullscreen = false;
+                updateUI();
+            }
+        });
+
         function toggleUserFullscreen() {
-            isUserFullscreen = !isUserFullscreen;
+            if (!isUserFullscreen) {
+                // 전체화면 진입 시도
+                const elem = document.documentElement;
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen().catch(err => console.log(err));
+                } else if (elem.webkitRequestFullscreen) { /* Safari */
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) { /* IE11 */
+                    elem.msRequestFullscreen();
+                }
+                isUserFullscreen = true;
+            } else {
+                // 전체화면 해제 시도
+                if (document.exitFullscreen) {
+                    document.exitFullscreen().catch(err => console.log(err));
+                } else if (document.webkitExitFullscreen) { /* Safari */
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) { /* IE11 */
+                    document.msExitFullscreen();
+                }
+                isUserFullscreen = false;
+            }
             updateUI();
         }
 
