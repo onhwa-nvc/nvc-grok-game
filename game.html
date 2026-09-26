@@ -239,7 +239,7 @@
         .game-container.font-zoom-in .seat-name { font-size: 14px !important; }
         .game-container.font-zoom-in .board-card-item { font-size: 13px !important; }
 
-        /* [수정] PC(컴퓨터) 화면 펼치기 모드에서 남북쪽 선물보관함 5칸씩 2줄 (위 5, 아래 5) 형태로 쾌적하게 배치 */
+        /* PC 화면 펼치기 모드: 남북쪽 선물보관함 5칸씩 2줄 */
         .gift-box-grid { display: none; }
         .game-container.mode-board .area-north .gift-box-grid,
         .game-container.mode-board .area-south .gift-box-grid {
@@ -261,9 +261,23 @@
             padding: 2px !important;
         }
 
+        /* [수정] PC 및 기본 환경: 동서쪽(좌우) 선물보관함 폭을 이름표 폭(95px)에 맞춰 꽉 차게 일치시킴 */
         .game-container.mode-board .area-west .gift-box-grid,
         .game-container.mode-board .area-east .gift-box-grid {
-            display: flex; flex-direction: column; flex-wrap: nowrap; max-width: 75px; max-height: 220px; overflow-y: auto;
+            display: flex !important;
+            flex-direction: column !important;
+            flex-wrap: nowrap !important;
+            width: 95px !important;
+            max-width: 95px !important;
+            max-height: 220px !important;
+            overflow-y: auto !important;
+            gap: 3px !important;
+        }
+        .game-container.mode-board .area-west .gift-slot,
+        .game-container.mode-board .area-east .gift-slot {
+            width: 100% !important;
+            min-width: 0 !important;
+            height: 30px !important;
         }
 
         .gift-slot {
@@ -360,6 +374,13 @@
                 font-weight: bold !important;
                 padding: 2px !important;
             }
+
+            /* 모바일 세로 모드 동서쪽 뱃지 폭(70px)에 일치 */
+            .game-container.mode-board .area-west .gift-box-grid,
+            .game-container.mode-board .area-east .gift-box-grid {
+                width: 70px !important;
+                max-width: 70px !important;
+            }
         }
 
         /* [스마트폰 가로 모드] */
@@ -410,6 +431,14 @@
                 font-size: 11px !important;
                 font-weight: bold !important;
                 padding: 1px !important;
+            }
+
+            /* [수정] 폰 가로 모드 동서쪽 선물보관함 폭을 이름표 폭(65px)에 맞춰 꽉 차게 일치시킴 */
+            .game-container.mode-board .area-west .gift-box-grid,
+            .game-container.mode-board .area-east .gift-box-grid {
+                width: 65px !important;
+                max-width: 65px !important;
+                max-height: 160px !important;
             }
         }
     </style>
