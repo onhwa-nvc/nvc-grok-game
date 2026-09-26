@@ -71,7 +71,7 @@
             color: #334155;
         }
 
-        .mode-btn, .select-deck-btn, .view-all-btn, .font-zoom-btn, .lobby-back-btn, .destroy-room-btn {
+        .mode-btn, .select-deck-btn, .card-all-view-btn, .fullscreen-toggle-btn, .font-zoom-btn, .lobby-back-btn, .destroy-room-btn {
             font-size: 13px;
             font-weight: bold;
             padding: 6px 11px;
@@ -117,16 +117,23 @@
             border-color: #0284c7 !important;
         }
 
-        .view-all-btn {
+        .card-all-view-btn {
             background-color: #fdf2f8;
             color: #be185d;
             border-color: #f472b6;
         }
-        .view-all-btn:hover { background-color: #fce7f3; }
-        .view-all-btn.active-fullscreen-toggle {
-            background-color: #be185d !important;
+        .card-all-view-btn:hover { background-color: #fce7f3; }
+
+        .fullscreen-toggle-btn {
+            background-color: #f8fafc;
+            color: #334155;
+            border-color: #94a3b8;
+        }
+        .fullscreen-toggle-btn:hover { background-color: #f1f5f9; }
+        .fullscreen-toggle-btn.active-fullscreen-toggle {
+            background-color: #334155 !important;
             color: #ffffff !important;
-            border-color: #831843 !important;
+            border-color: #0f172a !important;
         }
 
         .font-zoom-btn {
@@ -501,10 +508,10 @@
                 <span class="control-label" style="margin-right:3px;">카드:</span>
                 <button id="btnDeckFeelingPC" class="select-deck-btn" onclick="selectActivity('feeling')">느낌</button>
                 <button id="btnDeckNeedPC" class="select-deck-btn" onclick="selectActivity('need')">욕구</button>
+                <button class="card-all-view-btn" onclick="openAllCardsModal('feeling')">카드 전체보기</button>
             </div>
             <div class="menu-group">
-                <button class="view-all-btn" onclick="openAllCardsModal('feeling')">전체보기</button>
-                <button id="btnUserFullscreenPC" class="view-all-btn" onclick="toggleUserFullscreen()">전체화면보기</button>
+                <button id="btnUserFullscreenPC" class="fullscreen-toggle-btn" onclick="toggleUserFullscreen()">전체화면보기</button>
                 <button id="btnFontZoomPC" class="font-zoom-btn" onclick="toggleFontZoom()">글씨 🔍 A+</button>
             </div>
         </div>
@@ -515,7 +522,7 @@
                 <button class="lobby-back-btn" onclick="goToLobby()">← 로비</button>
                 <div id="roomDisplayBadgeMob" class="room-badge">방: 로딩</div>
                 <button id="destroyRoomBtnMob" class="destroy-room-btn" onclick="destroyRoom()">방종료</button>
-                <button id="btnUserFullscreenMob" class="view-all-btn" onclick="toggleUserFullscreen()" style="padding:4px 8px;">전체화면보기</button>
+                <button id="btnUserFullscreenMob" class="fullscreen-toggle-btn" onclick="toggleUserFullscreen()" style="padding:4px 8px;">전체화면보기</button>
             </div>
             <div class="mobile-row" style="background:#f1f5f9; padding:4px; border-radius:6px; border:1px solid #cbd5e1;">
                 <span style="font-size:11px; font-weight:bold; color:#475569; margin-right:3px;">활동:</span>
@@ -527,7 +534,7 @@
                 <span style="font-size:11px; font-weight:bold; color:#475569; margin-right:3px;">카드:</span>
                 <button id="btnDeckFeelingMob" class="select-deck-btn" onclick="selectActivity('feeling')">느낌</button>
                 <button id="btnDeckNeedMob" class="select-deck-btn" onclick="selectActivity('need')">욕구</button>
-                <button class="view-all-btn" onclick="openAllCardsModal('feeling')">전체보기</button>
+                <button class="card-all-view-btn" onclick="openAllCardsModal('feeling')">카드 전체보기</button>
                 <button id="btnFontZoomMob" class="font-zoom-btn" onclick="toggleFontZoom()">🔍 A+</button>
             </div>
         </div>
@@ -591,7 +598,7 @@
         </div>
     </div>
 
-    <!-- 전체 카드 보기 모달 팝업 -->
+    <!-- 카드 전체 보기 모달 팝업 -->
     <div id="allCardsModal" class="modal-overlay" onclick="closeAllCardsModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-header">
