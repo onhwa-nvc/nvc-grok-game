@@ -151,9 +151,9 @@
         .close-modal-btn { background: none; border: none; font-size: 15px; font-weight: bold; cursor: pointer; }
 
 
-        /* [모바일 전용 반응형 미디어 쿼리] 스마트폰 화면(너비 768px 이하)에서만 찌그러짐 방지 유연성 적용 */
-        @media screen and (max-width: 768px) {
-            body { padding: 4px; align-items: flex-start; }
+        /* [스마트폰 세로 화면 전용 최적화] 남북쪽을 가로로 넓히고 동서쪽 폭을 줄여 중앙 카드 덱 공간을 시원하게 확보 */
+        @media screen and (max-width: 768px) and (orientation: portrait) {
+            body { padding: 2px; }
             .game-container {
                 width: 100vw; height: 100vh; height: 100dvh; max-width: none; max-height: none;
                 border-radius: 0; border: none; padding: 4px;
@@ -168,19 +168,20 @@
                 font-size: 11px; padding: 5px 8px; flex-shrink: 0; white-space: nowrap;
             }
             .room-badge { font-size: 11px; padding: 5px 8px; flex-shrink: 0; white-space: nowrap; }
-            
+
+            /* 그리드 비율 조절: 좌우(동서) 폭을 줄이고 상하(남북)와 중앙 덱 공간을 극대화 */
             .game-board-layout {
-                grid-template-columns: 105px 1fr 105px;
-                grid-template-rows: 105px 1fr 105px;
+                grid-template-columns: 88px 1fr 88px;
+                grid-template-rows: 110px 1fr 110px;
                 gap: 4px; margin: 2px 0;
             }
-            .table-area { padding: 2px; gap: 4px; }
-            .area-north, .area-south { height: 105px; }
-            .area-west, .area-east { width: 105px; }
+            .table-area { padding: 3px; gap: 6px; }
+            .area-north, .area-south { height: 110px; width: 100%; justify-content: space-around; }
+            .area-west, .area-east { width: 88px; height: 100%; }
             
-            .center-deck-slot { width: 95px; height: 120px; padding: 4px; }
-            .card-slot { width: 78px; height: 78px; padding: 2px; }
-            .name-badge { width: 75px; padding: 2px; }
+            .center-deck-slot { width: 110px; height: 140px; }
+            .card-slot { width: 72px; height: 72px; padding: 2px; }
+            .name-badge { width: 68px; padding: 2px; }
             .seat-name { font-size: 10px; }
             .seat-btn { font-size: 8px; padding: 1px 3px; }
         }
