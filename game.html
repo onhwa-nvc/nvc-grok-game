@@ -164,7 +164,7 @@
             width: 100%; height: 100%; min-height: 0; padding: 4px; overflow: hidden;
         }
 
-        /* 정중앙 카드 덱 크기 콤팩트 유지 */
+        /* 정중앙 카드 덱 크기 */
         .center-deck-slot {
             width: 125px; height: 150px;
             background-color: #ffffff;
@@ -185,7 +185,7 @@
             background-color: #f0f9ff; border: 2px solid #0284c7; color: #0284c7;
         }
 
-        /* [수정] 전체카드 펼치기 모드: 카드가 적절한 크기로 2줄(또는 다중 열)로 예쁘게 배치되도록 수정 */
+        /* [PC/일반] 전체카드 펼치기 모드 그리드 */
         .center-board-area {
             width: 100%; height: 100%;
             background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 6px;
@@ -208,7 +208,7 @@
             background-color: #38bdf8 !important; color: #ffffff !important; border: 2px solid #0369a1 !important; transform: scale(1.08);
         }
 
-        /* 이름 뱃지 적당한 크기로 조정 */
+        /* 이름 뱃지 */
         .name-badge {
             background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 8px;
             text-align: center; flex-shrink: 0; width: 95px;
@@ -225,7 +225,7 @@
         }
         .seat-btn:hover { background-color: #f1f5f9; }
 
-        /* 카드 슬롯 적당한 크기로 조정 */
+        /* 카드 슬롯 */
         .card-slot {
             width: 105px; height: 105px; border-radius: 12px; display: flex; flex-direction: column;
             justify-content: center; align-items: center; text-align: center; cursor: pointer;
@@ -308,6 +308,21 @@
             .name-badge { width: 70px; padding: 4px; }
             .seat-name { font-size: 11px; }
             .seat-btn { font-size: 9px; padding: 2px 4px; }
+
+            /* [수정] 폰 세로 모드에서 전체 펼치기 시 카드가 정확히 3줄(3열)로 배치되도록 설정 */
+            .center-board-area {
+                grid-template-columns: repeat(3, 1fr) !important;
+                grid-auto-rows: 34px !important;
+                gap: 3px !important;
+                padding: 4px !important;
+            }
+            .board-card-item {
+                font-size: 11px !important;
+                height: 34px !important;
+            }
+            .board-card-empty {
+                height: 34px !important;
+            }
         }
 
         /* [스마트폰 가로 모드] */
@@ -811,7 +826,7 @@
 
                 if (gameState.gameMode !== 'board') {
                     if (!cardData.card) {
-                        slot.innerHTML = `<span style="font-size:11px; color:#94a3b8;">카드 없음</span>`;
+                        slot.innerHTML = `<span style="font-size:12px; color:#94a3b8;">카드 없음</span>`;
                         slot.style.borderColor = "#cbd5e1";
                         slot.style.backgroundColor = "#f8fafc";
                     } else {
