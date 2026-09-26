@@ -30,7 +30,7 @@
             overflow: hidden;
         }
 
-        /* [PC용 상단 컨트롤 바] 글씨 대폭 확대 */
+        /* [PC용 상단 컨트롤 바] */
         .top-control-bar {
             display: flex;
             justify-content: space-between;
@@ -164,8 +164,9 @@
             width: 100%; height: 100%; min-height: 0; padding: 4px; overflow: hidden;
         }
 
+        /* [수정] 정중앙 카드 덱 크기를 알맞게 축소 */
         .center-deck-slot {
-            width: 180px; height: 220px;
+            width: 130px; height: 155px;
             background-color: #ffffff;
             border: 2px dashed #cbd5e1;
             border-radius: 14px;
@@ -173,7 +174,7 @@
             justify-content: center; align-items: center;
             text-align: center; cursor: pointer;
             box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-            padding: 10px; transition: transform 0.1s;
+            padding: 8px; transition: transform 0.1s;
         }
         .center-deck-slot:hover { transform: scale(1.02); }
 
@@ -207,7 +208,7 @@
             background-color: #38bdf8 !important; color: #ffffff !important; border: 2px solid #0369a1 !important; transform: scale(1.08);
         }
 
-        /* 이름 뱃지 글씨 확대 */
+        /* 이름 뱃지 */
         .name-badge {
             background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 10px;
             text-align: center; flex-shrink: 0; width: 110px;
@@ -224,7 +225,7 @@
         }
         .seat-btn:hover { background-color: #f1f5f9; }
 
-        /* 카드 슬롯 글씨 대폭 확대 */
+        /* 카드 슬롯 */
         .card-slot {
             width: 125px; height: 125px; border-radius: 14px; display: flex; flex-direction: column;
             justify-content: center; align-items: center; text-align: center; cursor: pointer;
@@ -232,7 +233,7 @@
         }
         .game-container.mode-board .card-slot { display: none; }
 
-        /* [추가 글씨 확대 모드 (A+ 버튼 클릭 시)] */
+        /* 글씨 확대 모드 (A+) */
         .game-container.font-zoom-in .card-slot b { font-size: 24px !important; }
         .game-container.font-zoom-in .card-slot span { font-size: 15px !important; }
         .game-container.font-zoom-in .seat-name { font-size: 18px !important; }
@@ -274,8 +275,7 @@
         .all-card-item { border-radius: 8px; height: 54px; display: flex; justify-content: center; align-items: center; font-size: 17px; font-weight: bold; text-align: center; }
         .close-modal-btn { background: none; border: none; font-size: 18px; font-weight: bold; cursor: pointer; color: #64748b; }
 
-
-        /* [스마트폰 세로 모드]: 남북 테이블 좌우 꽉 참 + 큰 글씨 */
+        /* [스마트폰 세로 모드] */
         @media screen and (max-width: 768px) and (orientation: portrait) {
             .game-container { height: 100dvh; max-height: none; padding: 4px; }
             .top-control-bar { display: none !important; }
@@ -310,8 +310,7 @@
             .seat-btn { font-size: 11px; padding: 3px 6px; }
         }
 
-
-        /* [스마트폰 가로 모드]: 메뉴바 왼쪽 사이드바 */
+        /* [스마트폰 가로 모드] */
         @media screen and (max-width: 950px) and (orientation: landscape) {
             .game-container {
                 width: 100vw; height: 100dvh; max-width: none; max-height: none;
@@ -423,7 +422,7 @@
             <!-- 정중앙 영역 -->
             <div class="center-area-wrapper" id="centerAreaContainer">
                 <div id="centerDeckSlot" class="center-deck-slot" onclick="handleCenterDeckClick()">
-                    <span id="centerDeckText" style="font-size: 17px; font-weight: bold; color: #94a3b8;">상단에서 카드선택을<br>진행해주세요</span>
+                    <span id="centerDeckText" style="font-size: 15px; font-weight: bold; color: #94a3b8;">상단에서 카드선택을<br>진행해주세요</span>
                 </div>
             </div>
 
@@ -746,7 +745,7 @@
             const centerContainer = document.getElementById('centerAreaContainer');
             if (isBoard) {
                 if (!gameState.selectedActivity) {
-                    centerContainer.innerHTML = `<div class="center-deck-slot"><span style="font-size:15px; color:#94a3b8;">상단에서 카드선택을<br>진행해주세요</span></div>`;
+                    centerContainer.innerHTML = `<div class="center-deck-slot"><span style="font-size:14px; color:#94a3b8;">상단에서 카드선택을<br>진행해주세요</span></div>`;
                 } else {
                     const pool = gameState.selectedActivity === 'feeling' ? feelingPool : needPool;
                     const isFeeling = gameState.selectedActivity === 'feeling';
@@ -769,10 +768,10 @@
                     centerContainer.innerHTML = boardHTML;
                 }
             } else {
-                let deckText = gameState.selectedActivity === 'feeling' ? "<b>느낌 카드덱</b><br><span style='font-size:14px; margin-top:6px; display:block;'>터치해서 카드 뽑기</span>" :
-                               gameState.selectedActivity === 'need' ? "<b>욕구 카드덱</b><br><span style='font-size:14px; margin-top:6px; display:block;'>터치해서 카드 뽑기</span>" : "상단에서 카드선택을<br>진행해주세요";
+                let deckText = gameState.selectedActivity === 'feeling' ? "<b>느낌 카드덱</b><br><span style='font-size:13px; margin-top:4px; display:block;'>터치해서 카드 뽑기</span>" :
+                               gameState.selectedActivity === 'need' ? "<b>욕구 카드덱</b><br><span style='font-size:13px; margin-top:4px; display:block;'>터치해서 카드 뽑기</span>" : "상단에서 카드선택을<br>진행해주세요";
                 let deckClass = "center-deck-slot" + (gameState.selectedActivity ? ` active-${gameState.selectedActivity}` : '');
-                centerContainer.innerHTML = `<div class="${deckClass}" onclick="handleCenterDeckClick()"><span style="font-size: 18px; font-weight: bold;">${deckText}</span></div>`;
+                centerContainer.innerHTML = `<div class="${deckClass}" onclick="handleCenterDeckClick()"><span style="font-size: 15px; font-weight: bold;">${deckText}</span></div>`;
             }
 
             ['north', 'south', 'west', 'east'].forEach(seat => {
