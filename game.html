@@ -34,11 +34,11 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-wrap: nowrap;
-            gap: 10px;
+            flex-wrap: wrap; /* 폰에서 버튼이 넘칠 때 줄바꿈 허용으로 찌그러짐 방지 */
+            gap: 8px;
             background: #ffffff;
-            padding: 10px 16px;
-            border-radius: 16px;
+            padding: 8px 12px;
+            border-radius: 14px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.06);
             border: 1px solid #e2e8f0;
             z-index: 20;
@@ -48,14 +48,14 @@
             flex-shrink: 0;
         }
 
-        .control-group { display: flex; gap: 6px; align-items: center; }
+        .control-group { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: center; }
         .control-group.mode-group {
-            background-color: #f1f5f9; padding: 5px 10px; border-radius: 10px; border: 1px solid #cbd5e1;
+            background-color: #f1f5f9; padding: 4px 8px; border-radius: 10px; border: 1px solid #cbd5e1;
         }
-        .control-label { font-size: 13px; font-weight: bold; color: #334155; }
+        .control-label { font-size: 12px; font-weight: bold; color: #334155; }
 
         .mode-btn, .select-deck-btn, .view-all-btn, .fullscreen-btn, .font-zoom-btn, .lobby-back-btn, .destroy-room-btn {
-            font-size: 13px; font-weight: bold; padding: 6px 12px; border-radius: 10px; border: 1px solid #cbd5e1;
+            font-size: 12px; font-weight: bold; padding: 5px 10px; border-radius: 8px; border: 1px solid #cbd5e1;
             cursor: pointer; transition: all 0.2s; background-color: #ffffff; color: #475569;
         }
 
@@ -63,7 +63,7 @@
         .destroy-room-btn { background-color: #fee2e2; color: #991b1b; border-color: #fca5a5; display: none; }
         .destroy-room-btn:hover { background-color: #fecaca; }
 
-        .room-badge { background-color: #fdf2f8; color: #be185d; border: 1px solid #f472b6; font-size: 12px; font-weight: bold; padding: 6px 10px; border-radius: 10px; }
+        .room-badge { background-color: #fdf2f8; color: #be185d; border: 1px solid #f472b6; font-size: 11px; font-weight: bold; padding: 5px 8px; border-radius: 8px; }
 
         .mode-btn.active, .select-deck-btn.active {
             background-color: #64748b; color: #ffffff; border-color: #64748b; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -80,28 +80,28 @@
 
         .game-board-layout {
             display: grid;
-            grid-template-columns: 140px 1fr 140px;
-            grid-template-rows: 135px 1fr 135px;
-            gap: 8px; flex-grow: 1; width: 100%; min-height: 0; margin: 4px 0; align-items: center; justify-items: center;
+            grid-template-columns: 130px 1fr 130px;
+            grid-template-rows: 125px 1fr 125px;
+            gap: 6px; flex-grow: 1; width: 100%; min-height: 0; margin: 4px 0; align-items: center; justify-items: center;
         }
 
         .table-area {
-            background-color: #ffffff; border: 1px solid #e6ded1; border-radius: 10px; padding: 6px;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
+            background-color: #ffffff; border: 1px solid #e6ded1; border-radius: 10px; padding: 4px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.03); width: 100%; height: 100%; min-height: 0; overflow: auto;
         }
 
-        .area-north { grid-column: 2; grid-row: 1; width: 100%; height: 135px; flex-direction: row; }
-        .area-south { grid-column: 2; grid-row: 3; width: 100%; height: 135px; flex-direction: row; }
-        .area-west { grid-column: 1; grid-row: 1 / span 3; width: 140px; height: 100%; flex-direction: column; }
-        .area-east { grid-column: 3; grid-row: 1 / span 3; width: 140px; height: 100%; flex-direction: column; }
+        .area-north { grid-column: 2; grid-row: 1; width: 100%; height: 125px; flex-direction: row; }
+        .area-south { grid-column: 2; grid-row: 3; width: 100%; height: 125px; flex-direction: row; }
+        .area-west { grid-column: 1; grid-row: 1 / span 3; width: 130px; height: 100%; flex-direction: column; }
+        .area-east { grid-column: 3; grid-row: 1 / span 3; width: 130px; height: 100%; flex-direction: column; }
 
         .center-area-wrapper { grid-column: 2; grid-row: 2; display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; overflow: hidden; }
 
         .center-deck-slot {
-            width: 120px; height: 150px; background-color: #ffffff; border: 2px dashed #cbd5e1; border-radius: 12px;
+            width: 110px; height: 140px; background-color: #ffffff; border: 2px dashed #cbd5e1; border-radius: 12px;
             display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03); padding: 8px; transition: transform 0.1s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03); padding: 6px; transition: transform 0.1s;
         }
         .center-deck-slot:hover { transform: scale(1.02); }
         .center-deck-slot.active-feeling { background-color: #fdf2f8; border: 2px solid #be185d; color: #be185d; }
@@ -109,57 +109,58 @@
 
         .center-board-area {
             width: 100%; height: 100%; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 6px;
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); grid-auto-rows: 36px; gap: 4px; overflow-y: auto;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(68px, 1fr)); grid-auto-rows: 34px; gap: 4px; overflow-y: auto;
         }
-        .board-card-item { border-radius: 5px; height: 36px; display: flex; justify-content: center; align-items: center; font-size: 12px; font-weight: bold; cursor: pointer; }
-        .board-card-empty { height: 36px; }
+        .board-card-item { border-radius: 5px; height: 34px; display: flex; justify-content: center; align-items: center; font-size: 11px; font-weight: bold; cursor: pointer; }
+        .board-card-empty { height: 34px; }
         .board-card-item.selected-feeling { background-color: #f472b6 !important; color: #fff !important; border: 2px solid #831843 !important; }
         .board-card-item.selected-need { background-color: #38bdf8 !important; color: #fff !important; border: 2px solid #0369a1 !important; }
 
-        .name-badge { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 4px 6px; text-align: center; width: 90px; }
+        .name-badge { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 4px; text-align: center; width: 85px; flex-shrink: 0; }
         .badge-north-active { background-color: #f0fdf4 !important; border-color: #bbf7d0 !important; }
         .badge-south-active { background-color: #fefce8 !important; border-color: #fef08a !important; }
         .badge-west-active  { background-color: #faf5ff !important; border-color: #e9d5ff !important; }
         .badge-east-active  { background-color: #fff1f2 !important; border-color: #fecdd3 !important; }
 
-        .seat-name { font-size: 12px; font-weight: bold; color: #334155; }
-        .seat-btn { font-size: 10px; padding: 2px 4px; background-color: #fff; border-radius: 3px; border: 1px solid #cbd5e1; cursor: pointer; margin-top: 2px; }
+        .seat-name { font-size: 11px; font-weight: bold; color: #334155; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .seat-btn { font-size: 9px; padding: 2px 4px; background-color: #fff; border-radius: 3px; border: 1px solid #cbd5e1; cursor: pointer; margin-top: 2px; }
 
-        .card-slot { width: 105px; height: 105px; border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; cursor: pointer; padding: 6px; }
+        .card-slot { width: 95px; height: 95px; border-radius: 10px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; cursor: pointer; padding: 4px; flex-shrink: 0; }
         .game-container.mode-board .card-slot { display: none; }
 
-        .game-container.font-zoom-in .card-slot b { font-size: 18px !important; }
-        .game-container.font-zoom-in .card-slot span { font-size: 12px !important; }
+        .game-container.font-zoom-in .card-slot b { font-size: 16px !important; }
+        .game-container.font-zoom-in .card-slot span { font-size: 11px !important; }
 
         .gift-box-grid { display: none; }
-        .game-container.mode-board .gift-box-grid { display: flex; flex-direction: row; flex-wrap: wrap; gap: 4px; width: 100%; max-width: 340px; max-height: 90px; overflow-y: auto; }
-        .game-container.mode-board .area-west .gift-box-grid, .game-container.mode-board .area-east .gift-box-grid { flex-direction: column; flex-wrap: nowrap; max-width: 80px; max-height: 220px; }
+        .game-container.mode-board .gift-box-grid { display: flex; flex-direction: row; flex-wrap: wrap; gap: 3px; width: 100%; max-width: 300px; max-height: 80px; overflow-y: auto; }
+        .game-container.mode-board .area-west .gift-box-grid, .game-container.mode-board .area-east .gift-box-grid { flex-direction: column; flex-wrap: nowrap; max-width: 75px; max-height: 200px; }
 
-        .gift-slot { background-color: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 4px; min-width: 45px; height: 32px; display: flex; justify-content: center; align-items: center; font-size: 11px; font-weight: bold; cursor: pointer; }
+        .gift-slot { background-color: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 4px; min-width: 42px; height: 28px; display: flex; justify-content: center; align-items: center; font-size: 10px; font-weight: bold; cursor: pointer; }
         .gift-slot.has-feeling { background-color: #fdf2f8 !important; border: 1px solid #be185d !important; color: #be185d !important; }
         .gift-slot.has-need { background-color: #f0f9ff !important; border: 1px solid #0284c7 !important; color: #0284c7 !important; }
 
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.4); display: none; justify-content: center; align-items: center; z-index: 100; }
-        .modal-content { background-color: #fff; width: 90vw; max-width: 750px; height: 80vh; max-height: 650px; border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; }
-        .modal-header { padding: 12px 20px; background-color: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
-        .modal-tab-btn { font-size: 12px; font-weight: bold; padding: 4px 10px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer; background-color: #f8fafc; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.4); display: none; justify-content: center; align-items: center; z-index: 100; padding: 16px; }
+        .modal-content { background-color: #fff; width: 100vw; max-width: 700px; height: 80vh; max-height: 600px; border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; }
+        .modal-header { padding: 12px 16px; background-color: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+        .modal-tab-btn { font-size: 12px; font-weight: bold; padding: 4px 8px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer; background-color: #f8fafc; }
         .modal-tab-btn.feeling-active { background-color: #be185d !important; color: #fff !important; }
         .modal-tab-btn.need-active { background-color: #0284c7 !important; color: #fff !important; }
-        .modal-body { padding: 14px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(95px, 1fr)); gap: 8px; }
-        .all-card-item { border-radius: 6px; height: 46px; display: flex; justify-content: center; align-items: center; font-size: 14px; font-weight: bold; }
-        .close-modal-btn { background: none; border: none; font-size: 15px; font-weight: bold; cursor: pointer; }
+        .modal-body { padding: 12px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); gap: 6px; }
+        .all-card-item { border-radius: 6px; height: 42px; display: flex; justify-content: center; align-items: center; font-size: 13px; font-weight: bold; }
+        .close-modal-btn { background: none; border: none; font-size: 14px; font-weight: bold; cursor: pointer; }
 
+        /* 모바일 가로 모드 최적화 (왼쪽 패널 레이아웃) */
         @media (max-height: 550px) and (orientation: landscape) {
             body { min-height: 100dvh; }
             .game-container {
                 width: 100vw; height: 100dvh; max-width: none; max-height: none; border-radius: 0;
-                display: grid; grid-template-columns: 155px 1fr; grid-template-rows: 1fr; gap: 4px; padding: 3px;
+                display: grid; grid-template-columns: 145px 1fr; grid-template-rows: 1fr; gap: 4px; padding: 2px;
             }
             .top-control-bar {
                 grid-column: 1; grid-row: 1; flex-direction: column; align-items: stretch;
-                width: 100%; height: 100%; overflow-y: auto; padding: 6px; gap: 7px; border-radius: 6px;
+                width: 100%; height: 100%; overflow-y: auto; padding: 4px; gap: 5px; border-radius: 4px;
             }
-            .control-group { flex-direction: column; align-items: stretch; gap: 5px; }
+            .control-group { flex-direction: column; align-items: stretch; gap: 4px; }
             .game-board-layout { grid-column: 2; grid-row: 1; height: 100%; margin: 0; }
         }
     </style>
@@ -178,13 +179,13 @@
                 <button id="btnModePublic" class="mode-btn" onclick="switchGameMode('public')">나만 안 보기</button>
                 <button id="btnModeBoard" class="mode-btn" onclick="switchGameMode('board')">전체카드 펼치기</button>
             </div>
-            <div style="width: 1px; height: 14px; background-color: #cbd5e1;"></div>
+            <div style="width: 1px; height: 12px; background-color: #cbd5e1;"></div>
             <div class="control-group">
                 <span class="control-label">카드선택:</span>
                 <button id="btnDeckFeeling" class="select-deck-btn" onclick="selectActivity('feeling')">느낌</button>
                 <button id="btnDeckNeed" class="select-deck-btn" onclick="selectActivity('need')">욕구</button>
             </div>
-            <div style="width: 1px; height: 14px; background-color: #cbd5e1;"></div>
+            <div style="width: 1px; height: 12px; background-color: #cbd5e1;"></div>
             <button class="view-all-btn" onclick="openAllCardsModal('feeling')">카드 전체보기</button>
             <button id="btnFontZoom" class="font-zoom-btn" onclick="toggleFontZoom()">글씨 🔍 A+</button>
             <button class="fullscreen-btn" onclick="toggleFullScreen()">전체 화면</button>
@@ -211,7 +212,7 @@
 
             <div class="center-area-wrapper" id="centerAreaContainer">
                 <div id="centerDeckSlot" class="center-deck-slot" onclick="handleCenterDeckClick()">
-                    <span id="centerDeckText" style="font-size: 13px; font-weight: bold; color: #94a3b8;">상단에서 카드선택을<br>진행해주세요</span>
+                    <span id="centerDeckText" style="font-size: 12px; font-weight: bold; color: #94a3b8;">상단에서 카드선택을<br>진행해주세요</span>
                 </div>
             </div>
 
@@ -238,7 +239,7 @@
     <div id="allCardsModal" class="modal-overlay" onclick="closeAllCardsModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-header">
-                <b id="modalTitle" style="font-size: 15px; color: #334155;">NVC 전체 카드 목록</b>
+                <b id="modalTitle" style="font-size: 14px; color: #334155;">NVC 전체 카드 목록</b>
                 <div class="modal-tab-group">
                     <button id="modalTabFeeling" class="modal-tab-btn" onclick="switchModalTab('feeling')">느낌 카드</button>
                     <button id="modalTabNeed" class="modal-tab-btn" onclick="switchModalTab('need')">욕구 카드</button>
@@ -510,7 +511,7 @@
             const centerContainer = document.getElementById('centerAreaContainer');
             if (gameState.gameMode === 'board') {
                 if (!gameState.selectedActivity) {
-                    centerContainer.innerHTML = `<div class="center-deck-slot"><span style="font-size:12px; color:#94a3b8;">상단에서 카드선택을<br>진행해주세요</span></div>`;
+                    centerContainer.innerHTML = `<div class="center-deck-slot"><span style="font-size:11px; color:#94a3b8;">상단에서 카드선택을<br>진행해주세요</span></div>`;
                 } else {
                     const pool = gameState.selectedActivity === 'feeling' ? feelingPool : needPool;
                     const isFeeling = gameState.selectedActivity === 'feeling';
@@ -533,10 +534,10 @@
                     centerContainer.innerHTML = boardHTML;
                 }
             } else {
-                let deckText = gameState.selectedActivity === 'feeling' ? "<b>느낌 카드덱</b><br><span style='font-size:11px; margin-top:4px; display:block;'>터치해서 카드 뽑기</span>" :
-                               gameState.selectedActivity === 'need' ? "<b>욕구 카드덱</b><br><span style='font-size:11px; margin-top:4px; display:block;'>터치해서 카드 뽑기</span>" : "상단에서 카드선택을<br>진행해주세요";
+                let deckText = gameState.selectedActivity === 'feeling' ? "<b>느낌 카드덱</b><br><span style='font-size:10px; margin-top:2px; display:block;'>터치해서 뽑기</span>" :
+                               gameState.selectedActivity === 'need' ? "<b>욕구 카드덱</b><br><span style='font-size:10px; margin-top:2px; display:block;'>터치해서 뽑기</span>" : "상단에서 카드선택을<br>진행해주세요";
                 let deckClass = "center-deck-slot" + (gameState.selectedActivity ? ` active-${gameState.selectedActivity}` : '');
-                centerContainer.innerHTML = `<div class="${deckClass}" onclick="handleCenterDeckClick()"><span style="font-size: 13px; font-weight: bold;">${deckText}</span></div>`;
+                centerContainer.innerHTML = `<div class="${deckClass}" onclick="handleCenterDeckClick()"><span style="font-size: 12px; font-weight: bold;">${deckText}</span></div>`;
             }
 
             ['north', 'south', 'west', 'east'].forEach(seat => {
@@ -553,7 +554,7 @@
                     badge.className = `name-badge badge-${seat}-active`;
                     if (seat === mySeat) {
                         badge.querySelector('.seat-name').innerText = `${seatInfo.name} (나)`;
-                        seatBtn.innerText = "자리 비우기";
+                        seatBtn.innerText = "비우기";
                         seatBtn.style.backgroundColor = "#fee2e2"; seatBtn.style.color = "#991b1b";
                     } else {
                         badge.querySelector('.seat-name').innerText = seatInfo.name;
@@ -582,7 +583,7 @@
 
                 if (gameState.gameMode !== 'board') {
                     if (!cardData.card) {
-                        slot.innerHTML = `<span style="font-size:11px; color:#94a3b8;">카드 없음</span>`;
+                        slot.innerHTML = `<span style="font-size:10px; color:#94a3b8;">카드 없음</span>`;
                         slot.style.borderColor = "#cbd5e1"; slot.style.backgroundColor = "#f8fafc";
                     } else {
                         const isFeeling = cardData.type === 'feeling';
@@ -592,17 +593,17 @@
                         if (seat === mySeat) {
                             if (gameState.gameMode === 'private') {
                                 slot.innerHTML = cardData.revealed ? 
-                                    `<span style="font-size:10px; color:#ef4444;">[공개됨]</span><b style="font-size:14px;">${cardData.card}</b><span style="font-size:10px; color:#888;">(반납)</span>` :
-                                    `<b style="font-size:15px;">${cardData.card}</b><span style="font-size:10px; color:${isFeeling ? '#be185d' : '#0284c7'};">(공개)</span>`;
+                                    `<span style="font-size:9px; color:#ef4444;">[공개됨]</span><b style="font-size:13px;">${cardData.card}</b><span style="font-size:9px; color:#888;">(반납)</span>` :
+                                    `<b style="font-size:14px;">${cardData.card}</b><span style="font-size:9px; color:${isFeeling ? '#be185d' : '#0284c7'};">(공개)</span>`;
                             } else {
                                 slot.innerHTML = cardData.selfRevealed ?
-                                    `<b style="font-size:15px;">${cardData.card}</b><span style="font-size:10px;">(반납)</span>` :
-                                    `<b style="font-size:18px;">??</b><span style="font-size:10px;">(확인)</span>`;
+                                    `<b style="font-size:14px;">${cardData.card}</b><span style="font-size:9px;">(반납)</span>` :
+                                    `<b style="font-size:16px;">??</b><span style="font-size:9px;">(확인)</span>`;
                             }
                         } else {
                             slot.innerHTML = gameState.gameMode === 'private' ? 
-                                (cardData.revealed ? `<span style="font-size:10px; color:#ef4444;">[공개]</span><b style="font-size:14px;">${cardData.card}</b>` : `<b style="font-size:16px;">??</b>`) :
-                                `<span style="font-size:10px;">[${seatInfo.name}]</span><b style="font-size:14px;">${cardData.card}</b>`;
+                                (cardData.revealed ? `<span style="font-size:9px; color:#ef4444;">[공개]</span><b style="font-size:13px;">${cardData.card}</b>` : `<b style="font-size:15px;">??</b>`) :
+                                `<span style="font-size:9px;">[${seatInfo.name}]</span><b style="font-size:13px;">${cardData.card}</b>`;
                         }
                     }
                 }
