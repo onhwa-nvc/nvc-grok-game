@@ -49,7 +49,7 @@
         }
 
         .menu-group { display: flex; align-items: center; gap: 6px; }
-        .mobile-side-bar { display: none; } /* PC에서는 모바일 사이드바 숨김 */
+        .mobile-side-bar { display: none; } /* PC에서는 모바일 메뉴바 숨김 */
 
         .control-label {
             font-size: 12px;
@@ -275,29 +275,38 @@
         .close-modal-btn { background: none; border: none; font-size: 15px; font-weight: bold; cursor: pointer; color: #64748b; }
 
 
-        /* [스마트폰 세로 모드]: 남북 테이블 가로 100% 꽉 참 */
+        /* [스마트폰 세로 모드]: 남북 테이블 좌우로 100% 꽉 참, 메뉴바는 글씨 맞춤 컴팩트 다중 행 구조 */
         @media screen and (max-width: 768px) and (orientation: portrait) {
             .game-container { height: 100dvh; max-height: none; padding: 4px; }
             .top-control-bar { display: none !important; }
+            
             .mobile-side-bar {
-                display: flex; flex-direction: column; background: #ffffff; padding: 6px; border-radius: 10px; border: 1px solid #e2e8f0; gap: 4px; flex-shrink: 0; z-index: 20;
+                display: flex; flex-direction: column; background: #ffffff; padding: 6px 8px; border-radius: 10px; border: 1px solid #e2e8f0; gap: 5px; flex-shrink: 0; z-index: 20; width: 100%;
             }
-            .mobile-row { display: flex; justify-content: space-between; align-items: center; gap: 4px; width: 100%; }
-            .mode-btn, .select-deck-btn, .view-all-btn, .fullscreen-btn, .font-zoom-btn, .lobby-back-btn, .destroy-room-btn {
-                font-size: 10px; padding: 4px 6px; flex: 1; text-align: center;
+            .mobile-row {
+                display: flex; justify-content: flex-start; align-items: center; gap: 4px; width: 100%; flex-wrap: wrap;
             }
-            .room-badge { font-size: 10px; padding: 4px 6px; }
+            /* 버튼들이 늘어나지 않고 글씨 크기만큼만 깔끔하게 자리잡도록 설정 (flex: 0 0 auto) */
+            .mobile-side-bar button, .mobile-side-bar .room-badge {
+                flex: 0 0 auto; width: auto !important; font-size: 11px; padding: 4px 8px; height: 28px; line-height: 1.2;
+            }
+            .room-badge { font-weight: bold; }
 
             .game-board-layout {
                 grid-template-columns: 75px 1fr 75px;
-                grid-template-rows: 105px 1fr 105px;
+                grid-template-rows: 110px 1fr 110px;
                 gap: 4px; width: 100%; margin: 2px 0;
             }
-            .table-area { padding: 3px; gap: 4px; width: 100%; }
-            .area-north, .area-south { height: 105px; width: 100%; justify-content: space-between; }
-            .area-west, .area-east { width: 75px; height: 100%; }
+            /* 남북 테이블이 좌우로 100% 꽉 차도록 확장 */
+            .table-area { padding: 4px; gap: 6px; width: 100%; }
+            .area-north, .area-south {
+                grid-column: 1 / span 3 !important; /* 좌우 끝까지 확장 */
+                height: 110px; width: 100%; justify-content: space-between;
+            }
+            .area-west { grid-column: 1; grid-row: 2; width: 75px; height: 100%; }
+            .area-east { grid-column: 3; grid-row: 2; width: 75px; height: 100%; }
 
-            .card-slot { width: 70px; height: 70px; }
+            .card-slot { width: 75px; height: 75px; }
             .name-badge { width: 62px; padding: 2px; }
             .seat-name { font-size: 9px; }
             .seat-btn { font-size: 7px; padding: 1px 2px; }
@@ -309,12 +318,12 @@
             .game-container {
                 width: 100vw; height: 100dvh; max-width: none; max-height: none;
                 border-radius: 0; padding: 4px;
-                display: grid; grid-template-columns: 180px 1fr; grid-template-rows: 1fr; gap: 6px;
+                display: grid; grid-template-columns: 165px 1fr; grid-template-rows: 1fr; gap: 6px;
             }
             .top-control-bar { display: none !important; }
             .mobile-side-bar {
                 display: flex; grid-column: 1; grid-row: 1; flex-direction: column; justify-content: flex-start; align-items: stretch;
-                gap: 5px; background: #ffffff; padding: 8px; border-radius: 10px; border: 1px solid #e2e8f0; overflow-y: auto; z-index: 20;
+                gap: 6px; background: #ffffff; padding: 8px; border-radius: 10px; border: 1px solid #e2e8f0; overflow-y: auto; z-index: 20;
             }
             .mobile-side-bar .mobile-row { display: flex; flex-direction: column; gap: 3px; width: 100%; }
             .mobile-side-bar button, .mobile-side-bar .room-badge { width: 100%; text-align: center; font-size: 11px; padding: 5px; }
@@ -339,28 +348,24 @@
 <body>
 
     <div class="game-container" id="gameContainer">
-        <!-- [PC용 상단 메뉴바 - 4개 그룹 분할] -->
+        <!-- [PC용 상단 메뉴바] -->
         <div class="top-control-bar">
-            <!-- 1그룹: 방 관리 -->
             <div class="menu-group">
                 <button class="lobby-back-btn" onclick="goToLobby()">← 로비</button>
                 <div id="roomDisplayBadgePC" class="room-badge">방: 로딩</div>
                 <button id="destroyRoomBtnPC" class="destroy-room-btn" onclick="destroyRoom()">방종료</button>
             </div>
-            <!-- 2그룹: 활동(게임) 선택 -->
             <div class="menu-group" style="background:#f1f5f9; padding:3px 6px; border-radius:8px; border:1px solid #cbd5e1;">
                 <span class="control-label" style="margin-right:2px;">활동:</span>
                 <button id="btnModePrivatePC" class="mode-btn active" onclick="switchGameMode('private')">나만 보기</button>
                 <button id="btnModePublicPC" class="mode-btn" onclick="switchGameMode('public')">나만 안 보기</button>
                 <button id="btnModeBoardPC" class="mode-btn" onclick="switchGameMode('board')">전체 펼치기</button>
             </div>
-            <!-- 3그룹: 카드 선택 -->
             <div class="menu-group" style="background:#f8fafc; padding:3px 6px; border-radius:8px; border:1px solid #cbd5e1;">
                 <span class="control-label" style="margin-right:2px;">카드:</span>
                 <button id="btnDeckFeelingPC" class="select-deck-btn" onclick="selectActivity('feeling')">느낌</button>
                 <button id="btnDeckNeedPC" class="select-deck-btn" onclick="selectActivity('need')">욕구</button>
             </div>
-            <!-- 4그룹: 편의 기능 -->
             <div class="menu-group">
                 <button class="view-all-btn" onclick="openAllCardsModal('feeling')">전체보기</button>
                 <button id="btnFontZoomPC" class="font-zoom-btn" onclick="toggleFontZoom()">글씨 🔍 A+</button>
@@ -368,28 +373,27 @@
             </div>
         </div>
 
-        <!-- [모바일용 메뉴바: 세로모드는 상단 3단, 가로모드는 왼쪽 사이드바 변환] -->
+        <!-- [모바일 세로 모드용 메뉴바: 글씨 크기에 맞춘 컴팩트한 다중 행 구조] -->
         <div class="mobile-side-bar">
-            <!-- 1단: 방 관리 -->
+            <!-- 1행: 방 관리 및 전체화면 -->
             <div class="mobile-row">
                 <button class="lobby-back-btn" onclick="goToLobby()">← 로비</button>
                 <div id="roomDisplayBadgeMob" class="room-badge">방: 로딩</div>
                 <button id="destroyRoomBtnMob" class="destroy-room-btn" onclick="destroyRoom()">방종료</button>
                 <button class="fullscreen-btn" onclick="toggleFullScreen()">전체화면</button>
             </div>
-            <!-- 2단: 활동 선택 -->
+            <!-- 2행: 활동 선택 -->
             <div class="mobile-row" style="background:#f1f5f9; padding:3px; border-radius:6px; border:1px solid #cbd5e1;">
-                <button id="btnModePrivateMob" class="mode-btn active" onclick="switchGameMode('private')">나만 보기</button>
-                <button id="btnModePublicMob" class="mode-btn" onclick="switchGameMode('public')">나만 안 보기</button>
-                <button id="btnModeBoardMob" class="mode-btn" onclick="switchGameMode('board')">전체 펼치기</button>
+                <span style="font-size:10px; font-weight:bold; color:#475569; margin-right:2px;">활동:</span>
+                <button id="btnModePrivateMob" class="mode-btn active" onclick="switchGameMode('private')">나만보기</button>
+                <button id="btnModePublicMob" class="mode-btn" onclick="switchGameMode('public')">나만안보기</button>
+                <button id="btnModeBoardMob" class="mode-btn" onclick="switchGameMode('board')">전체펼치기</button>
             </div>
-            <!-- 3단: 카드 선택 -->
+            <!-- 3행: 카드 선택 및 편의 기능 -->
             <div class="mobile-row" style="background:#f8fafc; padding:3px; border-radius:6px; border:1px solid #cbd5e1;">
+                <span style="font-size:10px; font-weight:bold; color:#475569; margin-right:2px;">카드:</span>
                 <button id="btnDeckFeelingMob" class="select-deck-btn" onclick="selectActivity('feeling')">느낌</button>
                 <button id="btnDeckNeedMob" class="select-deck-btn" onclick="selectActivity('need')">욕구</button>
-            </div>
-            <!-- 4단: 편의 기능 -->
-            <div class="mobile-row">
                 <button class="view-all-btn" onclick="openAllCardsModal('feeling')">전체보기</button>
                 <button id="btnFontZoomMob" class="font-zoom-btn" onclick="toggleFontZoom()">🔍 A+</button>
             </div>
@@ -397,7 +401,7 @@
 
         <!-- 게임 플레이 메인 그리드 레이아웃 -->
         <div class="game-board-layout">
-            <!-- 북쪽 개인 테이블 -->
+            <!-- 북쪽 개인 테이블 (세로 모드 시 좌우로 100% 꽉 참) -->
             <div id="table-north" class="table-area area-north" onclick="handleTableClick('north')">
                 <div class="name-badge" id="badge-north">
                     <div class="seat-name">북쪽 자리</div>
@@ -440,7 +444,7 @@
                 <div class="gift-box-grid" id="giftGrid-east"></div>
             </div>
 
-            <!-- 남쪽 개인 테이블 -->
+            <!-- 남쪽 개인 테이블 (세로 모드 시 좌우로 100% 꽉 참) -->
             <div id="table-south" class="table-area area-south" onclick="handleTableClick('south')">
                 <div class="name-badge" id="badge-south">
                     <div class="seat-name">남쪽 자리</div>
