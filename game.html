@@ -324,7 +324,7 @@
                 height: 34px !important;
             }
 
-            /* 남북쪽 선물보관함 5칸씩 2줄 (위 5, 아래 5) 및 카드 크기 확대 */
+            /* 남북쪽 선물보관함 5칸씩 2줄 (위 5, 아래 5) 및 카드 크기 */
             .game-container.mode-board .area-north .gift-box-grid,
             .game-container.mode-board .area-south .gift-box-grid {
                 display: grid !important;
@@ -376,14 +376,14 @@
             .seat-name { font-size: 10px; }
             .seat-btn { font-size: 8px; padding: 2px 3px; }
 
-            /* [수정] 폰 가로 모드에서 남북쪽 선물보관함 카드를 위 5칸, 아래 5칸(2행 5열)로 배치하고, 여백을 활용해 가로/세로 폭과 글씨 크기를 대폭 상향 */
+            /* [수정] 폰 가로 모드에서 남북쪽 선물보관함 세로 폭을 살짝 줄여서 쾌적하게 배치 (위 5칸, 아래 5칸 형태 유지) */
             .game-container.mode-board .area-north .gift-box-grid,
             .game-container.mode-board .area-south .gift-box-grid {
                 display: grid !important;
-                grid-template-columns: repeat(5, minmax(65px, 1fr)) !important; /* 가로 칸 폭 대폭 확장 */
-                grid-template-rows: repeat(2, 40px) !important; /* 세로 높이 확장 */
-                gap: 3px !important;
-                max-width: 420px !important; /* 테이블 내 남는 여백 활용해 크게 확장 */
+                grid-template-columns: repeat(5, minmax(58px, 1fr)) !important; /* 가로 칸 폭 적당히 조절 */
+                grid-template-rows: repeat(2, 33px) !important; /* 세로 높이를 40px에서 33px로 살짝 축소 */
+                gap: 2px !important;
+                max-width: 360px !important;
                 max-height: none !important;
                 overflow-y: visible !important;
             }
@@ -391,10 +391,10 @@
             .game-container.mode-board .area-south .gift-slot {
                 min-width: 0 !important;
                 width: 100% !important;
-                height: 40px !important;
-                font-size: 13px !important; /* 글씨 크기 큼직하게 상향 */
+                height: 33px !important; /* 슬롯 세로 높이 축소 반영 */
+                font-size: 11px !important; /* 글씨 크기 적당하게 정돈 */
                 font-weight: bold !important;
-                padding: 2px !important;
+                padding: 1px !important;
             }
         }
     </style>
