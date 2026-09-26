@@ -985,8 +985,8 @@
                     centerContainer.innerHTML = boardHTML;
                 }
             } else {
-                let deckText = gameState.selectedActivity === 'feeling' ? "<b>느낌 카드덱</b><br><span style='font-size:11px; margin-top:3px; display:block;'>터치해서 카드 뽑기</span>" :
-                               gameState.selectedActivity === 'need' ? "<b>욕구 카드덱</b><br><span style='font-size:11px; margin-top:3px; display:block;'>터치해서 카드 뽑기</span>" : "메뉴에서 카드를 선택해 주세요.";
+                let deckText = gameState.selectedActivity === 'feeling' ? "<b>느낌카드</b><br><span style='font-size:11px; margin-top:3px; display:block;'>터치해서 카드 뽑기</span>" :
+                               gameState.selectedActivity === 'need' ? "<b>욕구카드</b><br><span style='font-size:11px; margin-top:3px; display:block;'>터치해서 카드 뽑기</span>" : "메뉴에서 카드를 선택해 주세요.";
                 let deckClass = "center-deck-slot" + (gameState.selectedActivity ? ` active-${gameState.selectedActivity}` : '');
                 centerContainer.innerHTML = `<div class="${deckClass}" onclick="handleCenterDeckClick()"><span style="font-size: 13px; font-weight: bold;">${deckText}</span></div>`;
             }
