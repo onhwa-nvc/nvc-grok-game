@@ -239,7 +239,7 @@
         .game-container.font-zoom-in .seat-name { font-size: 14px !important; }
         .game-container.font-zoom-in .board-card-item { font-size: 13px !important; }
 
-        /* 선물 보관함 그리드 */
+        /* 선물 보관함 그리드 (PC 기본) */
         .gift-box-grid { display: none; }
         .game-container.mode-board .gift-box-grid {
             display: flex; flex-direction: row; flex-wrap: wrap; gap: 3px; width: 100%; max-width: 320px; max-height: 90px; overflow-y: auto;
@@ -293,13 +293,13 @@
 
             .game-board-layout {
                 grid-template-columns: 80px 1fr 80px;
-                grid-template-rows: 115px 1fr 115px;
+                grid-template-rows: 125px 1fr 125px; /* 남북 영역 높이 살짝 확대 */
                 gap: 4px; width: 100%; margin: 2px 0;
             }
-            .table-area { padding: 4px; gap: 8px; width: 100%; justify-content: center; }
+            .table-area { padding: 4px; gap: 6px; width: 100%; justify-content: center; }
             .area-north, .area-south {
                 grid-column: 1 / span 3 !important;
-                height: 115px; width: 100%;
+                height: 125px; width: 100%;
             }
             .area-west { grid-column: 1; grid-row: 2; width: 80px; height: 100%; }
             .area-east { grid-column: 3; grid-row: 2; width: 80px; height: 100%; }
@@ -309,7 +309,7 @@
             .seat-name { font-size: 11px; }
             .seat-btn { font-size: 9px; padding: 2px 4px; }
 
-            /* [수정] 폰 세로 모드에서 전체 펼치기 시 카드가 정확히 3줄(3열)로 배치되도록 설정 */
+            /* 중앙 전체 펼치기 3열 배치 */
             .center-board-area {
                 grid-template-columns: repeat(3, 1fr) !important;
                 grid-auto-rows: 34px !important;
@@ -322,6 +322,26 @@
             }
             .board-card-empty {
                 height: 34px !important;
+            }
+
+            /* [수정] 폰 세로 모드에서 남북쪽 펼치기 보관함(gift-box-grid)을 정확히 위 5칸, 아래 5칸(2행 5열)로 배치 */
+            .game-container.mode-board .area-north .gift-box-grid,
+            .game-container.mode-board .area-south .gift-box-grid {
+                display: grid !important;
+                grid-template-columns: repeat(5, minmax(36px, 1fr)) !important;
+                grid-template-rows: repeat(2, 26px) !important;
+                gap: 2px !important;
+                max-width: 220px !important;
+                max-height: none !important;
+                overflow-y: visible !important;
+            }
+            .game-container.mode-board .area-north .gift-slot,
+            .game-container.mode-board .area-south .gift-slot {
+                min-width: 0 !important;
+                width: 100% !important;
+                height: 26px !important;
+                font-size: 10px !important;
+                padding: 1px !important;
             }
         }
 
