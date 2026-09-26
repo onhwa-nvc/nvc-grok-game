@@ -233,11 +233,11 @@
         }
         .game-container.mode-board .card-slot { display: none; }
 
-        /* 글씨 확대 모드 (A+) */
-        .game-container.font-zoom-in .card-slot b { font-size: 18px !important; }
-        .game-container.font-zoom-in .card-slot span { font-size: 12px !important; }
-        .game-container.font-zoom-in .seat-name { font-size: 14px !important; }
-        .game-container.font-zoom-in .board-card-item { font-size: 13px !important; }
+        /* [수정] 글씨 2단계 확대 모드 (A+) */
+        .game-container.font-zoom-in .card-slot b { font-size: 22px !important; }
+        .game-container.font-zoom-in .card-slot span { font-size: 14px !important; }
+        .game-container.font-zoom-in .seat-name { font-size: 16px !important; }
+        .game-container.font-zoom-in .board-card-item { font-size: 15px !important; }
 
         /* PC 화면 펼치기 모드: 남북쪽 선물보관함 5칸씩 2줄 */
         .gift-box-grid { display: none; }
@@ -261,7 +261,7 @@
             padding: 2px !important;
         }
 
-        /* [수정] PC 및 기본 환경: 동서쪽(좌우) 선물보관함 폭을 이름표 폭(95px)에 맞춰 꽉 차게 일치시킴 */
+        /* 동서쪽 선물보관함 폭을 이름표 폭(95px)에 일치 */
         .game-container.mode-board .area-west .gift-box-grid,
         .game-container.mode-board .area-east .gift-box-grid {
             display: flex !important;
@@ -375,7 +375,6 @@
                 padding: 2px !important;
             }
 
-            /* 모바일 세로 모드 동서쪽 뱃지 폭(70px)에 일치 */
             .game-container.mode-board .area-west .gift-box-grid,
             .game-container.mode-board .area-east .gift-box-grid {
                 width: 70px !important;
@@ -433,7 +432,6 @@
                 padding: 1px !important;
             }
 
-            /* [수정] 폰 가로 모드 동서쪽 선물보관함 폭을 이름표 폭(65px)에 맞춰 꽉 차게 일치시킴 */
             .game-container.mode-board .area-west .gift-box-grid,
             .game-container.mode-board .area-east .gift-box-grid {
                 width: 65px !important;
