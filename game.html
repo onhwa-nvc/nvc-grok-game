@@ -15,38 +15,680 @@
             min-height: 100vh; min-height: 100dvh; overflow: auto;
         }
 
-        /* [PC / 가로 모드] 상단 메뉴바 + 중앙 덱 중심 와이드 보드 */
+        /* [PC / 기본 가로 화면 레이아웃] 상단 1단 메뉴바 + 와이드 보드 */
         .game-container {
             position: relative;
             width: 100vw; height: 100vh;
             width: 100vw; height: 100dvh;
-            max-width: 1200px; max-height: 800px;
-            background-color: #f7f3요청하신 두 가지 화면 설정 변경을 안내해 드립니다. 사용 중이신 운영체제(Windows/Mac)와 앱/웹 환경에 맞춰 각각 설정해 보세요.
+            max-width: 1150px; max-height: 780px;
+            background-color: #f7f3ec;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            border: 1px solid #e6ded1;
+            display: flex; flex-direction: column;
+            justify-content: space-between;
+            padding: 10px;
+            overflow: hidden;
+        }
 
----
+        /* PC용 상단 1단 메뉴바 */
+        .top-control-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            padding: 8px 14px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid #e2e8f0;
+            z-index: 20;
+            width: 100%;
+            flex-shrink: 0;
+            gap: 8px;
+        }
 
-### 1. 컴퓨터 화면: 메뉴바(작업표시줄)를 위쪽으로 배치하기
+        .pc-menu-group { display: flex; align-items: center; gap: 6px; }
+        .mobile-3tier-bar { display: none; } /* PC에서는 3단 바 숨김 */
 
-사용 중이신 운영체제에 따라 다음 방법으로 메뉴바를 위로 옮기실 수 있습니다.
+        .mode-btn, .select-deck-btn, .view-all-btn, .fullscreen-btn, .font-zoom-btn, .lobby-back-btn, .destroy-room-btn {
+            font-size: 12px; font-weight: bold; padding: 6px 10px; border-radius: 8px; border: 1px solid #cbd5e1;
+            cursor: pointer; transition: all 0.2s; background-color: #ffffff; color: #475569;
+        }
 
-*   **Windows 10 / 11:**
-    1.  작업표시줄의 빈 곳을 **마우스 우클릭**합니다.
-    2.  `작업 표시줄 설정`으로 들어갑니다 (Windows 11의 경우 '작업 표시줄 동작' 확장).
-    3.  또는 간단하게 작업표시줄 빈 공간을 우클릭한 후 **'작업 표시줄 잠금'을 해제**한 뒤, 마우스로 드래그하여 **화면 맨 위쪽으로 끌어다 놓으시면** 이동됩니다. (※ Windows 11 최신 버전 일부 환경에서는 레지스트리 수정이 필요할 수 있으나, 기본적으로 드래그나 설정 메뉴를 지원합니다.)
-*   **Mac (macOS):**
-    1.  화면 왼쪽 상단의 **사과 아이콘() > 시스템 설정**(또는 시스템 환경설정)을 엽니다.
-    2.  **'데스크탑 및 Dock'** 메뉴를 클릭합니다.
-    3.  '화면에서의 Dock 위치' 항목을 **'상단'**으로 변경해 줍니다.
+        .lobby-back-btn { background-color: #f3ede2; color: #78716c; border-color: #d6c9b4; }
+        .destroy-room-btn { background-color: #fee2e2; color: #991b1b; border-color: #fca5a5; display: none; }
+        .destroy-room-btn:hover { background-color: #fecaca; }
 
----
+        .room-badge { background-color: #fdf2f8; color: #be185d; border: 1px solid #f472b6; font-size: 12px; font-weight: bold; padding: 6px 10px; border-radius: 8px; }
 
-### 2. 스마트폰 화면: 세로 모드에서 동서남북 비율을 가로로 꽉 차게 맞추기
+        .mode-btn.active, .select-deck-btn.active {
+            background-color: #64748b; color: #ffffff; border-color: #64748b; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
 
-스마트폰에서 지도나 방위(동서남북) 화면을 볼 때 세로 모드에서 폭이 좁아 답답하셨군요. 이 부분은 보고 계신 서비스나 앱의 레이아웃 특성에 기인한 경우가 많습니다. 아래 방법을 시도해 보세요.
+        .btn-feeling-active { background-color: #be185d !important; color: #ffffff !important; border-color: #be185d !important; }
+        .btn-need-active { background-color: #0284c7 !important; color: #ffffff !important; border-color: #0284c7 !important; }
 
-*   **화면 회전 고정 해제하기:** 스마트폰 상단바(제어 센터)를 내려 **'세로 방향 고정'을 끄고** 폰을 **가로로 눕혀서** 확인해 보세요. 가로 모드에서는 화면이 좌우로 넓어져 동서남북 배치가 훨씬 여유로워집니다.
-*   **브라우저 '데스크톱 사이트' 모드 활용:** 모바일 웹사이트로 접속 중이시라면, 브라우저 메뉴(우측 상단 점 3개 등)에서 **'데스크톱 사이트 보기'**를 체크해 보세요. PC 화면 기준으로 전체 비율이 잡히면서 동서남북 배치가 한눈에 들어오도록 조정될 수 있습니다.
+        .view-all-btn { background-color: #fdf2f8; color: #be185d; border-color: #f472b6; }
+        .view-all-btn:hover { background-color: #fce7f3; }
 
----
+        .fullscreen-btn, .font-zoom-btn { background-color: #f8fafc; color: #0f172a; border-color: #94a3b8; }
+        .font-zoom-btn.active { background-color: #0f172a; color: #ffffff; border-color: #0f172a; }
 
-혹시 특정 프로그램이나 웹페이지에서 이 문제가 발생하고 있나요? 사용 중인 프로그램 이름을 알려주시면 더 정확한 설정 방법을 안내해 드리겠습니다.
+        /* 게임 보드 영역 그리드 (PC 기본) */
+        .game-board-layout {
+            display: grid;
+            grid-template-columns: 110px 1fr 110px;
+            grid-template-rows: 105px 1fr 105px;
+            gap: 8px; flex-grow: 1; width: 100%; min-height: 0; margin: 6px 0; align-items: center; justify-items: center;
+        }
+
+        .table-area {
+            background-color: #ffffff; border: 1px solid #e6ded1; border-radius: 10px; padding: 6px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03); width: 100%; height: 100%; min-height: 0; overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .area-north { grid-column: 2; grid-row: 1; width: 100%; height: 105px; flex-direction: row; justify-content: space-between; }
+        .area-south { grid-column: 2; grid-row: 3; width: 100%; height: 105px; flex-direction: row; justify-content: space-between; }
+        .area-west { grid-column: 1; grid-row: 1 / span 3; width: 110px; height: 100%; flex-direction: column; }
+        .area-east { grid-column: 3; grid-row: 1 / span 3; width: 110px; height: 100%; flex-direction: column; }
+
+        .game-container.mode-board .area-north, .game-container.mode-board .area-south { height: 130px; }
+        .game-container.mode-board .area-west, .game-container.mode-board .area-east { width: 135px; }
+
+        .center-area-wrapper { grid-column: 2; grid-row: 2; display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; overflow: hidden; }
+
+        .center-deck-slot {
+            width: 170px; height: 215px; background-color: #ffffff; border: 3px dashed #cbd5e1; border-radius: 16px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06); padding: 10px; transition: transform 0.1s;
+        }
+        .center-deck-slot:hover { transform: scale(1.02); }
+        .center-deck-slot.active-feeling { background-color: #fdf2f8; border: 3px solid #be185d; color: #be185d; }
+        .center-deck-slot.active-need { background-color: #f0f9ff; border: 3px solid #0284c7; color: #0284c7; }
+
+        .center-board-area {
+            width: 100%; height: 100%; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 8px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); grid-auto-rows: 42px; gap: 6px; overflow-y: auto;
+        }
+        .board-card-item { border-radius: 6px; height: 42px; display: flex; justify-content: center; align-items: center; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .board-card-empty { height: 42px; }
+        .board-card-item.selected-feeling { background-color: #f472b6 !important; color: #fff !important; border: 2px solid #831843 !important; }
+        .board-card-item.selected-need { background-color: #38bdf8 !important; color: #fff !important; border: 2px solid #0369a1 !important; }
+
+        .name-badge { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 4px; text-align: center; width: 75px; flex-shrink: 0; }
+        .badge-north-active { background-color: #f0fdf4 !important; border-color: #bbf7d0 !important; }
+        .badge-south-active { background-color: #fefce8 !important; border-color: #fef08a !important; }
+        .badge-west-active  { background-color: #faf5ff !important; border-color: #e9d5ff !important; }
+        .badge-east-active  { background-color: #fff1f2 !important; border-color: #fecdd3 !important; }
+
+        .seat-name { font-size: 9px; font-weight: bold; color: #334155; }
+        .seat-btn { font-size: 8px; padding: 2px 3px; background-color: #fff; border-radius: 3px; border: 1px solid #cbd5e1; cursor: pointer; margin-top: 2px; }
+
+        .card-slot { width: 80px; height: 80px; border-radius: 10px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; cursor: pointer; padding: 4px; flex-shrink: 0; }
+        .game-container.mode-board .card-slot { display: none; }
+
+        .game-container.font-zoom-in .card-slot b { font-size: 18px !important; }
+        .game-container.font-zoom-in .card-slot span { font-size: 12px !important; }
+        .game-container.font-zoom-in .center-deck-slot b { font-size: 18px !important; }
+        .game-container.font-zoom-in .center-deck-slot span { font-size: 14px !important; }
+
+        .gift-box-grid { display: none; }
+        .game-container.mode-board .gift-box-grid { display: flex; flex-direction: row; flex-wrap: wrap; gap: 3px; width: 100%; max-width: 500px; max-height: 110px; overflow-y: auto; }
+        .game-container.mode-board .area-west .gift-box-grid, .game-container.mode-board .area-east .gift-box-grid { flex-direction: column; flex-wrap: nowrap; max-width: 80px; max-height: 220px; }
+
+        .gift-slot { background-color: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 4px; min-width: 35px; height: 26px; display: flex; justify-content: center; align-items: center; font-size: 9px; font-weight: bold; cursor: pointer; }
+        .gift-slot.has-feeling { background-color: #fdf2f8 !important; border: 1px solid #be185d !important; color: #be185d !important; }
+        .gift-slot.has-need { background-color: #f0f9ff !important; border: 1px solid #0284c7 !important; color: #0284c7 !important; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.4); display: none; justify-content: center; align-items: center; z-index: 100; }
+        .modal-content { background-color: #fff; width: 90vw; max-width: 750px; height: 80vh; max-height: 650px; border-radius: 16px; display: flex; flex-direction: column; overflow: hidden; }
+        .modal-header { padding: 12px 20px; background-color: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+        .modal-tab-btn { font-size: 12px; font-weight: bold; padding: 4px 10px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer; background-color: #f8fafc; }
+        .modal-tab-btn.feeling-active { background-color: #be185d !important; color: #fff !important; }
+        .modal-tab-btn.need-active { background-color: #0284c7 !important; color: #fff !important; }
+        .modal-body { padding: 14px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(95px, 1fr)); gap: 8px; }
+        .all-card-item { border-radius: 6px; height: 46px; display: flex; justify-content: center; align-items: center; font-size: 14px; font-weight: bold; }
+        .close-modal-btn { background: none; border: none; font-size: 15px; font-weight: bold; cursor: pointer; }
+
+
+        /* [스마트폰 세로 화면 전용 최적화] 상단 3단 메뉴바 + 남북 테이블 가로 100% 꽉 참 */
+        @media screen and (max-width: 768px) and (orientation: portrait) {
+            body { padding: 2px; }
+            .game-container {
+                width: 100vw; height: 100vh; height: 100dvh; max-width: none; max-height: none;
+                border-radius: 0; border: none; padding: 4px;
+                display: flex; flex-direction: column; justify-content: space-between;
+            }
+            
+            /* PC용 메뉴바 숨기고 스마트폰용 3단 메뉴바 활성화 */
+            .top-control-bar { display: none !important; }
+            .mobile-3tier-bar {
+                display: flex;
+                flex-direction: column;
+                background: #ffffff;
+                padding: 6px;
+                border-radius: 10px;
+                border: 1px solid #e2e8f0;
+                gap: 4px;
+                flex-shrink: 0;
+                z-index: 20;
+            }
+            .menu-row {
+                display: flex; justify-content: space-between; align-items: center; gap: 4px; width: 100%;
+            }
+            .mode-btn, .select-deck-btn, .view-all-btn, .fullscreen-btn, .font-zoom-btn, .lobby-back-btn, .destroy-room-btn {
+                font-size: 11px; padding: 5px 6px; flex: 1; text-align: center;
+            }
+            .room-badge { font-size: 11px; padding: 5px 6px; font-weight: bold; text-align: center; }
+
+            /* 남북 테이블 폭을 가로 방향으로 완벽하게 꽉 채우도록 그리드 열 조정 */
+            .game-board-layout {
+                grid-template-columns: 70px 1fr 70px;
+                grid-template-rows: 95px 1fr 95px;
+                gap: 4px; flex-grow: 1; width: 100%; min-height: 0; margin: 2px 0;
+            }
+            .table-area { padding: 3px; gap: 4px; width: 100%; }
+            .area-north, .area-south { height: 95px; width: 100%; justify-content: space-between; }
+            .area-west, .area-east { width: 70px; height: 100%; }
+            
+            .game-container.mode-board .area-north, .game-container.mode-board .area-south { height: 120px; }
+            .game-container.mode-board .area-west, .game-container.mode-board .area-east { width: 95px; }
+
+            .center-deck-slot { width: 140px; height: 180px; }
+            .card-slot { width: 65px; height: 65px; padding: 2px; }
+            .name-badge { width: 58px; padding: 2px; }
+            .seat-name { font-size: 8px; }
+            .seat-btn { font-size: 7px; padding: 1px 2px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container" id="gameContainer">
+        <!-- [PC용] 상단 1단 메뉴바 -->
+        <div class="top-control-bar">
+            <div class="pc-menu-group">
+                <button class="lobby-back-btn" onclick="goToLobby()">← 로비</button>
+                <button id="destroyRoomBtnPC" class="destroy-room-btn" onclick="destroyRoom()">방종료</button>
+                <div id="roomDisplayBadgePC" class="room-badge">방: 로딩</div>
+            </div>
+            <div class="pc-menu-group control-group mode-group" style="background:#f1f5f9; padding:3px 6px; border-radius:8px; border:1px solid #cbd5e1;">
+                <button id="btnModePrivatePC" class="mode-btn active" onclick="switchGameMode('private')">나만보기</button>
+                <button id="btnModePublicPC" class="mode-btn" onclick="switchGameMode('public')">공개</button>
+                <button id="btnModeBoardPC" class="mode-btn" onclick="switchGameMode('board')">전체카드</button>
+            </div>
+            <div class="pc-menu-group">
+                <button id="btnDeckFeelingPC" class="select-deck-btn" onclick="selectActivity('feeling')">느낌</button>
+                <button id="btnDeckNeedPC" class="select-deck-btn" onclick="selectActivity('need')">욕구</button>
+                <button class="view-all-btn" onclick="openAllCardsModal('feeling')">전체보기</button>
+                <button id="btnFontZoomPC" class="font-zoom-btn" onclick="toggleFontZoom()">🔍 A+</button>
+                <button class="fullscreen-btn" onclick="toggleFullScreen()">전체화면</button>
+            </div>
+        </div>
+
+        <!-- [스마트폰 세로용] 상단 3단 메뉴바 -->
+        <div class="mobile-3tier-bar">
+            <!-- 1단 -->
+            <div class="menu-row">
+                <button class="lobby-back-btn" onclick="goToLobby()">← 로비</button>
+                <div id="roomDisplayBadgeMob" class="room-badge">방: 로딩</div>
+                <button id="destroyRoomBtnMob" class="destroy-room-btn" onclick="destroyRoom()">방종료</button>
+                <button class="fullscreen-btn" onclick="toggleFullScreen()">전체화면</button>
+            </div>
+            <!-- 2단 -->
+            <div class="menu-row" style="background:#f1f5f9; padding:2px; border-radius:6px; border:1px solid #cbd5e1;">
+                <button id="btnModePrivateMob" class="mode-btn active" onclick="switchGameMode('private')">나만보기</button>
+                <button id="btnModePublicMob" class="mode-btn" onclick="switchGameMode('public')">공개</button>
+                <button id="btnModeBoardMob" class="mode-btn" onclick="switchGameMode('board')">전체카드</button>
+            </div>
+            <!-- 3단 -->
+            <div class="menu-row">
+                <button id="btnDeckFeelingMob" class="select-deck-btn" onclick="selectActivity('feeling')">느낌 카드</button>
+                <button id="btnDeckNeedMob" class="select-deck-btn" onclick="selectActivity('need')">욕구 카드</button>
+                <button class="view-all-btn" onclick="openAllCardsModal('feeling')">전체보기</button>
+                <button id="btnFontZoomMob" class="font-zoom-btn" onclick="toggleFontZoom()">🔍 A+</button>
+            </div>
+        </div>
+
+        <!-- 게임 보드 판 -->
+        <div class="game-board-layout">
+            <div id="table-north" class="table-area area-north" onclick="handleTableClick('north')">
+                <div class="name-badge" id="badge-north">
+                    <div class="seat-name">북쪽</div>
+                    <button class="seat-btn" id="btnSeat-north" onclick="event.stopPropagation(); toggleSitDown('north')">착석</button>
+                </div>
+                <div class="card-slot" id="slot-north" onclick="event.stopPropagation(); handleCardSlotClick('north')"><span style="font-size:10px; color:#94a3b8;">카드없음</span></div>
+                <div class="gift-box-grid" id="giftGrid-north"></div>
+            </div>
+
+            <div id="table-west" class="table-area area-west" onclick="handleTableClick('west')">
+                <div class="name-badge" id="badge-west">
+                    <div class="seat-name">서쪽</div>
+                    <button class="seat-btn" id="btnSeat-west" onclick="event.stopPropagation(); toggleSitDown('west')">착석</button>
+                </div>
+                <div class="card-slot" id="slot-west" onclick="event.stopPropagation(); handleCardSlotClick('west')"><span style="font-size:10px; color:#94a3b8;">카드없음</span></div>
+                <div class="gift-box-grid" id="giftGrid-west"></div>
+            </div>
+
+            <div class="center-area-wrapper" id="centerAreaContainer">
+                <div id="centerDeckSlot" class="center-deck-slot" onclick="handleCenterDeckClick()">
+                    <span id="centerDeckText" style="font-size: 13px; font-weight: bold; color: #94a3b8;">상단에서 카드선택을<br>진행해주세요</span>
+                </div>
+            </div>
+
+            <div id="table-east" class="table-area area-east" onclick="handleTableClick('east')">
+                <div class="name-badge" id="badge-east">
+                    <div class="seat-name">동쪽</div>
+                    <button class="seat-btn" id="btnSeat-east" onclick="event.stopPropagation(); toggleSitDown('east')">착석</button>
+                </div>
+                <div class="card-slot" id="slot-east" onclick="event.stopPropagation(); handleCardSlotClick('east')"><span style="font-size:10px; color:#94a3b8;">카드없음</span></div>
+                <div class="gift-box-grid" id="giftGrid-east"></div>
+            </div>
+
+            <div id="table-south" class="table-area area-south" onclick="handleTableClick('south')">
+                <div class="name-badge" id="badge-south">
+                    <div class="seat-name">남쪽</div>
+                    <button class="seat-btn" id="btnSeat-south" onclick="event.stopPropagation(); toggleSitDown('south')">착석</button>
+                </div>
+                <div class="card-slot" id="slot-south" onclick="event.stopPropagation(); handleCardSlotClick('south')"><span style="font-size:10px; color:#94a3b8;">카드없음</span></div>
+                <div class="gift-box-grid" id="giftGrid-south"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="allCardsModal" class="modal-overlay" onclick="closeAllCardsModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <b id="modalTitle" style="font-size: 15px; color: #334155;">NVC 전체 카드 목록</b>
+                <div class="modal-tab-group">
+                    <button id="modalTabFeeling" class="modal-tab-btn" onclick="switchModalTab('feeling')">느낌 카드</button>
+                    <button id="modalTabNeed" class="modal-tab-btn" onclick="switchModalTab('need')">욕구 카드</button>
+                </div>
+                <button class="close-modal-btn" onclick="closeAllCardsModal()">✕ 닫기</button>
+            </div>
+            <div class="modal-body" id="modalCardGrid"></div>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomCode = urlParams.get('room') || '1234';
+        const isHost = urlParams.get('host') === 'true';
+
+        document.getElementById('roomDisplayBadgePC').innerText = `방: ${roomCode}`;
+        document.getElementById('roomDisplayBadgeMob').innerText = `방: ${roomCode}`;
+        if (isHost) {
+            document.getElementById('destroyRoomBtnPC').style.display = "inline-block";
+            document.getElementById('destroyRoomBtnMob').style.display = "inline-block";
+        }
+
+        const socket = io(window.location.origin, {
+            path: '/socket.io',
+            transports: ['websocket', 'polling']
+        });
+
+        socket.emit('joinRoom', roomCode);
+
+        socket.on('roomDestroyed', () => {
+            alert("방장이 방을 종료하였습니다.");
+            location.href = 'index.html';
+        });
+
+        const feelingPool = [
+            "고맙다", "안심된다", "편안하다", "평온하다", "기운이난다", "용기난다", "기대된다", "여유롭다", "홀가분하다", "가슴뭉클하다",
+            "따뜻하다", "재미있다", "기쁘다", "뿌듯하다", "신난다", "행복하다", "감동받다", "반갑다", "궁금하다", "우울하다",
+            "괴롭다", "졸리다", "화난다", "그립다", "슬프다", "서운하다", "외롭다", "불편하다", "두렵다", "겁난다",
+            "걱정된다", "실망하다", "당황스럽다", "좌절스럽다", "혼란스럽다", "심심하다", "막막하다", "놀라다", "지친다", "무섭다",
+            "짜증난다", "안타깝다", "귀찮다", "불안하다", "긴장하다", "아쉽다", "신경쓰인다", "답답하다", "민망하다", "쓸쓸하다",
+            "피곤하다", "지루하다", "속상하다", "억울하다"
+        ];
+
+        const needPool = [
+            "놀이", "재미", "꿈", "희망", "솔직함", "자유/자율성", "감사", "보살핌", "보호",
+            "조화/어울리기", "휴식", "잠", "공기/음식/주거", "선택", "신뢰/믿기",
+            "능력", "자신감", "존재감", "창조", "자기표현", "혼자만의시간과 공간", "배려", "평화", "이해", "수용/받아주기",
+            "사랑", "우정", "관심", "평등", "협력", "공감/마음알아주기", "축하", "애도/슬퍼하기",
+            "안전", "기여", "나눔", "연결/친밀함", "소통", "소속감", "배움", "도전",
+            "예측가능성", "일관성", "건강", "운동", "여유", "공동체", "편안함", "존중", "도움/지지",
+            "보람", "회복", "진실", "성취", "인정"
+        ];
+        
+        let mySeat = null; 
+        let selectedCardForGift = null;
+        let currentModalType = 'feeling';
+        let isFontZoomed = false;
+        
+        let gameState = {
+            seats: {
+                north: { name: "", occupant: null },
+                south: { name: "", occupant: null },
+                west: { name: "", occupant: null },
+                east: { name: "", occupant: null }
+            },
+            cards: {
+                north: { card: "", type: "", revealed: false, selfRevealed: false },
+                south: { card: "", type: "", revealed: false, selfRevealed: false },
+                west: { card: "", type: "", revealed: false, selfRevealed: false },
+                east: { card: "", type: "", revealed: false, selfRevealed: false }
+            },
+            gifts: { north: [], south: [], west: [], east: [] },
+            selectedActivity: null,
+            gameMode: 'private'
+        };
+
+        window.onload = function() { updateUI(); };
+
+        socket.on('gameStateUpdate', (serverState) => {
+            gameState = serverState;
+            updateUI();
+        });
+
+        function syncAndBroadcast() {
+            socket.emit('updateGameState', { roomCode, gameState });
+        }
+
+        function goToLobby() {
+            leaveMySeat();
+            location.href = 'index.html';
+        }
+
+        function destroyRoom() {
+            if (confirm("정말 방을 종료하시겠습니까? 모든 참가자가 퇴장됩니다.")) {
+                socket.emit('destroyRoom', roomCode);
+            }
+        }
+
+        function leaveMySeat() {
+            if (mySeat !== null) {
+                gameState.seats[mySeat].occupant = null;
+                gameState.seats[mySeat].name = "";
+                gameState.cards[mySeat] = { card: "", type: "", revealed: false, selfRevealed: false };
+                gameState.gifts[mySeat] = [];
+                mySeat = null;
+                syncAndBroadcast();
+            }
+        }
+
+        window.addEventListener('beforeunload', () => { leaveMySeat(); });
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => alert(err.message));
+            } else if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+
+        function toggleFontZoom() {
+            isFontZoomed = !isFontZoomed;
+            updateUI();
+        }
+
+        function switchGameMode(mode) {
+            gameState.gameMode = mode;
+            selectedCardForGift = null;
+            syncAndBroadcast();
+        }
+
+        function selectActivity(type) {
+            for (let s in gameState.cards) {
+                if (gameState.cards[s].card !== "") {
+                    alert("아직 테이블에 카드를 들고 있는 참가자가 있습니다.");
+                    return;
+                }
+            }
+            gameState.selectedActivity = (gameState.selectedActivity === type) ? null : type;
+            selectedCardForGift = null;
+            syncAndBroadcast();
+        }
+
+        function openAllCardsModal(type = 'feeling') {
+            currentModalType = type;
+            renderModalContent();
+            document.getElementById('allCardsModal').style.display = "flex";
+        }
+
+        function switchModalTab(type) { currentModalType = type; renderModalContent(); }
+
+        function renderModalContent() {
+            const modalCardGrid = document.getElementById('modalCardGrid');
+            const modalTitle = document.getElementById('modalTitle');
+            const btnTabFeeling = document.getElementById('modalTabFeeling');
+            const btnTabNeed = document.getElementById('modalTabNeed');
+            
+            modalCardGrid.innerHTML = "";
+            const pool = currentModalType === 'feeling' ? feelingPool : needPool;
+            modalTitle.innerText = `NVC ${currentModalType === 'feeling' ? '느낌' : '욕구'} 카드 전체 목록`;
+            btnTabFeeling.className = "modal-tab-btn" + (currentModalType === 'feeling' ? ' feeling-active' : '');
+            btnTabNeed.className = "modal-tab-btn" + (currentModalType === 'need' ? ' need-active' : '');
+
+            pool.forEach(cardName => {
+                const item = document.createElement('div');
+                item.className = 'all-card-item';
+                const isFeeling = currentModalType === 'feeling';
+                item.style.backgroundColor = isFeeling ? '#fdf2f8' : '#f0f9ff';
+                item.style.borderColor = isFeeling ? '#be185d' : '#0284c7';
+                item.style.color = isFeeling ? '#be185d' : '#0284c7';
+                item.style.borderWidth = '1px'; item.style.borderStyle = 'solid';
+                item.innerText = cardName;
+                modalCardGrid.appendChild(item);
+            });
+        }
+
+        function closeAllCardsModal() { document.getElementById('allCardsModal').style.display = "none"; }
+
+        function toggleSitDown(seatId) {
+            if (mySeat === seatId) {
+                leaveMySeat();
+            } else {
+                if (mySeat !== null) { alert("이미 다른 자리에 착석해 계십니다."); return; }
+                if (gameState.seats[seatId].occupant !== null) { alert("이미 다른 사람이 착석한 자리입니다."); return; }
+                const userName = prompt("참가자 이름 입력", "참가자");
+                if (!userName) return;
+
+                mySeat = seatId;
+                gameState.seats[seatId].occupant = socket.id;
+                gameState.seats[seatId].name = userName;
+                syncAndBroadcast();
+            }
+        }
+
+        function handleCenterDeckClick() {
+            if (gameState.gameMode === 'board') return;
+            if (!mySeat) { alert("먼저 본인 자리에 착석해 주세요!"); return; }
+            if (!gameState.selectedActivity) { alert("상단에서 카드선택을 먼저 진행해 주세요!"); return; }
+            if (gameState.cards[mySeat].card) { alert("이미 카드를 뽑으셨습니다. 반납한 뒤 다시 뽑아주세요!"); return; }
+
+            for (let s in gameState.cards) {
+                if (gameState.cards[s].card !== "") {
+                    alert("다른 참가자가 카드를 진행 중입니다. 카드가 반납될 때까지 기다려 주세요!");
+                    return;
+                }
+            }
+
+            let usedCards = [];
+            for (let s in gameState.cards) if (gameState.cards[s].card) usedCards.push(gameState.cards[s].card);
+            for (let s in gameState.gifts) gameState.gifts[s].forEach(item => usedCards.push(typeof item === 'object' ? item.card : item));
+
+            const cardPool = gameState.selectedActivity === 'feeling' ? feelingPool : needPool;
+            const availableCards = cardPool.filter(c => !usedCards.includes(c));
+            if (availableCards.length === 0) { alert("덱에 남은 카드가 없습니다!"); return; }
+
+            const randomIndex = Math.floor(Math.random() * availableCards.length);
+            gameState.cards[mySeat].card = availableCards[randomIndex];
+            gameState.cards[mySeat].type = gameState.selectedActivity;
+            gameState.cards[mySeat].revealed = false;
+            gameState.cards[mySeat].selfRevealed = false;
+            syncAndBroadcast();
+        }
+
+        function handleBoardCardClick(cardName, event) {
+            event.stopPropagation();
+            if (!mySeat) { alert("먼저 본인 자리에 착석해 주세요!"); return; }
+            selectedCardForGift = { card: cardName, type: gameState.selectedActivity };
+            updateUI();
+        }
+
+        function handleTableClick(seatId) {
+            if (gameState.gameMode !== 'board') return;
+            if (!selectedCardForGift) { alert("선물할 카드를 먼저 선택해주세요!"); return; }
+            if (gameState.gifts[seatId].length >= 10) { alert("보관함이 꽉 찼습니다 (최대 10칸)!"); return; }
+
+            gameState.gifts[seatId].push({ card: selectedCardForGift.card, type: selectedCardForGift.type });
+            selectedCardForGift = null;
+            syncAndBroadcast();
+        }
+
+        function handleGiftSlotClick(seatId, index, event) {
+            event.stopPropagation();
+            if (seatId !== mySeat) return; 
+            gameState.gifts[seatId].splice(index, 1);
+            syncAndBroadcast();
+        }
+
+        function handleCardSlotClick(seatId) {
+            if (seatId !== mySeat || !gameState.cards[mySeat].card) return;
+            if (gameState.gameMode === 'private') {
+                if (!gameState.cards[mySeat].revealed) gameState.cards[mySeat].revealed = true;
+                else gameState.cards[mySeat] = { card: "", type: "", revealed: false, selfRevealed: false };
+            } else if (gameState.gameMode === 'public') {
+                if (gameState.cards[mySeat].selfRevealed) gameState.cards[mySeat] = { card: "", type: "", revealed: false, selfRevealed: false };
+                else gameState.cards[mySeat].selfRevealed = true;
+            }
+            syncAndBroadcast();
+        }
+
+        function updateUI() {
+            const container = document.getElementById('gameContainer');
+            
+            // 버튼 활성화 상태 동기화 (PC 및 모바일 양쪽 모두)
+            const isPrivate = gameState.gameMode === 'private';
+            const isPublic = gameState.gameMode === 'public';
+            const isBoard = gameState.gameMode === 'board';
+            
+            ['PC', 'Mob'].forEach(suffix => {
+                const pBtn = document.getElementById(`btnModePrivate${suffix}`);
+                const uBtn = document.getElementById(`btnModePublic${suffix}`);
+                const bBtn = document.getElementById(`btnModeBoard${suffix}`);
+                if(pBtn) pBtn.classList.toggle('active', isPrivate);
+                if(uBtn) uBtn.classList.toggle('active', isPublic);
+                if(bBtn) bBtn.classList.toggle('active', isBoard);
+
+                const fBtn = document.getElementById(`btnDeckFeeling${suffix}`);
+                const nBtn = document.getElementById(`btnDeckNeed${suffix}`);
+                if(fBtn) fBtn.className = 'select-deck-btn' + (gameState.selectedActivity === 'feeling' ? ' btn-feeling-active' : '');
+                if(nBtn) nBtn.className = 'select-deck-btn' + (gameState.selectedActivity === 'need' ? ' btn-need-active' : '');
+                
+                const zBtn = document.getElementById(`btnFontZoom${suffix}`);
+                if(zBtn) zBtn.classList.toggle('active', isFontZoomed);
+            });
+
+            container.classList.toggle('mode-board', isBoard);
+            container.classList.toggle('font-zoom-in', isFontZoomed);
+
+            const centerContainer = document.getElementById('centerAreaContainer');
+            if (isBoard) {
+                if (!gameState.selectedActivity) {
+                    centerContainer.innerHTML = `<div class="center-deck-slot"><span style="font-size:12px; color:#94a3b8;">상단에서 카드선택을<br>진행해주세요</span></div>`;
+                } else {
+                    const pool = gameState.selectedActivity === 'feeling' ? feelingPool : needPool;
+                    const isFeeling = gameState.selectedActivity === 'feeling';
+                    let usedCards = [];
+                    for (let s in gameState.cards) if (gameState.cards[s].card) usedCards.push(gameState.cards[s].card);
+                    for (let s in gameState.gifts) gameState.gifts[s].forEach(item => usedCards.push(typeof item === 'object' ? item.card : item));
+
+                    let boardHTML = `<div class="center-board-area">`;
+                    pool.forEach(cardName => {
+                        if (usedCards.includes(cardName)) {
+                            boardHTML += `<div class="board-card-empty"></div>`;
+                        } else {
+                            const isSelected = selectedCardForGift && selectedCardForGift.card === cardName;
+                            let itemClass = "board-card-item" + (isSelected ? (isFeeling ? " selected-feeling" : " selected-need") : "");
+                            let inlineStyle = isSelected ? "" : `background-color:${isFeeling ? '#fdf2f8' : '#f0f9ff'}; border:1px solid ${isFeeling ? '#be185d' : '#0284c7'}; color:${isFeeling ? '#be185d' : '#0284c7'};`;
+                            boardHTML += `<div class="${itemClass}" style="${inlineStyle}" onclick="handleBoardCardClick('${cardName}', event)">${cardName}</div>`;
+                        }
+                    });
+                    boardHTML += `</div>`;
+                    centerContainer.innerHTML = boardHTML;
+                }
+            } else {
+                let deckText = gameState.selectedActivity === 'feeling' ? "<b>느낌 카드덱</b><br><span style='font-size:12px; margin-top:6px; display:block;'>터치해서 카드 뽑기</span>" :
+                               gameState.selectedActivity === 'need' ? "<b>욕구 카드덱</b><br><span style='font-size:12px; margin-top:6px; display:block;'>터치해서 카드 뽑기</span>" : "상단에서 카드선택을<br>진행해주세요";
+                let deckClass = "center-deck-slot" + (gameState.selectedActivity ? ` active-${gameState.selectedActivity}` : '');
+                centerContainer.innerHTML = `<div class="${deckClass}" onclick="handleCenterDeckClick()"><span style="font-size: 15px; font-weight: bold;">${deckText}</span></div>`;
+            }
+
+            ['north', 'south', 'west', 'east'].forEach(seat => {
+                const badge = document.getElementById(`badge-${seat}`);
+                const seatBtn = document.getElementById(`btnSeat-${seat}`);
+                const slot = document.getElementById(`slot-${seat}`);
+                const giftGrid = document.getElementById(`giftGrid-${seat}`);
+                const seatInfo = gameState.seats[seat];
+                const cardData = gameState.cards[seat];
+                const gifts = gameState.gifts[seat] || [];
+                const seatNameKor = seat === 'north' ? '북쪽' : seat === 'south' ? '남쪽' : seat === 'west' ? '서쪽' : '동쪽';
+
+                if (seatInfo.occupant) {
+                    badge.className = `name-badge badge-${seat}-active`;
+                    if (seat === mySeat) {
+                        badge.querySelector('.seat-name').innerText = `${seatInfo.name} (나)`;
+                        seatBtn.innerText = "비우기";
+                        seatBtn.style.backgroundColor = "#fee2e2"; seatBtn.style.color = "#991b1b";
+                    } else {
+                        badge.querySelector('.seat-name').innerText = seatInfo.name;
+                        seatBtn.innerText = "착석중";
+                        seatBtn.style.backgroundColor = "#f1f5f9"; seatBtn.style.color = "#94a3b8";
+                    }
+                } else {
+                    badge.className = "name-badge";
+                    badge.querySelector('.seat-name').innerText = seatNameKor;
+                    seatBtn.innerText = "착석";
+                    seatBtn.style.backgroundColor = "#ffffff"; seatBtn.style.color = "#475569";
+                }
+
+                let gridHTML = "";
+                for (let i = 0; i < 10; i++) {
+                    const giftItem = gifts[i];
+                    if (giftItem) {
+                        const cName = typeof giftItem === 'object' ? giftItem.card : giftItem;
+                        const cType = typeof giftItem === 'object' ? giftItem.type : 'feeling';
+                        gridHTML += `<div class="gift-slot ${cType === 'feeling' ? 'has-feeling' : 'has-need'}" onclick="handleGiftSlotClick('${seat}', ${i}, event)">${cName}</div>`;
+                    } else {
+                        gridHTML += `<div class="gift-slot" style="color:#cbd5e1;">${i+1}</div>`;
+                    }
+                }
+                giftGrid.innerHTML = gridHTML;
+
+                if (!isBoard) {
+                    if (!cardData.card) {
+                        slot.innerHTML = `<span style="font-size:10px; color:#94a3b8;">카드 없음</span>`;
+                        slot.style.borderColor = "#cbd5e1"; slot.style.backgroundColor = "#f8fafc";
+                    } else {
+                        const isFeeling = cardData.type === 'feeling';
+                        slot.style.borderColor = isFeeling ? '#be185d' : '#0284c7';
+                        slot.style.backgroundColor = isFeeling ? '#fdf2f8' : '#f0f9ff';
+
+                        if (seat === mySeat) {
+                            if (isPrivate) {
+                                slot.innerHTML = cardData.revealed ? 
+                                    `<span style="font-size:9px; color:#ef4444;">[공개]</span><b style="font-size:13px;">${cardData.card}</b><span style="font-size:9px; color:#888;">(반납)</span>` :
+                                    `<b style="font-size:14px;">${cardData.card}</b><span style="font-size:9px; color:${isFeeling ? '#be185d' : '#0284c7'};">(공개)</span>`;
+                            } else {
+                                slot.innerHTML = cardData.selfRevealed ?
+                                    `<b style="font-size:14px;">${cardData.card}</b><span style="font-size:9px;">(반납)</span>` :
+                                    `<b style="font-size:16px;">??</b><span style="font-size:9px;">(확인)</span>`;
+                            }
+                        } else {
+                            slot.innerHTML = isPrivate ? 
+                                (cardData.revealed ? `<span style="font-size:9px; color:#ef4444;">[공개]</span><b style="font-size:13px;">${cardData.card}</b>` : `<b style="font-size:15px;">??</b>`) :
+                                `<span style="font-size:9px;">[${seatInfo.name}]</span><b style="font-size:13px;">${cardData.card}</b>`;
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
