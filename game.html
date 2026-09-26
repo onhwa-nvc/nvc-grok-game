@@ -494,8 +494,8 @@
         <!-- [PC용 상단 메뉴바] -->
         <div class="top-control-bar">
             <div class="menu-group">
+                <div id="roomDisplayBadgePC" class="room-badge">방코드: 로딩</div>
                 <button class="lobby-back-btn" onclick="goToLobby()">← 로비</button>
-                <div id="roomDisplayBadgePC" class="room-badge">방: 로딩</div>
                 <button id="destroyRoomBtnPC" class="destroy-room-btn" onclick="destroyRoom()">방종료</button>
             </div>
             <div class="menu-group" style="background:#f1f5f9; padding:4px 8px; border-radius:8px; border:1px solid #cbd5e1;">
@@ -519,8 +519,8 @@
         <!-- [모바일 세로 모드용 메뉴바] -->
         <div class="mobile-side-bar">
             <div class="mobile-row">
+                <div id="roomDisplayBadgeMob" class="room-badge">방코드: 로딩</div>
                 <button class="lobby-back-btn" onclick="goToLobby()">← 로비</button>
-                <div id="roomDisplayBadgeMob" class="room-badge">방: 로딩</div>
                 <button id="destroyRoomBtnMob" class="destroy-room-btn" onclick="destroyRoom()">방종료</button>
                 <button id="btnUserFullscreenMob" class="fullscreen-toggle-btn" onclick="toggleUserFullscreen()" style="padding:4px 8px;">전체화면보기</button>
             </div>
@@ -630,8 +630,8 @@
         const roomCode = urlParams.get('room') || '1234';
         const isHost = urlParams.get('host') === 'true';
 
-        document.getElementById('roomDisplayBadgePC').innerText = `방: ${roomCode}`;
-        document.getElementById('roomDisplayBadgeMob').innerText = `방: ${roomCode}`;
+        document.getElementById('roomDisplayBadgePC').innerText = `방코드: ${roomCode}`;
+        document.getElementById('roomDisplayBadgeMob').innerText = `방코드: ${roomCode}`;
         if (isHost) {
             document.getElementById('destroyRoomBtnPC').style.display = "inline-block";
             document.getElementById('destroyRoomBtnMob').style.display = "inline-block";
