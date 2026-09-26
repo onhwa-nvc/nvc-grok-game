@@ -142,8 +142,9 @@
             padding: 6px;
             display: flex;
             align-items: center;
+            /* [수정] 양끝 정렬(space-between)에서 중앙 집중 정렬(center)로 변경하여 요소들을 안으로 모음 */
             justify-content: center;
-            gap: 8px;
+            gap: 12px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.03);
             width: 100%;
             height: 100%;
@@ -275,7 +276,7 @@
         .close-modal-btn { background: none; border: none; font-size: 15px; font-weight: bold; cursor: pointer; color: #64748b; }
 
 
-        /* [스마트폰 세로 모드]: 남북 테이블 좌우로 100% 꽉 참, 메뉴바는 글씨 맞춤 컴팩트 다중 행 구조 */
+        /* [스마트폰 세로 모드]: 남북 테이블 좌우로 꽉 차면서 요소들은 중앙으로 모임 */
         @media screen and (max-width: 768px) and (orientation: portrait) {
             .game-container { height: 100dvh; max-height: none; padding: 4px; }
             .top-control-bar { display: none !important; }
@@ -286,7 +287,6 @@
             .mobile-row {
                 display: flex; justify-content: flex-start; align-items: center; gap: 4px; width: 100%; flex-wrap: wrap;
             }
-            /* 버튼들이 늘어나지 않고 글씨 크기만큼만 깔끔하게 자리잡도록 설정 (flex: 0 0 auto) */
             .mobile-side-bar button, .mobile-side-bar .room-badge {
                 flex: 0 0 auto; width: auto !important; font-size: 11px; padding: 4px 8px; height: 28px; line-height: 1.2;
             }
@@ -297,11 +297,10 @@
                 grid-template-rows: 110px 1fr 110px;
                 gap: 4px; width: 100%; margin: 2px 0;
             }
-            /* 남북 테이블이 좌우로 100% 꽉 차도록 확장 */
-            .table-area { padding: 4px; gap: 6px; width: 100%; }
+            .table-area { padding: 4px; gap: 8px; width: 100%; justify-content: center; }
             .area-north, .area-south {
-                grid-column: 1 / span 3 !important; /* 좌우 끝까지 확장 */
-                height: 110px; width: 100%; justify-content: space-between;
+                grid-column: 1 / span 3 !important;
+                height: 110px; width: 100%;
             }
             .area-west { grid-column: 1; grid-row: 2; width: 75px; height: 100%; }
             .area-east { grid-column: 3; grid-row: 2; width: 75px; height: 100%; }
@@ -334,8 +333,8 @@
                 grid-template-rows: 90px 1fr 90px;
                 gap: 4px; width: 100%; height: 100%; margin: 0;
             }
-            .table-area { padding: 2px; gap: 4px; width: 100%; height: 100%; }
-            .area-north, .area-south { height: 90px; width: 100%; justify-content: space-between; }
+            .table-area { padding: 2px; gap: 6px; width: 100%; height: 100%; justify-content: center; }
+            .area-north, .area-south { height: 90px; width: 100%; }
             .area-west, .area-east { width: 95px; height: 100%; }
 
             .card-slot { width: 65px; height: 65px; padding: 2px; }
@@ -373,23 +372,20 @@
             </div>
         </div>
 
-        <!-- [모바일 세로 모드용 메뉴바: 글씨 크기에 맞춘 컴팩트한 다중 행 구조] -->
+        <!-- [모바일 세로 모드용 메뉴바] -->
         <div class="mobile-side-bar">
-            <!-- 1행: 방 관리 및 전체화면 -->
             <div class="mobile-row">
                 <button class="lobby-back-btn" onclick="goToLobby()">← 로비</button>
                 <div id="roomDisplayBadgeMob" class="room-badge">방: 로딩</div>
                 <button id="destroyRoomBtnMob" class="destroy-room-btn" onclick="destroyRoom()">방종료</button>
                 <button class="fullscreen-btn" onclick="toggleFullScreen()">전체화면</button>
             </div>
-            <!-- 2행: 활동 선택 -->
             <div class="mobile-row" style="background:#f1f5f9; padding:3px; border-radius:6px; border:1px solid #cbd5e1;">
                 <span style="font-size:10px; font-weight:bold; color:#475569; margin-right:2px;">활동:</span>
                 <button id="btnModePrivateMob" class="mode-btn active" onclick="switchGameMode('private')">나만보기</button>
                 <button id="btnModePublicMob" class="mode-btn" onclick="switchGameMode('public')">나만안보기</button>
                 <button id="btnModeBoardMob" class="mode-btn" onclick="switchGameMode('board')">전체펼치기</button>
             </div>
-            <!-- 3행: 카드 선택 및 편의 기능 -->
             <div class="mobile-row" style="background:#f8fafc; padding:3px; border-radius:6px; border:1px solid #cbd5e1;">
                 <span style="font-size:10px; font-weight:bold; color:#475569; margin-right:2px;">카드:</span>
                 <button id="btnDeckFeelingMob" class="select-deck-btn" onclick="selectActivity('feeling')">느낌</button>
@@ -401,7 +397,7 @@
 
         <!-- 게임 플레이 메인 그리드 레이아웃 -->
         <div class="game-board-layout">
-            <!-- 북쪽 개인 테이블 (세로 모드 시 좌우로 100% 꽉 참) -->
+            <!-- 북쪽 개인 테이블 (요소들이 중앙으로 모임) -->
             <div id="table-north" class="table-area area-north" onclick="handleTableClick('north')">
                 <div class="name-badge" id="badge-north">
                     <div class="seat-name">북쪽 자리</div>
@@ -444,7 +440,7 @@
                 <div class="gift-box-grid" id="giftGrid-east"></div>
             </div>
 
-            <!-- 남쪽 개인 테이블 (세로 모드 시 좌우로 100% 꽉 참) -->
+            <!-- 남쪽 개인 테이블 (요소들이 중앙으로 모임) -->
             <div id="table-south" class="table-area area-south" onclick="handleTableClick('south')">
                 <div class="name-badge" id="badge-south">
                     <div class="seat-name">남쪽 자리</div>
