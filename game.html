@@ -71,7 +71,7 @@
             color: #334155;
         }
 
-        .mode-btn, .select-deck-btn, .view-all-btn, .fullscreen-btn, .font-zoom-btn, .lobby-back-btn, .destroy-room-btn {
+        .mode-btn, .select-deck-btn, .view-all-btn, .font-zoom-btn, .lobby-back-btn, .destroy-room-btn {
             font-size: 13px;
             font-weight: bold;
             padding: 6px 11px;
@@ -129,7 +129,7 @@
             border-color: #831843 !important;
         }
 
-        .fullscreen-btn, .font-zoom-btn {
+        .font-zoom-btn {
             background-color: #f8fafc;
             color: #0f172a;
             border-color: #94a3b8;
@@ -490,9 +490,8 @@
             </div>
             <div class="menu-group">
                 <button class="view-all-btn" onclick="openAllCardsModal('feeling')">전체보기</button>
-                <button id="btnUserFullscreenPC" class="view-all-btn" onclick="toggleUserFullscreen()">전체화면 켜기</button>
+                <button id="btnUserFullscreenPC" class="view-all-btn" onclick="toggleUserFullscreen()">전체화면보기</button>
                 <button id="btnFontZoomPC" class="font-zoom-btn" onclick="toggleFontZoom()">글씨 🔍 A+</button>
-                <button class="fullscreen-btn" onclick="toggleNativeFullScreen()">브라우저 전체화면</button>
             </div>
         </div>
 
@@ -502,8 +501,7 @@
                 <button class="lobby-back-btn" onclick="goToLobby()">← 로비</button>
                 <div id="roomDisplayBadgeMob" class="room-badge">방: 로딩</div>
                 <button id="destroyRoomBtnMob" class="destroy-room-btn" onclick="destroyRoom()">방종료</button>
-                <button id="btnUserFullscreenMob" class="view-all-btn" onclick="toggleUserFullscreen()" style="padding:4px 8px;">전체화면 켜기</button>
-                <button class="fullscreen-btn" onclick="toggleNativeFullScreen()">브라우저전체</button>
+                <button id="btnUserFullscreenMob" class="view-all-btn" onclick="toggleUserFullscreen()" style="padding:4px 8px;">전체화면보기</button>
             </div>
             <div class="mobile-row" style="background:#f1f5f9; padding:4px; border-radius:6px; border:1px solid #cbd5e1;">
                 <span style="font-size:11px; font-weight:bold; color:#475569; margin-right:3px;">활동:</span>
@@ -696,14 +694,6 @@
 
         window.addEventListener('beforeunload', () => { leaveMySeat(); });
 
-        function toggleNativeFullScreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => alert(err.message));
-            } else if (document.exitFullscreen) {
-                document.exitFullscreen();
-            }
-        }
-
         function toggleUserFullscreen() {
             isUserFullscreen = !isUserFullscreen;
             updateUI();
@@ -879,7 +869,7 @@
                 const fsBtn = document.getElementById(`btnUserFullscreen${suffix}`);
                 if(fsBtn) {
                     fsBtn.classList.toggle('active-fullscreen-toggle', isUserFullscreen);
-                    fsBtn.innerText = isUserFullscreen ? "전체보기 해제" : "전체화면 켜기";
+                    fsBtn.innerText = isUserFullscreen ? "전체화면해제" : "전체화면보기";
                 }
             });
 
