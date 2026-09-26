@@ -28,6 +28,20 @@
             justify-content: space-between;
             padding: 8px;
             overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        /* [사용자 수동 전체보기 모드 토글 클래스] */
+        .game-container.user-fullscreen-active {
+            position: fixed !important;
+            top: 0 !important; left: 0 !important;
+            width: 100vw !important; height: 100vh !important;
+            width: 100vw !important; height: 100dvh !important;
+            max-width: none !important; max-height: none !important;
+            border-radius: 0 !important;
+            z-index: 9999 !important;
+            background-color: #f7f3ec !important;
+            padding: 8px !important;
         }
 
         /* [PC용 상단 컨트롤 바] */
@@ -109,6 +123,11 @@
             border-color: #f472b6;
         }
         .view-all-btn:hover { background-color: #fce7f3; }
+        .view-all-btn.active-fullscreen-toggle {
+            background-color: #be185d !important;
+            color: #ffffff !important;
+            border-color: #831843 !important;
+        }
 
         .fullscreen-btn, .font-zoom-btn {
             background-color: #f8fafc;
@@ -234,13 +253,11 @@
         .game-container.mode-board .card-slot { display: none; }
 
         /* [글씨 확대 단계별 스타일] */
-        /* 1단계 확대 */
         .game-container.font-zoom-level-1 .card-slot b { font-size: 18px !important; }
         .game-container.font-zoom-level-1 .card-slot span { font-size: 12px !important; }
         .game-container.font-zoom-level-1 .seat-name { font-size: 14px !important; }
         .game-container.font-zoom-level-1 .board-card-item { font-size: 13px !important; }
 
-        /* 2단계 더 크게 확대 */
         .game-container.font-zoom-level-2 .card-slot b { font-size: 22px !important; }
         .game-container.font-zoom-level-2 .card-slot span { font-size: 14px !important; }
         .game-container.font-zoom-level-2 .seat-name { font-size: 16px !important; }
@@ -316,6 +333,7 @@
         /* [스마트폰 세로 모드] */
         @media screen and (max-width: 768px) and (orientation: portrait) {
             .game-container { height: 100dvh; max-height: none; padding: 4px; }
+            .game-container.user-fullscreen-active { height: 100dvh !important; }
             .top-control-bar { display: none !important; }
             
             .mobile-side-bar {
@@ -396,6 +414,7 @@
                 border-radius: 0; padding: 4px;
                 display: grid; grid-template-columns: 165px 1fr; grid-template-rows: 1fr; gap: 6px;
             }
+            .game-container.user-fullscreen-active { height: 100dvh !important; }
             .top-control-bar { display: none !important; }
             .mobile-side-bar {
                 display: flex; grid-column: 1; grid-row: 1; flex-direction: column; justify-content: flex-start; align-items: stretch;
@@ -471,8 +490,9 @@
             </div>
             <div class="menu-group">
                 <button class="view-all-btn" onclick="openAllCardsModal('feeling')">전체보기</button>
+                <button id="btnUserFullscreenPC" class="view-all-btn" onclick="toggleUserFullscreen()">전체화면 켜기</button>
                 <button id="btnFontZoomPC" class="font-zoom-btn" onclick="toggleFontZoom()">글씨 🔍 A+</button>
-                <button class="fullscreen-btn" onclick="toggleFullScreen()">전체화면</button>
+                <button class="fullscreen-btn" onclick="toggleNativeFullScreen()">브라우저 전체화면</button>
             </div>
         </div>
 
@@ -482,7 +502,8 @@
                 <button class="lobby-back-btn" onclick="goToLobby()">← 로비</button>
                 <div id="roomDisplayBadgeMob" class="room-badge">방: 로딩</div>
                 <button id="destroyRoomBtnMob" class="destroy-room-btn" onclick="destroyRoom()">방종료</button>
-                <button class="fullscreen-btn" onclick="toggleFullScreen()">전체화면</button>
+                <button id="btnUserFullscreenMob" class="view-all-btn" onclick="toggleUserFullscreen()" style="padding:4px 8px;">전체화면 켜기</button>
+                <button class="fullscreen-btn" onclick="toggleNativeFullScreen()">브라우저전체</button>
             </div>
             <div class="mobile-row" style="background:#f1f5f9; padding:4px; border-radius:6px; border:1px solid #cbd5e1;">
                 <span style="font-size:11px; font-weight:bold; color:#475569; margin-right:3px;">활동:</span>
@@ -620,6 +641,7 @@
         let selectedCardForGift = null;
         let currentModalType = 'feeling';
         let fontZoomLevel = 0; // 0: 기본, 1: 1단계 확대, 2: 2단계 확대
+        let isUserFullscreen = false; // 사용자 수동 전체화면 토글 상태
         
         let gameState = {
             seats: {
@@ -674,12 +696,17 @@
 
         window.addEventListener('beforeunload', () => { leaveMySeat(); });
 
-        function toggleFullScreen() {
+        function toggleNativeFullScreen() {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().catch(err => alert(err.message));
             } else if (document.exitFullscreen) {
                 document.exitFullscreen();
             }
+        }
+
+        function toggleUserFullscreen() {
+            isUserFullscreen = !isUserFullscreen;
+            updateUI();
         }
 
         function toggleFontZoom() {
@@ -848,9 +875,16 @@
                     else if (fontZoomLevel === 2) zBtn.innerText = "🔍 A+ (2)";
                     else zBtn.innerText = "🔍 A+";
                 }
+
+                const fsBtn = document.getElementById(`btnUserFullscreen${suffix}`);
+                if(fsBtn) {
+                    fsBtn.classList.toggle('active-fullscreen-toggle', isUserFullscreen);
+                    fsBtn.innerText = isUserFullscreen ? "전체보기 해제" : "전체화면 켜기";
+                }
             });
 
             container.classList.toggle('mode-board', isBoard);
+            container.classList.toggle('user-fullscreen-active', isUserFullscreen);
             container.classList.remove('font-zoom-level-1', 'font-zoom-level-2');
             if (fontZoomLevel === 1) container.classList.add('font-zoom-level-1');
             if (fontZoomLevel === 2) container.classList.add('font-zoom-level-2');
