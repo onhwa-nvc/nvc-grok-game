@@ -16,44 +16,82 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.static(path.join(__dirname)));
 
+// 활성화된 방 목록과 방별 게임 상태를 관리하는 저장소
 const activeRooms = new Set();
+const roomStates = {}; 
 
 io.on('connection', (socket) => {
     console.log(`사용자 접속됨: ${socket.id}`);
 
-    // 방장이 지정한 커스텀 코드로 방 생성
-    socket.on('createCustomRoom', (roomCode) => {
-        if (activeRooms.has(roomCode)) {
-            socket.emit('roomCreateError', "이미 사용 중인 방 코드입니다. 다른 코드를 입력해주세요.");
-            return;
-        }
+    // 관리자가 지정한 코드로 새 방 생성 (재사용 가능하도록 기존 잔여 데이터 클린업 포함)
+    socket.on('createSpecificRoom', (roomCode) => {
+        const trimmedCode = roomCode.trim();
+        
+        // 혹시라도 남아있을 수 있는 유령 데이터 강제 청소
+        activeRooms.delete(trimmedCode);
+        delete roomStates[trimmedCode];
 
-        activeRooms.add(roomCode);
-        console.log(`관리자 모드: 방 [${roomCode}] 생성됨`);
-        socket.emit('roomCreated', roomCode);
+        activeRooms.add(trimmedCode);
+        socket.join(trimmedCode);
+        
+        // 방 초기 게임 상태 설정
+        roomStates[trimmedCode] = {
+            seats: { 
+                north: { name: "", occupant: null }, 
+                south: { name: "", occupant: null }, 
+                west: { name: "", occupant: null }, 
+                east: { name: "", occupant: null } 
+            },
+            cards: { 
+                north: { card: "", type: "", revealed: false, selfRevealed: false }, 
+                south: { card: "", type: "", revealed: false, selfRevealed: false }, 
+                west: { card: "", type: "", revealed: false, selfRevealed: false }, 
+                east: { card: "", type: "", revealed: false, selfRevealed: false } 
+            },
+            gifts: { north: [], south: [], west: [], east: [] },
+            selectedActivity: null,
+            gameMode: 'private'
+        };
+
+        console.log(`[방 생성 완료] 코드: ${trimmedCode}`);
+        socket.emit('roomCreated', trimmedCode);
     });
 
+    // 방 존재 여부 확인
     socket.on('checkRoomExists', (roomCode) => {
         const trimmedCode = roomCode.trim();
         const exists = activeRooms.has(trimmedCode);
         socket.emit('roomCheckResult', { exists, roomCode: trimmedCode });
     });
 
+    // 게임방 입장 시 최신 상태 동기화
     socket.on('joinRoom', (roomCode) => {
-        socket.join(roomCode);
-        console.log(`사용자(${socket.id})가 방 [${roomCode}]에 입장했습니다.`);
+        const trimmedCode = roomCode.trim();
+        socket.join(trimmedCode);
+        console.log(`사용자(${socket.id})가 방 [${trimmedCode}]에 입장했습니다.`);
+        
+        if (roomStates[trimmedCode]) {
+            socket.emit('gameStateUpdate', roomStates[trimmedCode]);
+        }
     });
 
+    // 게임 상태 업데이트
     socket.on('updateGameState', (data) => {
         const { roomCode, gameState } = data;
+        if (roomCode && roomStates[roomCode]) {
+            roomStates[roomCode] = gameState;
+        }
         io.to(roomCode).emit('gameStateUpdate', gameState);
     });
 
+    // 방장이 방을 명시적으로 종료(폭파)할 때
     socket.on('destroyRoom', (roomCode) => {
-        if (activeRooms.has(roomCode)) {
-            activeRooms.delete(roomCode);
-            console.log(`방 [${roomCode}]이 방장에 의해 종료되었습니다.`);
-            io.to(roomCode).emit('roomDestroyed');
+        const trimmedCode = roomCode.trim();
+        if (activeRooms.has(trimmedCode)) {
+            activeRooms.delete(trimmedCode);
+            delete roomStates[trimmedCode];
+            console.log(`[방 폭파 완료] 코드: ${trimmedCode}`);
+            io.to(trimmedCode).emit('roomDestroyed');
         }
     });
 
