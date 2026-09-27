@@ -230,17 +230,17 @@
         .center-board-area {
             width: 100%; height: 100%;
             background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 8px;
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(82px, 1fr)); grid-auto-rows: 38px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(95px, 1fr)); grid-auto-rows: 44px;
             gap: 6px; overflow-y: auto; box-shadow: inset 0 2px 6px rgba(0,0,0,0.02);
             align-content: start; min-width: 0; min-height: 0;
         }
         .board-card-item {
-            border-radius: 6px; height: 38px; display: flex; justify-content: center; align-items: center;
-            font-size: 13px; font-weight: bold; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            transition: transform 0.1s; word-break: break-all; padding: 2px; text-align: center;
+            border-radius: 6px; height: 44px; display: flex; justify-content: center; align-items: center;
+            font-size: 11.5px; font-weight: bold; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: transform 0.1s; word-break: break-all; padding: 2px; text-align: center; line-height: 1.2;
         }
         .board-card-item:hover { transform: scale(1.05); }
-        .board-card-empty { height: 38px; background-color: transparent; border: 1px dashed transparent; pointer-events: none; }
+        .board-card-empty { height: 44px; background-color: transparent; border: 1px dashed transparent; pointer-events: none; }
 
         .board-card-item.selected-card {
             background-color: #38bdf8 !important; color: #ffffff !important; border: 2px solid #0369a1 !important; transform: scale(1.08);
@@ -270,20 +270,20 @@
             padding: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); flex-shrink: 0; overflow: hidden;
         }
         .card-slot b {
-            display: block; width: 100%; word-break: break-all; overflow-wrap: break-word; line-height: 1.3; font-size: 14px !important;
+            display: block; width: 100%; word-break: break-all; overflow-wrap: break-word; line-height: 1.3; font-size: 13px !important;
         }
         .game-container.mode-board .card-slot { display: none; }
 
         /* [글씨 확대 단계별 스타일] */
-        .game-container.font-zoom-level-1 .card-slot b { font-size: 15px !important; }
+        .game-container.font-zoom-level-1 .card-slot b { font-size: 14px !important; }
         .game-container.font-zoom-level-1 .card-slot span { font-size: 11.5px !important; }
         .game-container.font-zoom-level-1 .seat-name { font-size: 14.5px !important; }
-        .game-container.font-zoom-level-1 .board-card-item { font-size: 13.5px !important; }
+        .game-container.font-zoom-level-1 .board-card-item { font-size: 12.5px !important; }
 
-        .game-container.font-zoom-level-2 .card-slot b { font-size: 17px !important; }
+        .game-container.font-zoom-level-2 .card-slot b { font-size: 15.5px !important; }
         .game-container.font-zoom-level-2 .card-slot span { font-size: 12.5px !important; }
         .game-container.font-zoom-level-2 .seat-name { font-size: 15.5px !important; }
-        .game-container.font-zoom-level-2 .board-card-item { font-size: 14.5px !important; }
+        .game-container.font-zoom-level-2 .board-card-item { font-size: 13.5px !important; }
 
         /* PC 화면 펼치기 모드: 남북쪽 선물보관함 5칸씩 2줄 */
         .gift-box-grid { display: none; }
@@ -296,8 +296,8 @@
         }
         .game-container.mode-board .area-north .gift-slot,
         .game-container.mode-board .area-south .gift-slot {
-            min-width: 0 !important; width: 100% !important; height: 50px !important; font-size: 13px !important; font-weight: bold !important; padding: 2px !important;
-            word-break: break-all; overflow: hidden; display: flex; justify-content: center; align-items: center; text-align: center; line-height: 1.2;
+            min-width: 0 !important; width: 100% !important; height: 50px !important; font-size: 11px !important; font-weight: bold !important; padding: 2px !important;
+            word-break: break-all; overflow: hidden; display: flex; justify-content: center; align-items: center; text-align: center; line-height: 1.15;
         }
 
         .game-container.mode-board .area-west .gift-box-grid,
@@ -307,13 +307,13 @@
         }
         .game-container.mode-board .area-west .gift-slot,
         .game-container.mode-board .area-east .gift-slot {
-            width: 100% !important; min-width: 0 !important; height: 36px !important; font-size: 12px !important;
-            word-break: break-all; overflow: hidden; display: flex; justify-content: center; align-items: center; text-align: center;
+            width: 100% !important; min-width: 0 !important; height: 38px !important; font-size: 10.5px !important;
+            word-break: break-all; overflow: hidden; display: flex; justify-content: center; align-items: center; text-align: center; line-height: 1.15;
         }
 
         .gift-slot {
             background-color: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 6px; min-width: 50px; height: 36px;
-            display: flex; justify-content: center; align-items: center; font-size: 12px; font-weight: bold; color: #1e293b;
+            display: flex; justify-content: center; align-items: center; font-size: 11px; font-weight: bold; color: #1e293b;
             cursor: pointer; text-align: center; padding: 2px; flex-shrink: 0;
         }
         .gift-slot.has-feeling { background-color: #fdf2f8 !important; border: 1px solid #be185d !important; color: #be185d !important; }
@@ -332,8 +332,8 @@
         .modal-tab-group { display: flex; gap: 8px; flex-wrap: wrap; }
         .modal-tab-btn { font-size: 11px; font-weight: bold; padding: 5px 8px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer; background-color: #f8fafc; color: #475569; }
         .modal-tab-btn.active-tab { background-color: #0284c7 !important; color: #ffffff !important; border-color: #0284c7 !important; }
-        .modal-body { padding: 14px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(95px, 1fr)); gap: 8px; align-content: start; }
-        .all-card-item { border-radius: 6px; height: 46px; display: flex; justify-content: center; align-items: center; font-size: 13px; font-weight: bold; text-align: center; word-break: break-all; padding: 2px; }
+        .modal-body { padding: 14px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); gap: 8px; align-content: start; }
+        .all-card-item { border-radius: 6px; height: 48px; display: flex; justify-content: center; align-items: center; font-size: 11.5px; font-weight: bold; text-align: center; word-break: break-all; padding: 2px; line-height: 1.2; }
         .close-modal-btn { background: none; border: none; font-size: 15px; font-weight: bold; cursor: pointer; color: #64748b; }
 
         /* [이름 입력 전용 모달] */
@@ -371,16 +371,16 @@
             .area-east { grid-column: 3 !important; grid-row: 2 !important; width: 80px; height: 100%; }
 
             .card-slot { width: 85px; height: 85px; padding: 4px; }
-            .card-slot b { font-size: 12px !important; }
+            .card-slot b { font-size: 11px !important; }
             .name-badge { width: 70px; padding: 4px; }
             .seat-name { font-size: 11px; }
             .seat-btn { font-size: 9px; padding: 2px 4px; }
 
             .center-board-area {
-                grid-template-columns: repeat(3, 1fr) !important; grid-auto-rows: 34px !important; gap: 3px !important; padding: 4px !important;
+                grid-template-columns: repeat(3, 1fr) !important; grid-auto-rows: 38px !important; gap: 3px !important; padding: 4px !important;
             }
-            .board-card-item { font-size: 11px !important; height: 34px !important; }
-            .board-card-empty { height: 34px !important; }
+            .board-card-item { font-size: 10px !important; height: 38px !important; }
+            .board-card-empty { height: 38px !important; }
 
             .game-container.mode-board .area-north .gift-box-grid,
             .game-container.mode-board .area-south .gift-box-grid {
@@ -389,7 +389,7 @@
             }
             .game-container.mode-board .area-north .gift-slot,
             .game-container.mode-board .area-south .gift-slot {
-                min-width: 0 !important; width: 100% !important; height: 38px !important; font-size: 10px !important; font-weight: bold !important; padding: 2px !important;
+                min-width: 0 !important; width: 100% !important; height: 38px !important; font-size: 9.5px !important; font-weight: bold !important; padding: 1px !important;
             }
             .game-container.mode-board .area-west .gift-box-grid,
             .game-container.mode-board .area-east .gift-box-grid { width: 70px !important; max-width: 70px !important; }
@@ -425,7 +425,7 @@
             .center-area-wrapper { grid-column: 2 !important; grid-row: 2 !important; width: 100%; height: 100%; }
 
             .card-slot { width: 70px; height: 70px; padding: 3px; }
-            .card-slot b { font-size: 11px !important; }
+            .card-slot b { font-size: 10px !important; }
             .name-badge { width: 65px; padding: 3px; }
             .seat-name { font-size: 10px; }
             .seat-btn { font-size: 8px; padding: 2px 3px; }
@@ -437,7 +437,7 @@
             }
             .game-container.mode-board .area-north .gift-slot,
             .game-container.mode-board .area-south .gift-slot {
-                min-width: 0 !important; width: 100% !important; height: 33px !important; font-size: 10px !important; font-weight: bold !important; padding: 1px !important;
+                min-width: 0 !important; width: 100% !important; height: 33px !important; font-size: 9px !important; font-weight: bold !important; padding: 1px !important;
             }
             .game-container.mode-board .area-west .gift-box-grid,
             .game-container.mode-board .area-east .gift-box-grid { width: 65px !important; max-width: 65px !important; max-height: 160px !important; }
@@ -645,23 +645,25 @@
             "보람", "회복", "진실", "성취", "인정"
         ];
         
-        // 성인용 느낌 카드 풀 (제공해주신 단어들로 구성)
+        // 성인용 느낌 카드 풀 (슬래시로 묶인 한 줄 전체가 카드 한 장의 내용)
         const adultFeelingPool = [
-            "후회스러운", "아쉬운", "안타까운", "끌리는", "흥미로운", "궁금한", "괴로운", "혼란스러운",
-            "지친", "피곤한", "힘든", "무안한", "민망한", "멋쩍은", "무기력한", "불편한", "거북한",
-            "억울한", "분한", "상쾌한", "개운한", "우울한", "울적한", "긴장이 풀리는", "평화로운", "평온한",
-            "걱정스러운", "근심스러운", "불안한", "경이로운", "황홀한", "안심이 되는", "마음이 놓이는",
-            "쓸쓸한", "외로운", "심심한", "지루한", "따분한", "뿌듯한", "자랑스러운", "막막한", "암담한",
-            "생기가 도는", "활기 넘치는", "서운한", "섭섭한", "난처한", "난감한", "곤혹스러운",
-            "기대되는", "희망을 느끼는", "허전한", "공허한", "허탈한", "화나는", "열 받는", "격분한",
-            "흐뭇한", "만족스러운", "실망한", "낙담한", "답답한", "갑갑한", "든든한", "마음이 두 갈래인",
-            "흥분되는", "용기 나는", "기운이 나는", "속상한", "마음이 아픈", "반가운", "홀가분한", "편안한",
-            "비참한", "참담한", "긴장되는", "떨리는", "느긋한", "여유로운", "행복한", "기쁜", "즐거운",
-            "짜증나는", "놀란", "오싹한", "섬뜩한", "질린", "지겨운", "조바심 나는", "속 타는", "초조한",
-            "가슴뭉클한", "감동한", "정겨운", "다정한", "귀찮은", "성가신", "겁나는", "두려운", "무서운",
-            "신경 쓰이는", "꺼림칙한", "짜릿한", "신나는", "재미있는", "따뜻한", "푸근한",
-            "좌절감이 드는", "절망스러운", "당혹스런", "어리둥절한", "슬픈", "서글픈", "서먹한", "어색한",
-            "창피한", "부끄러운", "후련한", "통쾌한", "감사한", "고마운"
+            "후회스러운/아쉬운/안타까운", "끌리는/흥미로운/궁금한", "괴로운", "혼란스러운",
+            "지친/피곤한/힘든", "무안한/민망한/멋쩍은", "무기력한", "불편한/거북한",
+            "억울한/분한", "상쾌한/개운한", "우울한/울적한", "긴장이 풀리는",
+            "평화로운/평온한", "걱정스러운/근심스러운", "불안한", "경이로운/황홀한",
+            "안심이 되는/마음이 놓이는", "쓸쓸한/외로운", "심심한/지루한/따분한",
+            "뿌듯한/자랑스러운", "막막한/암담한", "생기가 도는/활기 넘치는",
+            "서운한/섭섭한", "난처한/난감한/곤혹스러운", "기대되는/희망을 느끼는",
+            "허전한/공허한/허탈한", "화나는/열 받는/격분한", "흐뭇한/만족스러운",
+            "실망한/낙담한", "답답한/갑갑한", "든든한", "마음이 두 갈래인",
+            "흥분되는", "용기 나는/기운이 나는", "속상한/마음이 아픈", "반가운",
+            "홀가분한/편안한", "비참한/참담한", "긴장되는/떨리는", "느긋한/여유로운",
+            "행복한/기쁜/즐거운", "짜증나는", "놀란/오싹한/섬뜩한", "질린/지겨운",
+            "조바심 나는/속 타는/초조한", "가슴뭉클한/감동한", "정겨운/다정한",
+            "귀찮은/성가신", "겁나는/두려운/무서운", "신경 쓰이는/꺼림칙한",
+            "짜릿한/신나는/재미있는", "따뜻한/푸근한", "좌절감이 드는/절망스러운",
+            "당혹스런/어리둥절한", "슬픈/서글픈", "서먹한/어색한", "창피한/부끄러운",
+            "후련한/통쾌한", "감사한/고마운"
         ];
 
         // 성인용 욕구 카드 풀 (추후 단어를 알려주시면 업데이트하면 됩니다)
