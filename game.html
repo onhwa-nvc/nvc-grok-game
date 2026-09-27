@@ -109,28 +109,29 @@
             border: 1px solid rgba(0,0,0,0.06);
         }
 
-        /* 지정해주신 파스텔 톤 배경색 및 테두리 매칭 */
+        /* 묶음 배경 색상 */
         .box-system   { background-color: #f5efe6; border-color: #e4d5c3; } /* 연한 갈색 */
         .box-activity { background-color: #f0f4ec; border-color: #d2dfc4; } /* 연한 카키 */
         .box-card     { background-color: #fef9e7; border-color: #f6e075; } /* 연한 노랑 */
 
+        /* [활성화된 버튼 색상: 과하지 않고 묶음톤보다 약 2배 정도 부드럽게 진한 톤] */
         .mode-btn.active {
-            background-color: #556b2f !important; /* 진한 카키 */
-            color: #ffffff !important;
-            border-color: #3f4f22 !important;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background-color: #b5c49a !important; /* 중간 톤 카키 */
+            color: #2f3e1e !important;
+            border-color: #9ab07b !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
         }
 
         .btn-feeling-active {
-            background-color: #be185d !important;
-            color: #ffffff !important;
-            border-color: #9d174d !important;
+            background-color: #f3c1d3 !important; /* 부드러운 핑크 */
+            color: #881337 !important;
+            border-color: #e09bb5 !important;
         }
 
         .btn-need-active {
-            background-color: #0284c7 !important;
-            color: #ffffff !important;
-            border-color: #0369a1 !important;
+            background-color: #b3e0f7 !important; /* 부드러운 하늘/파랑 */
+            color: #0369a1 !important;
+            border-color: #82ccf2 !important;
         }
 
         .card-all-view-btn {
@@ -147,9 +148,9 @@
         }
         .fullscreen-toggle-btn:hover { background-color: #fef3c7; }
         .fullscreen-toggle-btn.active-fullscreen-toggle {
-            background-color: #78350f !important;
-            color: #ffffff !important;
-            border-color: #451a03 !important;
+            background-color: #e6c5a8 !important; /* 부드러운 갈색 톤 */
+            color: #5c2c16 !important;
+            border-color: #c99e7a !important;
         }
 
         .font-zoom-btn {
@@ -158,9 +159,9 @@
             border-color: #d97706;
         }
         .font-zoom-btn.active {
-            background-color: #78350f;
-            color: #ffffff;
-            border-color: #451a03;
+            background-color: #e6c5a8 !important; /* 부드러운 갈색 톤 */
+            color: #5c2c16 !important;
+            border-color: #c99e7a !important;
         }
 
         /* [PC 화면] 3x3 그리드로 모서리를 비우는 십자형 레이아웃 구성 */
@@ -513,7 +514,7 @@
     <div class="game-container" id="gameContainer">
         <!-- [PC용 상단 메뉴바] -->
         <div class="top-control-bar">
-            <!-- 1. 시스템/이동 묶음 (연한 갈색 파스텔톤) -->
+            <!-- 1. 시스템/이동 묶음 -->
             <div class="control-group-box box-system">
                 <div id="roomDisplayBadgePC" class="room-badge">방코드: 로딩</div>
                 <button class="lobby-back-btn" onclick="goToLobby()">← 로비</button>
@@ -522,7 +523,7 @@
                 <button id="btnFontZoomPC" class="font-zoom-btn" onclick="toggleFontZoom()">글씨 🔍 A+</button>
             </div>
 
-            <!-- 2. 활동 모드 묶음 (연한 카키 파스텔톤) -->
+            <!-- 2. 활동 모드 묶음 -->
             <div class="control-group-box box-activity">
                 <span class="control-label">활동:</span>
                 <button id="btnModePrivatePC" class="mode-btn active" onclick="switchGameMode('private')">나만 보기</button>
@@ -530,7 +531,7 @@
                 <button id="btnModeBoardPC" class="mode-btn" onclick="switchGameMode('board')">전체 펼치기</button>
             </div>
 
-            <!-- 3. 카드 관련 묶음 (연한 노랑 파스텔톤) -->
+            <!-- 3. 카드 관련 묶음 -->
             <div class="control-group-box box-card">
                 <span class="control-label">카드:</span>
                 <button id="btnDeckFeelingPC" class="select-deck-btn" onclick="selectActivity('feeling')">느낌</button>
