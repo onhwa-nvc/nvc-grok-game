@@ -133,7 +133,7 @@
             border-color: #82ccf2 !important;
         }
 
-        /* 성인용 덱 활성 색상 (연보라/마젠타톤) */
+        /* 성인용 덱 활성 색상 */
         .btn-adult-feeling-active {
             background-color: #e879f9 !important;
             color: #4a044e !important;
@@ -195,7 +195,6 @@
             flex-shrink: 0;
         }
 
-        /* PC 화면 기준 네 귀퉁이를 비우고 십자로 배치 */
         .area-north { grid-column: 2; grid-row: 1; width: 100%; height: 155px; flex-direction: row; }
         .area-south { grid-column: 2; grid-row: 3; width: 100%; height: 155px; flex-direction: row; }
         .area-west  { grid-column: 1; grid-row: 2; width: 200px; height: 100%; flex-direction: column; }
@@ -241,7 +240,6 @@
         }
         .board-card-item:hover { transform: scale(1.05); }
         .board-card-empty { height: 44px; background-color: transparent; border: 1px dashed transparent; pointer-events: none; }
-
         .board-card-item.selected-card {
             background-color: #38bdf8 !important; color: #ffffff !important; border: 2px solid #0369a1 !important; transform: scale(1.08);
         }
@@ -263,29 +261,36 @@
         }
         .seat-btn:hover { background-color: #f1f5f9; }
 
-        /* [PC 화면] 카드 슬롯 크기 및 글씨 */
+        /* [PC 화면] 카드 슬롯 크기 및 글씨 (심플하게 단어만 표시) */
         .card-slot {
             width: 135px; height: 135px; border-radius: 14px; display: flex; flex-direction: column;
             justify-content: center; align-items: center; text-align: center; cursor: pointer;
             padding: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); flex-shrink: 0; overflow: hidden;
+            border: 2px solid #cbd5e1; background-color: #f8fafc;
+            transition: all 0.15s ease;
         }
         .card-slot b {
-            display: block; width: 100%; word-break: break-all; overflow-wrap: break-word; line-height: 1.3; font-size: 13px !important;
+            display: block; width: 100%; word-break: break-all; overflow-wrap: break-word; line-height: 1.3; font-size: 13.5px !important;
         }
         .game-container.mode-board .card-slot { display: none; }
 
+        /* 카드 활성화 상태 (한 번 터치했을 때 테두리가 진해지는 반응) */
+        .card-slot.card-active-state {
+            border-width: 3px !important;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+            transform: scale(1.02);
+        }
+
         /* [글씨 확대 단계별 스타일] */
-        .game-container.font-zoom-level-1 .card-slot b { font-size: 14px !important; }
-        .game-container.font-zoom-level-1 .card-slot span { font-size: 11.5px !important; }
+        .game-container.font-zoom-level-1 .card-slot b { font-size: 14.5px !important; }
         .game-container.font-zoom-level-1 .seat-name { font-size: 14.5px !important; }
         .game-container.font-zoom-level-1 .board-card-item { font-size: 12.5px !important; }
 
-        .game-container.font-zoom-level-2 .card-slot b { font-size: 15.5px !important; }
-        .game-container.font-zoom-level-2 .card-slot span { font-size: 12.5px !important; }
+        .game-container.font-zoom-level-2 .card-slot b { font-size: 16px !important; }
         .game-container.font-zoom-level-2 .seat-name { font-size: 15.5px !important; }
         .game-container.font-zoom-level-2 .board-card-item { font-size: 13.5px !important; }
 
-        /* PC 화면 펼치기 모드: 남북쪽 선물보관함 5칸씩 2줄 */
+        /* 선물보관함 그리드 */
         .gift-box-grid { display: none; }
         .game-container.mode-board .area-north .gift-box-grid,
         .game-container.mode-board .area-south .gift-box-grid {
@@ -299,7 +304,6 @@
             min-width: 0 !important; width: 100% !important; height: 50px !important; font-size: 11px !important; font-weight: bold !important; padding: 2px !important;
             word-break: break-all; overflow: hidden; display: flex; justify-content: center; align-items: center; text-align: center; line-height: 1.15;
         }
-
         .game-container.mode-board .area-west .gift-box-grid,
         .game-container.mode-board .area-east .gift-box-grid {
             display: flex !important; flex-direction: column !important; flex-wrap: nowrap !important;
@@ -645,7 +649,7 @@
             "보람", "회복", "진실", "성취", "인정"
         ];
         
-        // 성인용 느낌 카드 풀 (슬래시로 묶인 한 줄 전체가 카드 한 장의 내용)
+        // 성인용 느낌 카드 풀
         const adultFeelingPool = [
             "후회스러운/아쉬운/안타까운", "끌리는/흥미로운/궁금한", "괴로운", "혼란스러운",
             "지친/피곤한/힘든", "무안한/민망한/멋쩍은", "무기력한", "불편한/거북한",
@@ -666,7 +670,7 @@
             "후련한/통쾌한", "감사한/고마운"
         ];
 
-        // 성인용 욕구 카드 풀 (추후 단어를 알려주시면 업데이트하면 됩니다)
+        // 성인용 욕구 카드 풀 (추후 단어를 알려주시면 업데이트)
         const adultNeedPool = ["성인용 욕구 단어를 준비 중입니다"];
         
         let mySeat = null; 
@@ -904,14 +908,24 @@
             syncAndBroadcast();
         }
 
+        // [핵심 수정] 카드 슬롯을 터치했을 때의 심플하고 직관적인 상태 변화 로직
         function handleCardSlotClick(seatId) {
             if (seatId !== mySeat || !gameState.cards[mySeat].card) return;
+            
             if (gameState.gameMode === 'private') {
-                if (!gameState.cards[mySeat].revealed) gameState.cards[mySeat].revealed = true;
-                else gameState.cards[mySeat] = { card: "", type: "", revealed: false, selfRevealed: false };
+                // 나만 보기 모드: 첫 터치 시 전체공개(상태 활성화), 두 번째 터치 시 반납(카드 없음)
+                if (!gameState.cards[mySeat].revealed) {
+                    gameState.cards[mySeat].revealed = true;
+                } else {
+                    gameState.cards[mySeat] = { card: "", type: "", revealed: false, selfRevealed: false };
+                }
             } else if (gameState.gameMode === 'public') {
-                if (gameState.cards[mySeat].selfRevealed) gameState.cards[mySeat] = { card: "", type: "", revealed: false, selfRevealed: false };
-                else gameState.cards[mySeat].selfRevealed = true;
+                // 나만 안 보기 모드: 첫 터치 시 내 카드 확인(상태 활성화), 두 번째 터치 시 반납(카드 없음)
+                if (!gameState.cards[mySeat].selfRevealed) {
+                    gameState.cards[mySeat].selfRevealed = true;
+                } else {
+                    gameState.cards[mySeat] = { card: "", type: "", revealed: false, selfRevealed: false };
+                }
             }
             syncAndBroadcast();
         }
@@ -1044,33 +1058,62 @@
                         slot.innerHTML = `<span style="font-size:13px; color:#94a3b8;">카드 없음</span>`;
                         slot.style.borderColor = "#cbd5e1";
                         slot.style.backgroundColor = "#f8fafc";
+                        slot.classList.remove('card-active-state');
                     } else {
-                        slot.style.borderColor = "#f6e075";
-                        slot.style.backgroundColor = "#fef9e7";
+                        const isFeeling = cardData.type.includes('feeling');
+                        const themeBorder = isFeeling ? '#be185d' : '#0284c7';
+                        const themeBg = isFeeling ? '#fdf2f8' : '#f0f9ff';
+                        const themeColor = isFeeling ? '#be185d' : '#0284c7';
+
+                        slot.style.backgroundColor = themeBg;
 
                         if (seat === mySeat) {
                             if (gameState.gameMode === 'private') {
+                                // 나만 보기 모드 (내 자리)
                                 if (cardData.revealed) {
-                                    slot.innerHTML = `<span style="font-size:11px; color:#ef4444; margin-bottom:2px; display:block;">[전체 공개됨]</span><b>${cardData.card}</b><span style="font-size:11px; color:#888; display:block; margin-top:2px;">(터치해 반납)</span>`;
+                                    // 첫 번째 터치 후: 테두리가 진하게 활성화된 상태 (단어만 깔끔하게 표시)
+                                    slot.style.borderColor = themeBorder;
+                                    slot.classList.add('card-active-state');
+                                    slot.innerHTML = `<b style="color:${themeColor};">${cardData.card}</b>`;
                                 } else {
-                                    slot.innerHTML = `<b>${cardData.card}</b><span style="font-size:11px; color:#b45309; display:block; margin-top:2px;">(터치해 전체공개)</span>`;
+                                    // 뽑은 직후: 연한 테두리 상태 (단어만 표시)
+                                    slot.style.borderColor = "#cbd5e1";
+                                    slot.classList.remove('card-active-state');
+                                    slot.innerHTML = `<b style="color:${themeColor};">${cardData.card}</b>`;
                                 }
                             } else {
+                                // 나만 안 보기 모드 (내 자리)
                                 if (cardData.selfRevealed) {
-                                    slot.innerHTML = `<b>${cardData.card}</b><span style="font-size:11px; color:#b45309; display:block; margin-top:2px;">(터치해 반납)</span>`;
+                                    // 첫 번째 터치 후: 테두리 진하게 활성화 (단어만 표시)
+                                    slot.style.borderColor = themeBorder;
+                                    slot.classList.add('card-active-state');
+                                    slot.innerHTML = `<b style="color:${themeColor};">${cardData.card}</b>`;
                                 } else {
-                                    slot.innerHTML = `<b style="font-size:22px; color:#b45309;">??</b><span style="font-size:11px; color:#b45309; display:block; margin-top:2px;">(내 카드 확인)</span>`;
+                                    // 뽑은 직후: 뒷면 물음표
+                                    slot.style.borderColor = "#cbd5e1";
+                                    slot.classList.remove('card-active-state');
+                                    slot.innerHTML = `<b style="font-size:22px; color:#b45309;">??</b>`;
                                 }
                             }
                         } else {
+                            // 다른 사람 자리
                             if (gameState.gameMode === 'private') {
                                 if (cardData.revealed) {
-                                    slot.innerHTML = `<span style="font-size:11px; color:#ef4444; margin-bottom:2px; display:block;">[공개된 카드]</span><b>${cardData.card}</b>`;
+                                    // 상대가 공개(터치)한 경우: 진한 테두리와 함께 단어 표시
+                                    slot.style.borderColor = themeBorder;
+                                    slot.classList.add('card-active-state');
+                                    slot.innerHTML = `<b style="color:${themeColor};">${cardData.card}</b>`;
                                 } else {
-                                    slot.innerHTML = `<b style="font-size:20px; color:#b45309;">??</b>`;
+                                    // 상대가 아직 공개 안 함: 물음표
+                                    slot.style.borderColor = "#cbd5e1";
+                                    slot.classList.remove('card-active-state');
+                                    slot.innerHTML = `<b style="font-size:20px; color:${themeColor};">??</b>`;
                                 }
                             } else {
-                                slot.innerHTML = `<span style="font-size:11px; color:#b45309; margin-bottom:2px; display:block;">[${seatInfo.name || '상대'}의 카드]</span><b>${cardData.card}</b>`;
+                                // 나만 안 보기 모드: 남들은 항상 카드가 바로 보임
+                                slot.style.borderColor = themeBorder;
+                                slot.classList.add('card-active-state');
+                                slot.innerHTML = `<b style="color:${themeColor};">${cardData.card}</b>`;
                             }
                         }
                     }
