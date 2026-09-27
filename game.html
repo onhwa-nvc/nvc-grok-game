@@ -147,12 +147,12 @@
             border-color: #0f172a;
         }
 
-        /* [PC 화면] 게임 보드 그리드 레이아웃 크기 키움 */
+        /* [PC 화면] 3x3 그리드로 모서리를 비우는 십자형 레이아웃 구성 */
         .game-board-layout {
             display: grid;
-            grid-template-columns: 170px 1fr 170px;
-            grid-template-rows: 160px 1fr 160px;
-            gap: 10px;
+            grid-template-columns: 200px 1fr 200px;
+            grid-template-rows: 155px 1fr 155px;
+            gap: 12px;
             flex-grow: 1;
             width: 100%;
             min-height: 0;
@@ -179,10 +179,11 @@
             flex-shrink: 0;
         }
 
-        .area-north { grid-column: 2; grid-row: 1; width: 100%; height: 160px; flex-direction: row; }
-        .area-south { grid-column: 2; grid-row: 3; width: 100%; height: 160px; flex-direction: row; }
-        .area-west { grid-column: 1; grid-row: 1 / span 3; width: 170px; height: 100%; flex-direction: column; }
-        .area-east { grid-column: 3; grid-row: 1 / span 3; width: 170px; height: 100%; flex-direction: column; }
+        /* 모서리를 비우기 위해 북/남은 가운데 열(2열)에만 배치, 동/서는 가운데 행(2행)에만 배치 */
+        .area-north { grid-column: 2; grid-row: 1; width: 100%; height: 155px; flex-direction: row; }
+        .area-south { grid-column: 2; grid-row: 3; width: 100%; height: 155px; flex-direction: row; }
+        .area-west  { grid-column: 1; grid-row: 2; width: 200px; height: 100%; flex-direction: column; }
+        .area-east  { grid-column: 3; grid-row: 2; width: 200px; height: 100%; flex-direction: column; }
 
         .center-area-wrapper {
             grid-column: 2; grid-row: 2;
@@ -190,7 +191,7 @@
             width: 100%; height: 100%; min-height: 0; padding: 4px; overflow: hidden;
         }
 
-        /* [PC 화면] 정중앙 카드 덱 크기 확대 */
+        /* [PC 화면] 정중앙 카드 덱 크기 */
         .center-deck-slot {
             width: 145px; height: 175px;
             background-color: #ffffff;
@@ -234,7 +235,7 @@
             background-color: #38bdf8 !important; color: #ffffff !important; border: 2px solid #0369a1 !important; transform: scale(1.08);
         }
 
-        /* [PC 화면] 이름 뱃지 크기 확대 */
+        /* [PC 화면] 이름 뱃지 크기 */
         .name-badge {
             background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 10px;
             text-align: center; flex-shrink: 0; width: 115px;
@@ -251,7 +252,7 @@
         }
         .seat-btn:hover { background-color: #f1f5f9; }
 
-        /* [PC 화면] 카드 슬롯 크기 및 글씨 확대 */
+        /* [PC 화면] 카드 슬롯 크기 및 글씨 */
         .card-slot {
             width: 135px; height: 135px; border-radius: 14px; display: flex; flex-direction: column;
             justify-content: center; align-items: center; text-align: center; cursor: pointer;
@@ -373,7 +374,7 @@
         .name-modal-confirm { background-color: #0284c7; color: #ffffff; border-color: #0284c7; }
         .name-modal-cancel { background-color: #f1f5f9; color: #475569; }
 
-        /* [스마트폰 세로 모드] (기존 컴팩트 크기 유지) */
+        /* [스마트폰 세로 모드] */
         @media screen and (max-width: 768px) and (orientation: portrait) {
             .game-container { height: 100dvh; max-height: none; padding: 4px; }
             .game-container.user-fullscreen-active { height: 100dvh !important; }
@@ -398,10 +399,11 @@
             .table-area { padding: 4px; gap: 6px; width: 100%; justify-content: center; }
             .area-north, .area-south {
                 grid-column: 1 / span 3 !important;
+                grid-row: auto !important;
                 height: 125px; width: 100%;
             }
-            .area-west { grid-column: 1; grid-row: 2; width: 80px; height: 100%; }
-            .area-east { grid-column: 3; grid-row: 2; width: 80px; height: 100%; }
+            .area-west { grid-column: 1 !important; grid-row: 2 !important; width: 80px; height: 100%; }
+            .area-east { grid-column: 3 !important; grid-row: 2 !important; width: 80px; height: 100%; }
 
             .card-slot { width: 85px; height: 85px; padding: 4px; }
             .card-slot b { font-size: 12px !important; }
@@ -438,7 +440,7 @@
             }
         }
 
-        /* [스마트폰 가로 모드] (기존 컴팩트 크기 유지) */
+        /* [스마트폰 가로 모드] */
         @media screen and (max-width: 950px) and (orientation: landscape) {
             .game-container {
                 width: 100vw; height: 100dvh; max-width: none; max-height: none;
@@ -461,8 +463,8 @@
                 gap: 4px; width: 100%; height: 100%; margin: 0;
             }
             .table-area { padding: 3px; gap: 6px; width: 100%; height: 100%; justify-content: center; }
-            .area-north, .area-south { height: 95px; width: 100%; }
-            .area-west, .area-east { width: 95px; height: 100%; }
+            .area-north, .area-south { grid-column: 2 !important; grid-row: auto !important; height: 95px; width: 100%; }
+            .area-west, .area-east { grid-column: auto !important; grid-row: 2 !important; width: 95px; height: 100%; }
 
             .card-slot { width: 70px; height: 70px; padding: 3px; }
             .card-slot b { font-size: 11px !important; }
