@@ -121,28 +121,30 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.08);
         }
 
-        /* 어린이용 덱 활성 색상 */
-        .btn-child-feeling-active {
+        /* 느낌/욕구 버튼 기본 색상 (분홍/하늘 통일) */
+        .select-deck-feeling {
+            background-color: #fdf2f8 !important;
+            color: #be185d !important;
+            border-color: #fbcfe8 !important;
+        }
+        .select-deck-need {
+            background-color: #f0f9ff !important;
+            color: #0284c7 !important;
+            border-color: #bae6fd !important;
+        }
+
+        /* 덱 활성 색상 */
+        .btn-feeling-active {
             background-color: #f3c1d3 !important;
             color: #881337 !important;
             border-color: #e09bb5 !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
         }
-        .btn-child-need-active {
+        .btn-need-active {
             background-color: #b3e0f7 !important;
             color: #0369a1 !important;
             border-color: #82ccf2 !important;
-        }
-
-        /* 성인용 덱 활성 색상 */
-        .btn-adult-feeling-active {
-            background-color: #e879f9 !important;
-            color: #4a044e !important;
-            border-color: #c084fc !important;
-        }
-        .btn-adult-need-active {
-            background-color: #c084fc !important;
-            color: #3b0764 !important;
-            border-color: #a855f7 !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
         }
 
         .card-all-view-btn {
@@ -220,10 +222,8 @@
         }
         .center-deck-slot:hover { transform: scale(1.02); }
 
-        .center-deck-slot.active-child-feeling { background-color: #fdf2f8; border: 2px solid #be185d; color: #be185d; }
-        .center-deck-slot.active-child-need    { background-color: #f0f9ff; border: 2px solid #0284c7; color: #0284c7; }
-        .center-deck-slot.active-adult-feeling { background-color: #fae8ff; border: 2px solid #a855f7; color: #a855f7; }
-        .center-deck-slot.active-adult-need    { background-color: #faf5ff; border: 2px solid #7e22ce; color: #7e22ce; }
+        .center-deck-slot.active-feeling { background-color: #fdf2f8; border: 2px solid #be185d; color: #be185d; }
+        .center-deck-slot.active-need    { background-color: #f0f9ff; border: 2px solid #0284c7; color: #0284c7; }
 
         /* [PC 화면] 전체카드 펼치기 모드 그리드 */
         .center-board-area {
@@ -261,7 +261,7 @@
         }
         .seat-btn:hover { background-color: #f1f5f9; }
 
-        /* [PC 화면] 카드 슬롯 크기 (줄바꿈 반영을 위해 세로 정렬 구조 적용) */
+        /* [PC 화면] 카드 슬롯 크기 */
         .card-slot {
             width: 135px; height: 135px; border-radius: 14px; display: flex; flex-direction: column;
             justify-content: center; align-items: center; text-align: center; cursor: pointer;
@@ -275,7 +275,7 @@
         }
         .game-container.mode-board .card-slot { display: none; }
 
-        /* 카드 활성화 상태 (한 번 터치했을 때 테두리가 진해지는 반응) */
+        /* 카드 활성화 상태 */
         .card-slot.card-active-state {
             border-width: 3px !important;
             box-shadow: 0 6px 16px rgba(0,0,0,0.12);
@@ -400,7 +400,7 @@
             .game-container.mode-board .area-east .gift-box-grid { width: 70px !important; max-width: 70px !important; }
         }
 
-        /* [스마트폰 가로 모드: 동서쪽만 세로로 늘려 코너 채우기] */
+        /* [스마트폰 가로 모드] */
         @media screen and (max-width: 950px) and (orientation: landscape) {
             .game-container {
                 width: 100vw; height: 100dvh; max-width: none; max-height: none;
@@ -474,16 +474,16 @@
             <!-- 3. 어린이용 카드 묶음 -->
             <div class="control-group-box box-card-child">
                 <span class="control-label">어린이:</span>
-                <button id="btnDeckChildFeelingPC" class="select-deck-btn" onclick="selectActivity('child_feeling')">느낌</button>
-                <button id="btnDeckChildNeedPC" class="select-deck-btn" onclick="selectActivity('child_need')">욕구</button>
+                <button id="btnDeckChildFeelingPC" class="select-deck-btn select-deck-feeling" onclick="selectActivity('child_feeling')">느낌</button>
+                <button id="btnDeckChildNeedPC" class="select-deck-btn select-deck-need" onclick="selectActivity('child_need')">욕구</button>
                 <button class="card-all-view-btn" onclick="openAllCardsModal('child_feeling')">전체보기</button>
             </div>
 
             <!-- 4. 성인용 카드 묶음 -->
             <div class="control-group-box box-card-adult">
                 <span class="control-label">성인:</span>
-                <button id="btnDeckAdultFeelingPC" class="select-deck-btn" onclick="selectActivity('adult_feeling')">느낌</button>
-                <button id="btnDeckAdultNeedPC" class="select-deck-btn" onclick="selectActivity('adult_need')">욕구</button>
+                <button id="btnDeckAdultFeelingPC" class="select-deck-btn select-deck-feeling" onclick="selectActivity('adult_feeling')">느낌</button>
+                <button id="btnDeckAdultNeedPC" class="select-deck-btn select-deck-need" onclick="selectActivity('adult_need')">욕구</button>
                 <button class="card-all-view-btn" onclick="openAllCardsModal('adult_feeling')">전체보기</button>
             </div>
         </div>
@@ -505,14 +505,14 @@
             </div>
             <div class="mobile-row" style="background:#fef9e7; padding:4px; border-radius:6px; border:1px solid #f6e075;">
                 <span class="control-label" style="color:#b45309; margin-right:2px;">어린이:</span>
-                <button id="btnDeckChildFeelingMob" class="select-deck-btn" onclick="selectActivity('child_feeling')">느낌</button>
-                <button id="btnDeckChildNeedMob" class="select-deck-btn" onclick="selectActivity('child_need')">욕구</button>
+                <button id="btnDeckChildFeelingMob" class="select-deck-btn select-deck-feeling" onclick="selectActivity('child_feeling')">느낌</button>
+                <button id="btnDeckChildNeedMob" class="select-deck-btn select-deck-need" onclick="selectActivity('child_need')">욕구</button>
                 <button class="card-all-view-btn" onclick="openAllCardsModal('child_feeling')">전체보기</button>
             </div>
             <div class="mobile-row" style="background:#fae8ff; padding:4px; border-radius:6px; border:1px solid #f0abfc;">
                 <span class="control-label" style="color:#86198f; margin-right:2px;">성인:</span>
-                <button id="btnDeckAdultFeelingMob" class="select-deck-btn" onclick="selectActivity('adult_feeling')">느낌</button>
-                <button id="btnDeckAdultNeedMob" class="select-deck-btn" onclick="selectActivity('adult_need')">욕구</button>
+                <button id="btnDeckAdultFeelingMob" class="select-deck-btn select-deck-feeling" onclick="selectActivity('adult_feeling')">느낌</button>
+                <button id="btnDeckAdultNeedMob" class="select-deck-btn select-deck-need" onclick="selectActivity('adult_need')">욕구</button>
                 <button class="card-all-view-btn" onclick="openAllCardsModal('adult_feeling')">전체보기</button>
             </div>
         </div>
@@ -531,7 +531,7 @@
                 <div class="gift-box-grid" id="giftGrid-north"></div>
             </div>
 
-            <!-- 서쪽 개인 테이블 (스마트폰 가로모드에서 코너 채우기 적용) -->
+            <!-- 서쪽 개인 테이블 -->
             <div id="table-west" class="table-area area-west" onclick="handleTableClick('west')">
                 <div class="name-badge" id="badge-west">
                     <div class="seat-name">서쪽 자리</div>
@@ -550,7 +550,7 @@
                 </div>
             </div>
 
-            <!-- 동쪽 개인 테이블 (스마트폰 가로모드에서 코너 채우기 적용) -->
+            <!-- 동쪽 개인 테이블 -->
             <div id="table-east" class="table-area area-east" onclick="handleTableClick('east')">
                 <div class="name-badge" id="badge-east">
                     <div class="seat-name">동쪽 자리</div>
@@ -784,7 +784,6 @@
 
         function switchModalTab(type) { currentModalType = type; renderModalContent(); }
 
-        // 슬래시('/')를 기준으로 줄바꿈(HTML <br>) 처리해 주는 도우미 함수
         function formatCardText(cardName) {
             if (!cardName) return "";
             return cardName.split('/').join('<br>');
@@ -952,13 +951,15 @@
                 ['child_feeling', 'child_need', 'adult_feeling', 'adult_need'].forEach(act => {
                     const btn = document.getElementById(`btnDeck${act.split('_').map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join('')}${suffix}`);
                     if(btn) {
-                        let activeClass = '';
-                        if (act === 'child_feeling') activeClass = ' btn-child-feeling-active';
-                        else if (act === 'child_need') activeClass = ' btn-child-need-active';
-                        else if (act === 'adult_feeling') activeClass = ' btn-adult-feeling-active';
-                        else if (act === 'adult_need') activeClass = ' btn-adult-need-active';
+                        const isFeeling = act.includes('feeling');
+                        const isSelected = gameState.selectedActivity === act;
                         
-                        btn.className = 'select-deck-btn' + (gameState.selectedActivity === act ? activeClass : '');
+                        let baseClass = isFeeling ? 'select-deck-btn select-deck-feeling' : 'select-deck-btn select-deck-need';
+                        let activeClass = '';
+                        if (isSelected) {
+                            activeClass = isFeeling ? ' btn-feeling-active' : ' btn-need-active';
+                        }
+                        btn.className = baseClass + activeClass;
                     }
                 });
                 
@@ -1020,7 +1021,7 @@
                 else if (gameState.selectedActivity === 'adult_need') deckTitle = "성인 욕구";
 
                 let deckText = deckTitle ? `<b>${deckTitle}</b><br><span style='font-size:11px; margin-top:2px; display:block;'>터치해 뽑기</span>` : "메뉴에서 카드를<br>선택해주세요.";
-                let deckClass = "center-deck-slot" + (gameState.selectedActivity ? ` active-${gameState.selectedActivity.replace('_', '-')}` : '');
+                let deckClass = "center-deck-slot" + (gameState.selectedActivity ? (gameState.selectedActivity.includes('feeling') ? ' active-feeling' : ' active-need') : '');
                 centerContainer.innerHTML = `<div class="${deckClass}" onclick="handleCenterDeckClick()"><span style="font-size: 12px; font-weight: bold;">${deckText}</span></div>`;
             }
 
