@@ -121,7 +121,6 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.08);
         }
 
-        /* 느낌/욕구 버튼 기본 색상 (분홍/하늘 통일) */
         .select-deck-feeling {
             background-color: #fdf2f8 !important;
             color: #be185d !important;
@@ -133,7 +132,6 @@
             border-color: #bae6fd !important;
         }
 
-        /* 덱 활성 색상 */
         .btn-feeling-active {
             background-color: #f3c1d3 !important;
             color: #881337 !important;
@@ -165,7 +163,7 @@
             border-color: #c99e7a !important;
         }
 
-        /* [PC 화면] 3x3 그리드: 모서리(네 귀퉁이)를 비우는 십자형 레이아웃 */
+        /* [PC 화면] 3x3 그리드 레이아웃 */
         .game-board-layout {
             display: grid;
             grid-template-columns: 200px 1fr 200px;
@@ -208,7 +206,6 @@
             width: 100%; height: 100%; min-height: 0; padding: 4px; overflow: hidden;
         }
 
-        /* [PC 화면] 정중앙 카드 덱 크기 */
         .center-deck-slot {
             width: 135px; height: 135px; border-radius: 14px;
             background-color: #ffffff;
@@ -224,7 +221,6 @@
         .center-deck-slot.active-feeling { background-color: #fdf2f8; border: 2px solid #be185d; color: #be185d; }
         .center-deck-slot.active-need    { background-color: #f0f9ff; border: 2px solid #0284c7; color: #0284c7; }
 
-        /* [PC 화면] 전체카드 펼치기 모드 그리드 */
         .center-board-area {
             width: 100%; height: 100%;
             background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 8px;
@@ -243,7 +239,6 @@
             background-color: #38bdf8 !important; color: #ffffff !important; border: 2px solid #0369a1 !important; transform: scale(1.08);
         }
 
-        /* [PC 화면] 이름 뱃지 크기 */
         .name-badge {
             background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 10px;
             text-align: center; flex-shrink: 0; width: 115px;
@@ -260,7 +255,6 @@
         }
         .seat-btn:hover { background-color: #f1f5f9; }
 
-        /* [PC 화면] 카드 슬롯 크기 (135px × 135px) */
         .card-slot {
             width: 135px; height: 135px; border-radius: 14px; display: flex; flex-direction: column;
             justify-content: center; align-items: center; text-align: center; cursor: pointer;
@@ -274,14 +268,12 @@
         }
         .game-container.mode-board .card-slot { display: none; }
 
-        /* 카드 활성화 상태 */
         .card-slot.card-active-state {
             border-width: 3px !important;
             box-shadow: 0 6px 16px rgba(0,0,0,0.12);
             transform: scale(1.02);
         }
 
-        /* [글씨 확대 단계별 스타일] */
         .game-container.font-zoom-level-1 .card-slot .card-text-content { font-size: 13.5px !important; }
         .game-container.font-zoom-level-1 .seat-name { font-size: 14.5px !important; }
         .game-container.font-zoom-level-1 .board-card-item { font-size: 12px !important; }
@@ -290,7 +282,6 @@
         .game-container.font-zoom-level-2 .seat-name { font-size: 15.5px !important; }
         .game-container.font-zoom-level-2 .board-card-item { font-size: 13px !important; }
 
-        /* 선물보관함 그리드 */
         .gift-box-grid { display: none; }
         .game-container.mode-board .area-north .gift-box-grid,
         .game-container.mode-board .area-south .gift-box-grid {
@@ -323,7 +314,7 @@
         .gift-slot.has-feeling { background-color: #fdf2f8 !important; border: 1px solid #be185d !important; color: #be185d !important; }
         .gift-slot.has-need    { background-color: #f0f9ff !important; border: 1px solid #0284c7 !important; color: #0284c7 !important; }
 
-        /* [PC 기준 공통 모달 팝업 - 전체보기 창] */
+        /* [PC 공통 모달 팝업 - 전체보기 창] */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background-color: rgba(0, 0, 0, 0.4); display: none; justify-content: center; align-items: center; z-index: 10000;
@@ -412,19 +403,20 @@
             .game-container.mode-board .area-west .gift-box-grid,
             .game-container.mode-board .area-east .gift-box-grid { width: 70px !important; max-width: 70px !important; }
 
-            /* [모바일 전용 전체보기 팝업 글자 및 카드 크기 확대] */
-            .modal-content { width: 96vw !important; height: 90vh !important; }
+            /* [모바일 세로 모드 전용 전체보기 팝업 글자 및 카드 크기 극대화] */
+            .modal-content { width: 98vw !important; height: 92vh !important; }
             .modal-header { padding: 8px 10px; }
-            .modal-tab-btn { font-size: 11px; padding: 5px 7px; }
+            .modal-tab-btn { font-size: 11px; padding: 5px 6px; }
             .modal-body { 
-                grid-template-columns: repeat(3, 1fr) !important; /* 세로 화면에서 3열로 시원하게 배치 */
-                gap: 8px !important; 
-                padding: 10px !important; 
+                grid-template-columns: repeat(2, 1fr) !important; /* 폰 세로에서는 2열로 배치하여 글자 크기를 극대화 */
+                gap: 10px !important; 
+                padding: 12px !important; 
             }
             .all-card-item { 
-                height: 65px !important; /* 카드 높이 확대 */
-                font-size: 13.5px !important; /* 모바일에서도 글씨가 큼직하게 보이도록 조정 */
-                line-height: 1.2 !important;
+                height: 80px !important; /* 카드를 큼직하게 유지 */
+                font-size: 17px !important; /* 글자 크기를 17px로 대폭 확대 */
+                line-height: 1.3 !important;
+                font-weight: 800 !important;
             }
         }
 
@@ -475,16 +467,18 @@
             .game-container.mode-board .area-west .gift-box-grid,
             .game-container.mode-board .area-east .gift-box-grid { width: 65px !important; max-width: 65px !important; max-height: 160px !important; }
 
-            /* [모바일 가로 모드 전용 전체보기 팝업 글자 및 카드 크기 확대] */
-            .modal-content { width: 95vw !important; height: 92vh !important; }
+            /* [모바일 가로 모드 전용 전체보기 팝업 글자 및 카드 크기 극대화] */
+            .modal-content { width: 96vw !important; height: 92vh !important; }
             .modal-body { 
-                grid-template-columns: repeat(4, 1fr) !important; /* 가로 화면에서는 4열로 배치 */
+                grid-template-columns: repeat(3, 1fr) !important; /* 폰 가로에서는 3열로 배치 */
                 gap: 8px !important; 
                 padding: 10px !important; 
             }
             .all-card-item { 
-                height: 58px !important; 
-                font-size: 12.5px !important; 
+                height: 72px !important; 
+                font-size: 15px !important; /* 가로 모드에서도 글씨 큼직하게 유지 */
+                line-height: 1.25 !important;
+                font-weight: 800 !important;
             }
         }
     </style>
@@ -707,7 +701,7 @@
             "조바심 나는/속 타는/초조한", "가슴뭉클한/감동한", "정겨운/다정한",
             "귀찮은/성가신", "겁나는/두려운/무서운", "신경 쓰이는/꺼림칙한",
             "짜릿한/신나는/재미있는", "따뜻한/푸근한", "좌절감이 드는/절망스러운",
-            "당혹ส런/어리둥절한", "슬픈/서글픈", "서먹한/어색한", "창피한/부끄러운",
+            "당혹스런/어리둥절한", "슬픈/서글픈", "서먹한/어색한", "창피한/부끄러운",
             "후련한/통쾌한", "감사한/고마운"
         ];
 
