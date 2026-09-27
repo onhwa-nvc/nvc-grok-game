@@ -109,27 +109,25 @@
             border: 1px solid rgba(0,0,0,0.06);
         }
 
-        /* 묶음 배경 색상 */
-        .box-system   { background-color: #f5efe6; border-color: #e4d5c3; } /* 연한 갈색 */
-        .box-activity { background-color: #f0f4ec; border-color: #d2dfc4; } /* 연한 카키 */
-        .box-card     { background-color: #fef9e7; border-color: #f6e075; } /* 연한 노랑 */
+        .box-system   { background-color: #f5efe6; border-color: #e4d5c3; }
+        .box-activity { background-color: #f0f4ec; border-color: #d2dfc4; }
+        .box-card     { background-color: #fef9e7; border-color: #f6e075; }
 
-        /* [활성화된 버튼 색상: 과하지 않고 묶음톤보다 약 2배 정도 부드럽게 진한 톤] */
         .mode-btn.active {
-            background-color: #b5c49a !important; /* 중간 톤 카키 */
+            background-color: #b5c49a !important;
             color: #2f3e1e !important;
             border-color: #9ab07b !important;
             box-shadow: 0 1px 3px rgba(0,0,0,0.08);
         }
 
         .btn-feeling-active {
-            background-color: #f3c1d3 !important; /* 부드러운 핑크 */
+            background-color: #f3c1d3 !important;
             color: #881337 !important;
             border-color: #e09bb5 !important;
         }
 
         .btn-need-active {
-            background-color: #b3e0f7 !important; /* 부드러운 하늘/파랑 */
+            background-color: #b3e0f7 !important;
             color: #0369a1 !important;
             border-color: #82ccf2 !important;
         }
@@ -148,7 +146,7 @@
         }
         .fullscreen-toggle-btn:hover { background-color: #fef3c7; }
         .fullscreen-toggle-btn.active-fullscreen-toggle {
-            background-color: #e6c5a8 !important; /* 부드러운 갈색 톤 */
+            background-color: #e6c5a8 !important;
             color: #5c2c16 !important;
             border-color: #c99e7a !important;
         }
@@ -159,7 +157,7 @@
             border-color: #d97706;
         }
         .font-zoom-btn.active {
-            background-color: #e6c5a8 !important; /* 부드러운 갈색 톤 */
+            background-color: #e6c5a8 !important;
             color: #5c2c16 !important;
             border-color: #c99e7a !important;
         }
@@ -324,7 +322,6 @@
             line-height: 1.2;
         }
 
-        /* 동서쪽 선물보관함 폭을 이름표 폭(115px)에 일치 */
         .game-container.mode-board .area-west .gift-box-grid,
         .game-container.mode-board .area-east .gift-box-grid {
             display: flex !important;
@@ -456,7 +453,7 @@
             }
         }
 
-        /* [스마트폰 가로 모드] */
+        /* [스마트폰 가로 모드: 컴화면 영향 없음 / 가로폭은 기존 날씬하게 유지하며 코너 빈부분만 위아래로 길게 채우기] */
         @media screen and (max-width: 950px) and (orientation: landscape) {
             .game-container {
                 width: 100vw; height: 100dvh; max-width: none; max-height: none;
@@ -475,12 +472,18 @@
             .game-board-layout {
                 grid-column: 2; grid-row: 1;
                 grid-template-columns: 95px 1fr 95px;
-                grid-template-rows: 95px 1fr 95px;
+                grid-template-rows: 1fr 1fr 1fr; /* 위아래 3등분으로 늘려서 코너 빈틈 채우기 */
                 gap: 4px; width: 100%; height: 100%; margin: 0;
             }
             .table-area { padding: 3px; gap: 6px; width: 100%; height: 100%; justify-content: center; }
-            .area-north, .area-south { grid-column: 2 !important; grid-row: auto !important; height: 95px; width: 100%; }
-            .area-west, .area-east { grid-column: auto !important; grid-row: 2 !important; width: 95px; height: 100%; }
+            
+            /* 북쪽/남쪽은 기존 좁은 폭 유지, 동쪽/서쪽은 위아래(1~3행) 전체 높이로 늘려서 코너 공백 채우기 */
+            .area-north { grid-column: 2 !important; grid-row: 1 !important; height: 100%; width: 100%; }
+            .area-south { grid-column: 2 !important; grid-row: 3 !important; height: 100%; width: 100%; }
+            .area-west  { grid-column: 1 !important; grid-row: 1 / span 3 !important; width: 95px; height: 100%; flex-direction: column; }
+            .area-east  { grid-column: 3 !important; grid-row: 1 / span 3 !important; width: 95px; height: 100%; flex-direction: column; }
+            
+            .center-area-wrapper { grid-column: 2 !important; grid-row: 2 !important; width: 100%; height: 100%; }
 
             .card-slot { width: 70px; height: 70px; padding: 3px; }
             .card-slot b { font-size: 11px !important; }
