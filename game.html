@@ -179,7 +179,6 @@
             flex-shrink: 0;
         }
 
-        /* 모서리를 비우기 위해 북/남은 가운데 열(2열)에만 배치, 동/서는 가운데 행(2행)에만 배치 */
         .area-north { grid-column: 2; grid-row: 1; width: 100%; height: 155px; flex-direction: row; }
         .area-south { grid-column: 2; grid-row: 3; width: 100%; height: 155px; flex-direction: row; }
         .area-west  { grid-column: 1; grid-row: 2; width: 200px; height: 100%; flex-direction: column; }
@@ -252,7 +251,7 @@
         }
         .seat-btn:hover { background-color: #f1f5f9; }
 
-        /* [PC 화면] 카드 슬롯 크기 및 글씨 */
+        /* [PC 화면] 카드 슬롯 크기 및 글씨 (기본) */
         .card-slot {
             width: 135px; height: 135px; border-radius: 14px; display: flex; flex-direction: column;
             justify-content: center; align-items: center; text-align: center; cursor: pointer;
@@ -264,20 +263,20 @@
             word-break: break-all;
             overflow-wrap: break-word;
             line-height: 1.3;
-            font-size: 17px !important;
+            font-size: 14px !important;
         }
         .game-container.mode-board .card-slot { display: none; }
 
-        /* [글씨 확대 단계별 스타일 (PC)] */
-        .game-container.font-zoom-level-1 .card-slot b { font-size: 20px !important; }
-        .game-container.font-zoom-level-1 .card-slot span { font-size: 13px !important; }
-        .game-container.font-zoom-level-1 .seat-name { font-size: 16px !important; }
-        .game-container.font-zoom-level-1 .board-card-item { font-size: 15px !important; }
+        /* [글씨 확대 단계별 스타일 - 완만하게 조정] */
+        .game-container.font-zoom-level-1 .card-slot b { font-size: 15px !important; }
+        .game-container.font-zoom-level-1 .card-slot span { font-size: 11.5px !important; }
+        .game-container.font-zoom-level-1 .seat-name { font-size: 14.5px !important; }
+        .game-container.font-zoom-level-1 .board-card-item { font-size: 13.5px !important; }
 
-        .game-container.font-zoom-level-2 .card-slot b { font-size: 24px !important; }
-        .game-container.font-zoom-level-2 .card-slot span { font-size: 15px !important; }
-        .game-container.font-zoom-level-2 .seat-name { font-size: 18px !important; }
-        .game-container.font-zoom-level-2 .board-card-item { font-size: 17px !important; }
+        .game-container.font-zoom-level-2 .card-slot b { font-size: 17px !important; }
+        .game-container.font-zoom-level-2 .card-slot span { font-size: 12.5px !important; }
+        .game-container.font-zoom-level-2 .seat-name { font-size: 15.5px !important; }
+        .game-container.font-zoom-level-2 .board-card-item { font-size: 14.5px !important; }
 
         /* PC 화면 펼치기 모드: 남북쪽 선물보관함 5칸씩 2줄 */
         .gift-box-grid { display: none; }
