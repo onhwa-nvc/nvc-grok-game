@@ -50,7 +50,7 @@
             justify-content: space-between;
             align-items: center;
             background: #ffffff;
-            padding: 10px 16px;
+            padding: 8px 14px;
             border-radius: 14px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.06);
             border: 1px solid #e2e8f0;
@@ -59,22 +59,22 @@
             max-width: 1240px;
             margin: 0 auto;
             flex-shrink: 0;
-            gap: 8px;
+            gap: 6px;
         }
 
-        .menu-group { display: flex; align-items: center; gap: 6px; }
+        .menu-group { display: flex; align-items: center; gap: 5px; }
         .mobile-side-bar { display: none; }
 
         .control-label {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: bold;
-            color: #334155;
+            color: #475569;
         }
 
         .mode-btn, .select-deck-btn, .card-all-view-btn, .fullscreen-toggle-btn, .font-zoom-btn, .lobby-back-btn, .destroy-room-btn {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: bold;
-            padding: 6px 12px;
+            padding: 5px 10px;
             border-radius: 8px;
             border: 1px solid #cbd5e1;
             cursor: pointer;
@@ -84,48 +84,64 @@
             white-space: nowrap;
         }
 
-        .lobby-back-btn { background-color: #f3ede2; color: #78716c; border-color: #d6c9b4; }
-        .destroy-room-btn { background-color: #fee2e2; color: #991b1b; border-color: #fca5a5; display: none; }
-        .destroy-room-btn:hover { background-color: #fecaca; }
+        .lobby-back-btn { background-color: #ffffff; color: #78716c; border-color: #cbd5e1; }
+        .lobby-back-btn:hover { background-color: #f8fafc; }
+        .destroy-room-btn { background-color: #ffffff; color: #991b1b; border-color: #fca5a5; display: none; }
+        .destroy-room-btn:hover { background-color: #fee2e2; }
 
         .room-badge {
-            background-color: #fdf2f8;
+            background-color: #ffffff;
             color: #be185d;
             border: 1px solid #f472b6;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: bold;
-            padding: 6px 12px;
+            padding: 5px 10px;
             border-radius: 8px;
         }
 
-        .mode-btn.active, .select-deck-btn.active {
-            background-color: #64748b;
-            color: #ffffff;
-            border-color: #64748b;
+        /* 묶음 박스 파스텔톤 공통 스타일 */
+        .control-group-box {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 8px;
+            border-radius: 10px;
+            border: 1px solid rgba(0,0,0,0.06);
+        }
+
+        /* 그룹별 파스텔 톤 배경 및 버튼 활성화(진하게) 색상 매칭 */
+        .box-system { background-color: #f8fafc; border-color: #e2e8f0; }
+        .box-activity { background-color: #f1f5f9; border-color: #cbd5e1; }
+        .box-card { background-color: #fdf2f8; border-color: #f472b6; }
+
+        .mode-btn.active {
+            background-color: #475569 !important;
+            color: #ffffff !important;
+            border-color: #334155 !important;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .btn-feeling-active {
             background-color: #be185d !important;
             color: #ffffff !important;
-            border-color: #be185d !important;
+            border-color: #9d174d !important;
         }
 
         .btn-need-active {
             background-color: #0284c7 !important;
             color: #ffffff !important;
-            border-color: #0284c7 !important;
+            border-color: #0369a1 !important;
         }
 
         .card-all-view-btn {
-            background-color: #fdf2f8;
+            background-color: #ffffff;
             color: #be185d;
             border-color: #f472b6;
         }
         .card-all-view-btn:hover { background-color: #fce7f3; }
 
         .fullscreen-toggle-btn {
-            background-color: #f8fafc;
+            background-color: #ffffff;
             color: #334155;
             border-color: #94a3b8;
         }
@@ -137,7 +153,7 @@
         }
 
         .font-zoom-btn {
-            background-color: #f8fafc;
+            background-color: #ffffff;
             color: #0f172a;
             border-color: #94a3b8;
         }
@@ -190,7 +206,7 @@
             width: 100%; height: 100%; min-height: 0; padding: 4px; overflow: hidden;
         }
 
-        /* [PC 화면] 정중앙 카드 덱 크기 2/3 수준으로 축소 (기존 145x175 -> 100x120) */
+        /* [PC 화면] 정중앙 카드 덱 크기 */
         .center-deck-slot {
             width: 100px; height: 120px;
             background-color: #ffffff;
@@ -267,7 +283,7 @@
         }
         .game-container.mode-board .card-slot { display: none; }
 
-        /* [글씨 확대 단계별 스타일 - 완만하게 조정] */
+        /* [글씨 확대 단계별 스타일] */
         .game-container.font-zoom-level-1 .card-slot b { font-size: 15px !important; }
         .game-container.font-zoom-level-1 .card-slot span { font-size: 11.5px !important; }
         .game-container.font-zoom-level-1 .seat-name { font-size: 14.5px !important; }
@@ -497,26 +513,29 @@
     <div class="game-container" id="gameContainer">
         <!-- [PC용 상단 메뉴바] -->
         <div class="top-control-bar">
-            <div class="menu-group">
+            <!-- 1. 시스템/이동 묶음 (연한 회색 계열 파스텔톤) -->
+            <div class="control-group-box box-system">
                 <div id="roomDisplayBadgePC" class="room-badge">방코드: 로딩</div>
                 <button class="lobby-back-btn" onclick="goToLobby()">← 로비</button>
                 <button id="destroyRoomBtnPC" class="destroy-room-btn" onclick="destroyRoom()">방종료</button>
+                <button id="btnUserFullscreenPC" class="fullscreen-toggle-btn" onclick="toggleUserFullscreen()">전체화면보기</button>
+                <button id="btnFontZoomPC" class="font-zoom-btn" onclick="toggleFontZoom()">글씨 🔍 A+</button>
             </div>
-            <div class="menu-group" style="background:#f1f5f9; padding:4px 8px; border-radius:8px; border:1px solid #cbd5e1;">
-                <span class="control-label" style="margin-right:3px;">활동:</span>
+
+            <!-- 2. 활동 모드 묶음 (연한 푸른빛 계열 파스텔톤) -->
+            <div class="control-group-box box-activity">
+                <span class="control-label">활동:</span>
                 <button id="btnModePrivatePC" class="mode-btn active" onclick="switchGameMode('private')">나만 보기</button>
                 <button id="btnModePublicPC" class="mode-btn" onclick="switchGameMode('public')">나만 안 보기</button>
                 <button id="btnModeBoardPC" class="mode-btn" onclick="switchGameMode('board')">전체 펼치기</button>
             </div>
-            <div class="menu-group" style="background:#f8fafc; padding:4px 8px; border-radius:8px; border:1px solid #cbd5e1;">
-                <span class="control-label" style="margin-right:3px;">카드:</span>
+
+            <!-- 3. 카드 관련 묶음 (연한 핑크빛 계열 파스텔톤) -->
+            <div class="control-group-box box-card">
+                <span class="control-label">카드:</span>
                 <button id="btnDeckFeelingPC" class="select-deck-btn" onclick="selectActivity('feeling')">느낌</button>
                 <button id="btnDeckNeedPC" class="select-deck-btn" onclick="selectActivity('need')">욕구</button>
                 <button class="card-all-view-btn" onclick="openAllCardsModal('feeling')">카드 전체보기</button>
-            </div>
-            <div class="menu-group">
-                <button id="btnUserFullscreenPC" class="fullscreen-toggle-btn" onclick="toggleUserFullscreen()">전체화면보기</button>
-                <button id="btnFontZoomPC" class="font-zoom-btn" onclick="toggleFontZoom()">글씨 🔍 A+</button>
             </div>
         </div>
 
@@ -527,6 +546,7 @@
                 <button class="lobby-back-btn" onclick="goToLobby()">← 로비</button>
                 <button id="destroyRoomBtnMob" class="destroy-room-btn" onclick="destroyRoom()">방종료</button>
                 <button id="btnUserFullscreenMob" class="fullscreen-toggle-btn" onclick="toggleUserFullscreen()" style="padding:4px 8px;">전체화면보기</button>
+                <button id="btnFontZoomMob" class="font-zoom-btn" onclick="toggleFontZoom()">🔍 A+</button>
             </div>
             <div class="mobile-row" style="background:#f1f5f9; padding:4px; border-radius:6px; border:1px solid #cbd5e1;">
                 <span style="font-size:11px; font-weight:bold; color:#475569; margin-right:3px;">활동:</span>
@@ -534,12 +554,11 @@
                 <button id="btnModePublicMob" class="mode-btn" onclick="switchGameMode('public')">나만안보기</button>
                 <button id="btnModeBoardMob" class="mode-btn" onclick="switchGameMode('board')">전체펼치기</button>
             </div>
-            <div class="mobile-row" style="background:#f8fafc; padding:4px; border-radius:6px; border:1px solid #cbd5e1;">
-                <span style="font-size:11px; font-weight:bold; color:#475569; margin-right:3px;">카드:</span>
+            <div class="mobile-row" style="background:#fdf2f8; padding:4px; border-radius:6px; border:1px solid #f472b6;">
+                <span style="font-size:11px; font-weight:bold; color:#be185d; margin-right:3px;">카드:</span>
                 <button id="btnDeckFeelingMob" class="select-deck-btn" onclick="selectActivity('feeling')">느낌</button>
                 <button id="btnDeckNeedMob" class="select-deck-btn" onclick="selectActivity('need')">욕구</button>
                 <button class="card-all-view-btn" onclick="openAllCardsModal('feeling')">카드 전체보기</button>
-                <button id="btnFontZoomMob" class="font-zoom-btn" onclick="toggleFontZoom()">🔍 A+</button>
             </div>
         </div>
 
