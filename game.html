@@ -453,7 +453,7 @@
             }
         }
 
-        /* [스마트폰 가로 모드: 컴화면 영향 없음 / 가로폭은 기존 날씬하게 유지하며 코너 빈부분만 위아래로 길게 채우기] */
+        /* [스마트폰 가로 모드: PC 화면 완전 보존 / 남북쪽은 기존 날씬한 높이 유지하며 동서쪽만 세로 코너 공백 채우기] */
         @media screen and (max-width: 950px) and (orientation: landscape) {
             .game-container {
                 width: 100vw; height: 100dvh; max-width: none; max-height: none;
@@ -472,16 +472,16 @@
             .game-board-layout {
                 grid-column: 2; grid-row: 1;
                 grid-template-columns: 95px 1fr 95px;
-                grid-template-rows: 1fr 1fr 1fr; /* 위아래 3등분으로 늘려서 코너 빈틈 채우기 */
+                grid-template-rows: 95px 1fr 95px; /* 남북쪽 높이 원래대로 슬림하게 복원 */
                 gap: 4px; width: 100%; height: 100%; margin: 0;
             }
             .table-area { padding: 3px; gap: 6px; width: 100%; height: 100%; justify-content: center; }
             
-            /* 북쪽/남쪽은 기존 좁은 폭 유지, 동쪽/서쪽은 위아래(1~3행) 전체 높이로 늘려서 코너 공백 채우기 */
-            .area-north { grid-column: 2 !important; grid-row: 1 !important; height: 100%; width: 100%; }
-            .area-south { grid-column: 2 !important; grid-row: 3 !important; height: 100%; width: 100%; }
-            .area-west  { grid-column: 1 !important; grid-row: 1 / span 3 !important; width: 95px; height: 100%; flex-direction: column; }
-            .area-east  { grid-column: 3 !important; grid-row: 1 / span 3 !important; width: 95px; height: 100%; flex-direction: column; }
+            /* 북쪽과 남쪽은 고유의 슬림한 높이(95px) 유지, 서쪽과 동쪽만 위아래(1~3행)로 늘려서 코너 공백 채우기 */
+            .area-north { grid-column: 2 !important; grid-row: 1 !important; height: 95px !important; width: 100%; }
+            .area-south { grid-column: 2 !important; grid-row: 3 !important; height: 95px !important; width: 100%; }
+            .area-west  { grid-column: 1 !important; grid-row: 1 / span 3 !important; width: 95px; height: 100% !important; flex-direction: column; }
+            .area-east  { grid-column: 3 !important; grid-row: 1 / span 3 !important; width: 95px; height: 100% !important; flex-direction: column; }
             
             .center-area-wrapper { grid-column: 2 !important; grid-row: 2 !important; width: 100%; height: 100%; }
 
