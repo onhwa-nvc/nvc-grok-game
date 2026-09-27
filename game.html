@@ -66,7 +66,7 @@
         .mobile-side-bar { display: none; }
 
         .control-label {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             color: #475569;
         }
@@ -74,7 +74,7 @@
         .mode-btn, .select-deck-btn, .card-all-view-btn, .fullscreen-toggle-btn, .font-zoom-btn, .lobby-back-btn, .destroy-room-btn {
             font-size: 12px;
             font-weight: bold;
-            padding: 5px 10px;
+            padding: 5px 9px;
             border-radius: 8px;
             border: 1px solid #cbd5e1;
             cursor: pointer;
@@ -103,7 +103,7 @@
         .control-group-box {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
             padding: 4px 8px;
             border-radius: 10px;
             border: 1px solid rgba(0,0,0,0.06);
@@ -111,7 +111,8 @@
 
         .box-system   { background-color: #f5efe6; border-color: #e4d5c3; }
         .box-activity { background-color: #f0f4ec; border-color: #d2dfc4; }
-        .box-card     { background-color: #fef9e7; border-color: #f6e075; }
+        .box-card-child { background-color: #fef9e7; border-color: #f6e075; }
+        .box-card-adult { background-color: #fae8ff; border-color: #f0abfc; }
 
         .mode-btn.active {
             background-color: #b5c49a !important;
@@ -120,16 +121,28 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.08);
         }
 
-        .btn-feeling-active {
+        /* 어린이용 덱 활성 색상 */
+        .btn-child-feeling-active {
             background-color: #f3c1d3 !important;
             color: #881337 !important;
             border-color: #e09bb5 !important;
         }
-
-        .btn-need-active {
+        .btn-child-need-active {
             background-color: #b3e0f7 !important;
             color: #0369a1 !important;
             border-color: #82ccf2 !important;
+        }
+
+        /* 성인용 덱 활성 색상 (연보라/마젠타톤) */
+        .btn-adult-feeling-active {
+            background-color: #e879f9 !important;
+            color: #4a044e !important;
+            border-color: #c084fc !important;
+        }
+        .btn-adult-need-active {
+            background-color: #c084fc !important;
+            color: #3b0764 !important;
+            border-color: #a855f7 !important;
         }
 
         .card-all-view-btn {
@@ -139,30 +152,18 @@
         }
         .card-all-view-btn:hover { background-color: #fef3c7; }
 
-        .fullscreen-toggle-btn {
+        .fullscreen-toggle-btn, .font-zoom-btn {
             background-color: #ffffff;
             color: #78350f;
             border-color: #d97706;
         }
-        .fullscreen-toggle-btn:hover { background-color: #fef3c7; }
-        .fullscreen-toggle-btn.active-fullscreen-toggle {
+        .fullscreen-toggle-btn.active-fullscreen-toggle, .font-zoom-btn.active {
             background-color: #e6c5a8 !important;
             color: #5c2c16 !important;
             border-color: #c99e7a !important;
         }
 
-        .font-zoom-btn {
-            background-color: #ffffff;
-            color: #78350f;
-            border-color: #d97706;
-        }
-        .font-zoom-btn.active {
-            background-color: #e6c5a8 !important;
-            color: #5c2c16 !important;
-            border-color: #c99e7a !important;
-        }
-
-        /* [PC 화면] 기본 3x3 십자형 레이아웃 (네 귀퉁이 비우기) */
+        /* [PC 화면] 3x3 그리드: 모서리(네 귀퉁이)를 비우는 십자형 레이아웃 복원 */
         .game-board-layout {
             display: grid;
             grid-template-columns: 200px 1fr 200px;
@@ -194,7 +195,7 @@
             flex-shrink: 0;
         }
 
-        /* PC 기준 각 자리 배치 (네 모서리가 비어 있는 구조) */
+        /* PC 화면 기준 네 귀퉁이를 비우고 십자로 배치 */
         .area-north { grid-column: 2; grid-row: 1; width: 100%; height: 155px; flex-direction: row; }
         .area-south { grid-column: 2; grid-row: 3; width: 100%; height: 155px; flex-direction: row; }
         .area-west  { grid-column: 1; grid-row: 2; width: 200px; height: 100%; flex-direction: column; }
@@ -220,12 +221,10 @@
         }
         .center-deck-slot:hover { transform: scale(1.02); }
 
-        .center-deck-slot.active-feeling {
-            background-color: #fdf2f8; border: 2px solid #be185d; color: #be185d;
-        }
-        .center-deck-slot.active-need {
-            background-color: #f0f9ff; border: 2px solid #0284c7; color: #0284c7;
-        }
+        .center-deck-slot.active-child-feeling { background-color: #fdf2f8; border: 2px solid #be185d; color: #be185d; }
+        .center-deck-slot.active-child-need    { background-color: #f0f9ff; border: 2px solid #0284c7; color: #0284c7; }
+        .center-deck-slot.active-adult-feeling { background-color: #fdf4ff; border: 2px solid #a855f7; color: #a855f7; }
+        .center-deck-slot.active-adult-need    { background-color: #faf5ff; border: 2px solid #7e22ce; color: #7e22ce; }
 
         /* [PC 화면] 전체카드 펼치기 모드 그리드 */
         .center-board-area {
@@ -243,10 +242,7 @@
         .board-card-item:hover { transform: scale(1.05); }
         .board-card-empty { height: 38px; background-color: transparent; border: 1px dashed transparent; pointer-events: none; }
 
-        .board-card-item.selected-feeling {
-            background-color: #f472b6 !important; color: #ffffff !important; border: 2px solid #831843 !important; transform: scale(1.08);
-        }
-        .board-card-item.selected-need {
+        .board-card-item.selected-card {
             background-color: #38bdf8 !important; color: #ffffff !important; border: 2px solid #0369a1 !important; transform: scale(1.08);
         }
 
@@ -274,12 +270,7 @@
             padding: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); flex-shrink: 0; overflow: hidden;
         }
         .card-slot b {
-            display: block;
-            width: 100%;
-            word-break: break-all;
-            overflow-wrap: break-word;
-            line-height: 1.3;
-            font-size: 14px !important;
+            display: block; width: 100%; word-break: break-all; overflow-wrap: break-word; line-height: 1.3; font-size: 14px !important;
         }
         .game-container.mode-board .card-slot { display: none; }
 
@@ -301,51 +292,23 @@
             display: grid !important;
             grid-template-columns: repeat(5, minmax(75px, 1fr)) !important;
             grid-template-rows: repeat(2, 50px) !important;
-            gap: 6px !important;
-            max-width: 520px !important;
-            max-height: none !important;
-            overflow-y: visible !important;
+            gap: 6px !important; max-width: 520px !important; max-height: none !important; overflow-y: visible !important;
         }
         .game-container.mode-board .area-north .gift-slot,
         .game-container.mode-board .area-south .gift-slot {
-            min-width: 0 !important;
-            width: 100% !important;
-            height: 50px !important;
-            font-size: 13px !important;
-            font-weight: bold !important;
-            padding: 2px !important;
-            word-break: break-all;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            line-height: 1.2;
+            min-width: 0 !important; width: 100% !important; height: 50px !important; font-size: 13px !important; font-weight: bold !important; padding: 2px !important;
+            word-break: break-all; overflow: hidden; display: flex; justify-content: center; align-items: center; text-align: center; line-height: 1.2;
         }
 
         .game-container.mode-board .area-west .gift-box-grid,
         .game-container.mode-board .area-east .gift-box-grid {
-            display: flex !important;
-            flex-direction: column !important;
-            flex-wrap: nowrap !important;
-            width: 115px !important;
-            max-width: 115px !important;
-            max-height: 260px !important;
-            overflow-y: auto !important;
-            gap: 4px !important;
+            display: flex !important; flex-direction: column !important; flex-wrap: nowrap !important;
+            width: 115px !important; max-width: 115px !important; max-height: 260px !important; overflow-y: auto !important; gap: 4px !important;
         }
         .game-container.mode-board .area-west .gift-slot,
         .game-container.mode-board .area-east .gift-slot {
-            width: 100% !important;
-            min-width: 0 !important;
-            height: 36px !important;
-            font-size: 12px !important;
-            word-break: break-all;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
+            width: 100% !important; min-width: 0 !important; height: 36px !important; font-size: 12px !important;
+            word-break: break-all; overflow: hidden; display: flex; justify-content: center; align-items: center; text-align: center;
         }
 
         .gift-slot {
@@ -354,7 +317,7 @@
             cursor: pointer; text-align: center; padding: 2px; flex-shrink: 0;
         }
         .gift-slot.has-feeling { background-color: #fdf2f8 !important; border: 1px solid #be185d !important; color: #be185d !important; }
-        .gift-slot.has-need { background-color: #f0f9ff !important; border: 1px solid #0284c7 !important; color: #0284c7 !important; }
+        .gift-slot.has-need    { background-color: #f0f9ff !important; border: 1px solid #0284c7 !important; color: #0284c7 !important; }
 
         /* 공통 모달 팝업 */
         .modal-overlay {
@@ -366,10 +329,9 @@
             border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); display: flex; flex-direction: column; overflow: hidden; border: 1px solid #e2e8f0;
         }
         .modal-header { padding: 12px 20px; background-color: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
-        .modal-tab-group { display: flex; gap: 8px; }
-        .modal-tab-btn { font-size: 12px; font-weight: bold; padding: 5px 10px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer; background-color: #f8fafc; color: #475569; }
-        .modal-tab-btn.feeling-active { background-color: #be185d !important; color: #ffffff !important; border-color: #be185d !important; }
-        .modal-tab-btn.need-active { background-color: #0284c7 !important; color: #ffffff !important; border-color: #0284c7 !important; }
+        .modal-tab-group { display: flex; gap: 8px; flex-wrap: wrap; }
+        .modal-tab-btn { font-size: 11px; font-weight: bold; padding: 5px 8px; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer; background-color: #f8fafc; color: #475569; }
+        .modal-tab-btn.active-tab { background-color: #0284c7 !important; color: #ffffff !important; border-color: #0284c7 !important; }
         .modal-body { padding: 14px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(95px, 1fr)); gap: 8px; align-content: start; }
         .all-card-item { border-radius: 6px; height: 46px; display: flex; justify-content: center; align-items: center; font-size: 13px; font-weight: bold; text-align: center; word-break: break-all; padding: 2px; }
         .close-modal-btn { background: none; border: none; font-size: 15px; font-weight: bold; cursor: pointer; color: #64748b; }
@@ -377,12 +339,9 @@
         /* [이름 입력 전용 모달] */
         .name-modal-content {
             background-color: #ffffff; width: 300px; padding: 20px; border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2); display: flex; flex-direction: column; gap: 12px; text-align: center;
-            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); display: flex; flex-direction: column; gap: 12px; text-align: center; border: 1px solid #e2e8f0;
         }
-        .name-modal-input {
-            width: 100%; padding: 8px 10px; font-size: 14px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none;
-        }
+        .name-modal-input { width: 100%; padding: 8px 10px; font-size: 14px; border: 1px solid #cbd5e1; border-radius: 6px; outline: none; }
         .name-modal-btn-group { display: flex; gap: 8px; justify-content: center; }
         .name-modal-btn { flex: 1; padding: 7px; font-size: 13px; font-weight: bold; border-radius: 6px; border: 1px solid #cbd5e1; cursor: pointer; }
         .name-modal-confirm { background-color: #0284c7; color: #ffffff; border-color: #0284c7; }
@@ -397,12 +356,8 @@
             .mobile-side-bar {
                 display: flex; flex-direction: column; background: #ffffff; padding: 5px 8px; border-radius: 10px; border: 1px solid #e2e8f0; gap: 4px; flex-shrink: 0; z-index: 20; width: 100%;
             }
-            .mobile-row {
-                display: flex; justify-content: flex-start; align-items: center; gap: 4px; width: 100%; flex-wrap: wrap;
-            }
-            .mobile-side-bar button, .mobile-side-bar .room-badge {
-                flex: 0 0 auto; width: auto !important; font-size: 11px; padding: 4px 8px; height: 30px; line-height: 1.2;
-            }
+            .mobile-row { display: flex; justify-content: flex-start; align-items: center; gap: 4px; width: 100%; flex-wrap: wrap; }
+            .mobile-side-bar button, .mobile-side-bar .room-badge { flex: 0 0 auto; width: auto !important; font-size: 11px; padding: 4px 7px; height: 30px; line-height: 1.2; }
             .room-badge { font-weight: bold; font-size: 11px; }
 
             .game-board-layout {
@@ -411,11 +366,7 @@
                 gap: 4px; width: 100%; margin: 2px 0;
             }
             .table-area { padding: 4px; gap: 6px; width: 100%; justify-content: center; }
-            .area-north, .area-south {
-                grid-column: 1 / span 3 !important;
-                grid-row: auto !important;
-                height: 125px; width: 100%;
-            }
+            .area-north, .area-south { grid-column: 1 / span 3 !important; grid-row: auto !important; height: 125px; width: 100%; }
             .area-west { grid-column: 1 !important; grid-row: 2 !important; width: 80px; height: 100%; }
             .area-east { grid-column: 3 !important; grid-row: 2 !important; width: 80px; height: 100%; }
 
@@ -426,40 +377,29 @@
             .seat-btn { font-size: 9px; padding: 2px 4px; }
 
             .center-board-area {
-                grid-template-columns: repeat(3, 1fr) !important;
-                grid-auto-rows: 34px !important;
-                gap: 3px !important;
-                padding: 4px !important;
+                grid-template-columns: repeat(3, 1fr) !important; grid-auto-rows: 34px !important; gap: 3px !important; padding: 4px !important;
             }
             .board-card-item { font-size: 11px !important; height: 34px !important; }
             .board-card-empty { height: 34px !important; }
 
             .game-container.mode-board .area-north .gift-box-grid,
             .game-container.mode-board .area-south .gift-box-grid {
-                display: grid !important;
-                grid-template-columns: repeat(5, minmax(50px, 1fr)) !important;
-                grid-template-rows: repeat(2, 38px) !important;
-                gap: 3px !important;
-                max-width: 290px !important;
-                max-height: none !important;
-                overflow-y: visible !important;
+                display: grid !important; grid-template-columns: repeat(5, minmax(50px, 1fr)) !important; grid-template-rows: repeat(2, 38px) !important;
+                gap: 3px !important; max-width: 290px !important; max-height: none !important; overflow-y: visible !important;
             }
             .game-container.mode-board .area-north .gift-slot,
             .game-container.mode-board .area-south .gift-slot {
                 min-width: 0 !important; width: 100% !important; height: 38px !important; font-size: 10px !important; font-weight: bold !important; padding: 2px !important;
             }
             .game-container.mode-board .area-west .gift-box-grid,
-            .game-container.mode-board .area-east .gift-box-grid {
-                width: 70px !important; max-width: 70px !important;
-            }
+            .game-container.mode-board .area-east .gift-box-grid { width: 70px !important; max-width: 70px !important; }
         }
 
-        /* [스마트폰 가로 모드 전용: PC 화면에는 절대 영향 없음] */
+        /* [스마트폰 가로 모드: 동서쪽만 세로로 늘려 코너 채우기] */
         @media screen and (max-width: 950px) and (orientation: landscape) {
             .game-container {
                 width: 100vw; height: 100dvh; max-width: none; max-height: none;
-                border-radius: 0; padding: 4px;
-                display: grid; grid-template-columns: 165px 1fr; grid-template-rows: 1fr; gap: 6px;
+                border-radius: 0; padding: 4px; display: grid; grid-template-columns: 165px 1fr; grid-template-rows: 1fr; gap: 6px;
             }
             .game-container.user-fullscreen-active { height: 100dvh !important; }
             .top-control-bar { display: none !important; }
@@ -470,7 +410,6 @@
             .mobile-side-bar .mobile-row { display: flex; flex-direction: column; gap: 3px; width: 100%; }
             .mobile-side-bar button, .mobile-side-bar .room-badge { width: 100%; text-align: center; font-size: 11px; padding: 5px; }
 
-            /* 폰 가로 모드일 때만 동서 자리가 코너를 채우도록 설정 */
             .game-board-layout {
                 grid-column: 2; grid-row: 1;
                 grid-template-columns: 95px 1fr 95px;
@@ -479,11 +418,10 @@
             }
             .table-area { padding: 3px; gap: 6px; width: 100%; height: 100%; justify-content: center; }
             
-            .game-board-layout > .area-north { grid-column: 2 !important; grid-row: 1 !important; height: 95px !important; width: 100%; }
-            .game-board-layout > .area-south { grid-column: 2 !important; grid-row: 3 !important; height: 95px !important; width: 100%; }
-            .game-board-layout > .area-west  { grid-column: 1 !important; grid-row: 1 / span 3 !important; width: 95px; height: 100% !important; flex-direction: column; }
-            .game-board-layout > .area-east  { grid-column: 3 !important; grid-row: 1 / span 3 !important; width: 95px; height: 100% !important; flex-direction: column; }
-            
+            .area-north { grid-column: 2 !important; grid-row: 1 !important; height: 95px !important; width: 100%; }
+            .area-south { grid-column: 2 !important; grid-row: 3 !important; height: 95px !important; width: 100%; }
+            .area-west  { grid-column: 1 !important; grid-row: 1 / span 3 !important; width: 95px; height: 100% !important; flex-direction: column; }
+            .area-east  { grid-column: 3 !important; grid-row: 1 / span 3 !important; width: 95px; height: 100% !important; flex-direction: column; }
             .center-area-wrapper { grid-column: 2 !important; grid-row: 2 !important; width: 100%; height: 100%; }
 
             .card-slot { width: 70px; height: 70px; padding: 3px; }
@@ -494,22 +432,15 @@
 
             .game-container.mode-board .area-north .gift-box-grid,
             .game-container.mode-board .area-south .gift-box-grid {
-                display: grid !important;
-                grid-template-columns: repeat(5, minmax(58px, 1fr)) !important;
-                grid-template-rows: repeat(2, 33px) !important;
-                gap: 2px !important;
-                max-width: 360px !important;
-                max-height: none !important;
-                overflow-y: visible !important;
+                display: grid !important; grid-template-columns: repeat(5, minmax(58px, 1fr)) !important; grid-template-rows: repeat(2, 33px) !important;
+                gap: 2px !important; max-width: 360px !important; max-height: none !important; overflow-y: visible !important;
             }
             .game-container.mode-board .area-north .gift-slot,
             .game-container.mode-board .area-south .gift-slot {
                 min-width: 0 !important; width: 100% !important; height: 33px !important; font-size: 10px !important; font-weight: bold !important; padding: 1px !important;
             }
             .game-container.mode-board .area-west .gift-box-grid,
-            .game-container.mode-board .area-east .gift-box-grid {
-                width: 65px !important; max-width: 65px !important; max-height: 160px !important;
-            }
+            .game-container.mode-board .area-east .gift-box-grid { width: 65px !important; max-width: 65px !important; max-height: 160px !important; }
         }
     </style>
 </head>
@@ -535,12 +466,20 @@
                 <button id="btnModeBoardPC" class="mode-btn" onclick="switchGameMode('board')">전체 펼치기</button>
             </div>
 
-            <!-- 3. 카드 관련 묶음 -->
-            <div class="control-group-box box-card">
-                <span class="control-label">카드:</span>
-                <button id="btnDeckFeelingPC" class="select-deck-btn" onclick="selectActivity('feeling')">느낌</button>
-                <button id="btnDeckNeedPC" class="select-deck-btn" onclick="selectActivity('need')">욕구</button>
-                <button class="card-all-view-btn" onclick="openAllCardsModal('feeling')">카드 전체보기</button>
+            <!-- 3. 어린이용 카드 묶음 -->
+            <div class="control-group-box box-card-child">
+                <span class="control-label">어린이:</span>
+                <button id="btnDeckChildFeelingPC" class="select-deck-btn" onclick="selectActivity('child_feeling')">느낌</button>
+                <button id="btnDeckChildNeedPC" class="select-deck-btn" onclick="selectActivity('child_need')">욕구</button>
+                <button class="card-all-view-btn" onclick="openAllCardsModal('child_feeling')">전체보기</button>
+            </div>
+
+            <!-- 4. 성인용 카드 묶음 -->
+            <div class="control-group-box box-card-adult">
+                <span class="control-label">성인:</span>
+                <button id="btnDeckAdultFeelingPC" class="select-deck-btn" onclick="selectActivity('adult_feeling')">느낌</button>
+                <button id="btnDeckAdultNeedPC" class="select-deck-btn" onclick="selectActivity('adult_need')">욕구</button>
+                <button class="card-all-view-btn" onclick="openAllCardsModal('adult_feeling')">전체보기</button>
             </div>
         </div>
 
@@ -550,20 +489,26 @@
                 <div id="roomDisplayBadgeMob" class="room-badge">방코드: 로딩</div>
                 <button class="lobby-back-btn" onclick="goToLobby()">← 로비</button>
                 <button id="destroyRoomBtnMob" class="destroy-room-btn" onclick="destroyRoom()">방종료</button>
-                <button id="btnUserFullscreenMob" class="fullscreen-toggle-btn" onclick="toggleUserFullscreen()" style="padding:4px 8px;">전체화면보기</button>
+                <button id="btnUserFullscreenMob" class="fullscreen-toggle-btn" onclick="toggleUserFullscreen()" style="padding:4px 8px;">전체화면</button>
                 <button id="btnFontZoomMob" class="font-zoom-btn" onclick="toggleFontZoom()">🔍 A+</button>
             </div>
             <div class="mobile-row" style="background:#f0f4ec; padding:4px; border-radius:6px; border:1px solid #d2dfc4;">
-                <span style="font-size:11px; font-weight:bold; color:#475569; margin-right:3px;">활동:</span>
+                <span class="control-label" style="margin-right:2px;">활동:</span>
                 <button id="btnModePrivateMob" class="mode-btn active" onclick="switchGameMode('private')">나만보기</button>
                 <button id="btnModePublicMob" class="mode-btn" onclick="switchGameMode('public')">나만안보기</button>
                 <button id="btnModeBoardMob" class="mode-btn" onclick="switchGameMode('board')">전체펼치기</button>
             </div>
             <div class="mobile-row" style="background:#fef9e7; padding:4px; border-radius:6px; border:1px solid #f6e075;">
-                <span style="font-size:11px; font-weight:bold; color:#b45309; margin-right:3px;">카드:</span>
-                <button id="btnDeckFeelingMob" class="select-deck-btn" onclick="selectActivity('feeling')">느낌</button>
-                <button id="btnDeckNeedMob" class="select-deck-btn" onclick="selectActivity('need')">욕구</button>
-                <button class="card-all-view-btn" onclick="openAllCardsModal('feeling')">카드 전체보기</button>
+                <span class="control-label" style="color:#b45309; margin-right:2px;">어린이:</span>
+                <button id="btnDeckChildFeelingMob" class="select-deck-btn" onclick="selectActivity('child_feeling')">느낌</button>
+                <button id="btnDeckChildNeedMob" class="select-deck-btn" onclick="selectActivity('child_need')">욕구</button>
+                <button class="card-all-view-btn" onclick="openAllCardsModal('child_feeling')">전체보기</button>
+            </div>
+            <div class="mobile-row" style="background:#fae8ff; padding:4px; border-radius:6px; border:1px solid #f0abfc;">
+                <span class="control-label" style="color:#86198f; margin-right:2px;">성인:</span>
+                <button id="btnDeckAdultFeelingMob" class="select-deck-btn" onclick="selectActivity('adult_feeling')">느낌</button>
+                <button id="btnDeckAdultNeedMob" class="select-deck-btn" onclick="selectActivity('adult_need')">욕구</button>
+                <button class="card-all-view-btn" onclick="openAllCardsModal('adult_feeling')">전체보기</button>
             </div>
         </div>
 
@@ -581,7 +526,7 @@
                 <div class="gift-box-grid" id="giftGrid-north"></div>
             </div>
 
-            <!-- 서쪽 개인 테이블 -->
+            <!-- 서쪽 개인 테이블 (스마트폰 가로모드에서 코너 채우기 적용) -->
             <div id="table-west" class="table-area area-west" onclick="handleTableClick('west')">
                 <div class="name-badge" id="badge-west">
                     <div class="seat-name">서쪽 자리</div>
@@ -600,7 +545,7 @@
                 </div>
             </div>
 
-            <!-- 동쪽 개인 테이블 -->
+            <!-- 동쪽 개인 테이블 (스마트폰 가로모드에서 코너 채우기 적용) -->
             <div id="table-east" class="table-area area-east" onclick="handleTableClick('east')">
                 <div class="name-badge" id="badge-east">
                     <div class="seat-name">동쪽 자리</div>
@@ -630,10 +575,12 @@
     <div id="allCardsModal" class="modal-overlay" onclick="closeAllCardsModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-header">
-                <b id="modalTitle" style="font-size: 15px; color: #334155;">NVC 전체 카드 목록</b>
+                <b id="modalTitle" style="font-size: 14px; color: #334155;">NVC 전체 카드 목록</b>
                 <div class="modal-tab-group">
-                    <button id="modalTabFeeling" class="modal-tab-btn" onclick="switchModalTab('feeling')">느낌 카드</button>
-                    <button id="modalTabNeed" class="modal-tab-btn" onclick="switchModalTab('need')">욕구 카드</button>
+                    <button id="modalTabChildFeeling" class="modal-tab-btn" onclick="switchModalTab('child_feeling')">어린이 느낌</button>
+                    <button id="modalTabChildNeed" class="modal-tab-btn" onclick="switchModalTab('child_need')">어린이 욕구</button>
+                    <button id="modalTabAdultFeeling" class="modal-tab-btn" onclick="switchModalTab('adult_feeling')">성인 느낌</button>
+                    <button id="modalTabAdultNeed" class="modal-tab-btn" onclick="switchModalTab('adult_need')">성인 욕구</button>
                 </div>
                 <button class="close-modal-btn" onclick="closeAllCardsModal()">✕ 닫기</button>
             </div>
@@ -677,7 +624,8 @@
             location.href = 'index.html';
         });
 
-        const feelingPool = [
+        // 어린이용 느낌 카드 풀
+        const childFeelingPool = [
             "고맙다", "안심된다", "편안하다", "평온하다", "기운이난다", "용기난다", "기대된다", "여유롭다", "홀가분하다", "가슴뭉클하다",
             "따뜻하다", "재미있다", "기쁘다", "뿌듯하다", "신난다", "행복하다", "감동받다", "반갑다", "궁금하다", "우울하다",
             "괴롭다", "졸리다", "화난다", "그립다", "슬프다", "서운하다", "외롭다", "불편하다", "두렵다", "겁난다",
@@ -686,7 +634,8 @@
             "피곤하다", "지루하다", "속상하다", "억울하다"
         ];
 
-        const needPool = [
+        // 어린이용 욕구 카드 풀
+        const childNeedPool = [
             "놀이", "재미", "꿈", "희망", "솔직함", "자유/자율성", "감사", "보살핌", "보호",
             "조화/어울리기", "휴식", "잠", "공기/음식/주거", "선택", "신뢰/믿기",
             "능력", "자신감", "존재감", "창조", "자기표현", "혼자만의시간과 공간", "배려", "평화", "이해", "수용/받아주기",
@@ -696,12 +645,16 @@
             "보람", "회복", "진실", "성취", "인정"
         ];
         
+        // 성인용 카드 풀 (추후 단어를 알려주시면 여기에 채워 넣거나 업데이트하면 됩니다)
+        const adultFeelingPool = ["성인용 느낌 단어를 준비 중입니다"];
+        const adultNeedPool = ["성인용 욕구 단어를 준비 중입니다"];
+        
         let mySeat = null; 
         let selectedCardForGift = null;
-        let currentModalType = 'feeling';
-        let fontZoomLevel = 0; // 0: 기본, 1: 1단계 확대, 2: 2단계 확대
-        let isUserFullscreen = false; // 사용자 수동 전체화면 토글 상태
-        let pendingSeatId = null; // 착석 대기 중인 자리 ID
+        let currentModalType = 'child_feeling';
+        let fontZoomLevel = 0; 
+        let isUserFullscreen = false; 
+        let pendingSeatId = null; 
         
         let gameState = {
             seats: {
@@ -766,22 +719,10 @@
         function toggleUserFullscreen() {
             if (!isUserFullscreen) {
                 const elem = document.documentElement;
-                if (elem.requestFullscreen) {
-                    elem.requestFullscreen().catch(err => console.log(err));
-                } else if (elem.webkitRequestFullscreen) {
-                    elem.webkitRequestFullscreen();
-                } else if (elem.msRequestFullscreen) {
-                    elem.msRequestFullscreen();
-                }
+                if (elem.requestFullscreen) elem.requestFullscreen().catch(err => console.log(err));
                 isUserFullscreen = true;
             } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen().catch(err => console.log(err));
-                } else if (document.webkitExitFullscreen) {
-                    document.webkitExitFullscreen();
-                } else if (document.msExitFullscreen) {
-                    document.msExitFullscreen();
-                }
+                if (document.exitFullscreen) document.exitFullscreen().catch(err => console.log(err));
                 isUserFullscreen = false;
             }
             updateUI();
@@ -810,7 +751,7 @@
             syncAndBroadcast();
         }
 
-        function openAllCardsModal(type = 'feeling') {
+        function openAllCardsModal(type = 'child_feeling') {
             currentModalType = type;
             renderModalContent();
             document.getElementById('allCardsModal').style.display = "flex";
@@ -821,22 +762,29 @@
         function renderModalContent() {
             const modalCardGrid = document.getElementById('modalCardGrid');
             const modalTitle = document.getElementById('modalTitle');
-            const btnTabFeeling = document.getElementById('modalTabFeeling');
-            const btnTabNeed = document.getElementById('modalTabNeed');
             
             modalCardGrid.innerHTML = "";
-            const pool = currentModalType === 'feeling' ? feelingPool : needPool;
-            modalTitle.innerText = `NVC ${currentModalType === 'feeling' ? '느낌' : '욕구'} 카드 전체 목록`;
-            btnTabFeeling.className = "modal-tab-btn" + (currentModalType === 'feeling' ? ' feeling-active' : '');
-            btnTabNeed.className = "modal-tab-btn" + (currentModalType === 'need' ? ' need-active' : '');
+            let pool = childFeelingPool;
+            let titleText = "어린이 느낌 카드";
+
+            if (currentModalType === 'child_feeling') { pool = childFeelingPool; titleText = "어린이 느낌 카드 목록"; }
+            else if (currentModalType === 'child_need') { pool = childNeedPool; titleText = "어린이 욕구 카드 목록"; }
+            else if (currentModalType === 'adult_feeling') { pool = adultFeelingPool; titleText = "성인 느낌 카드 목록"; }
+            else if (currentModalType === 'adult_need') { pool = adultNeedPool; titleText = "성인 욕구 카드 목록"; }
+
+            modalTitle.innerText = `NVC ${titleText}`;
+
+            ['child_feeling', 'child_need', 'adult_feeling', 'adult_need'].forEach(t => {
+                const btn = document.getElementById(`modalTab${t.split('_').map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join('')}`);
+                if(btn) btn.classList.toggle('active-tab', currentModalType === t);
+            });
 
             pool.forEach(cardName => {
                 const item = document.createElement('div');
                 item.className = 'all-card-item';
-                const isFeeling = currentModalType === 'feeling';
-                item.style.backgroundColor = isFeeling ? '#fdf2f8' : '#f0f9ff';
-                item.style.borderColor = isFeeling ? '#be185d' : '#0284c7';
-                item.style.color = isFeeling ? '#be185d' : '#0284c7';
+                item.style.backgroundColor = currentModalType.includes('feeling') ? '#fdf2f8' : '#f0f9ff';
+                item.style.borderColor = currentModalType.includes('feeling') ? '#be185d' : '#0284c7';
+                item.style.color = currentModalType.includes('feeling') ? '#be185d' : '#0284c7';
                 item.style.borderWidth = '1px'; item.style.borderStyle = 'solid';
                 item.innerText = cardName;
                 modalCardGrid.appendChild(item);
@@ -866,10 +814,7 @@
 
         function confirmSeatName() {
             const userName = document.getElementById('nameInputText').value.trim();
-            if (!userName) {
-                alert("이름을 입력해주세요.");
-                return;
-            }
+            if (!userName) { alert("이름을 입력해주세요."); return; }
             const seatId = pendingSeatId;
             closeNameModal();
 
@@ -898,7 +843,12 @@
             for (let s in gameState.cards) if (gameState.cards[s].card) usedCards.push(gameState.cards[s].card);
             for (let s in gameState.gifts) gameState.gifts[s].forEach(item => usedCards.push(typeof item === 'object' ? item.card : item));
 
-            const cardPool = gameState.selectedActivity === 'feeling' ? feelingPool : needPool;
+            let cardPool = childFeelingPool;
+            if (gameState.selectedActivity === 'child_feeling') cardPool = childFeelingPool;
+            else if (gameState.selectedActivity === 'child_need') cardPool = childNeedPool;
+            else if (gameState.selectedActivity === 'adult_feeling') cardPool = adultFeelingPool;
+            else if (gameState.selectedActivity === 'adult_need') cardPool = adultNeedPool;
+
             const availableCards = cardPool.filter(c => !usedCards.includes(c));
             if (availableCards.length === 0) { alert("덱에 남은 카드가 없습니다!"); return; }
 
@@ -961,10 +911,18 @@
                 if(uBtn) uBtn.classList.toggle('active', isPublic);
                 if(bBtn) bBtn.classList.toggle('active', isBoard);
 
-                const fBtn = document.getElementById(`btnDeckFeeling${suffix}`);
-                const nBtn = document.getElementById(`btnDeckNeed${suffix}`);
-                if(fBtn) fBtn.className = 'select-deck-btn' + (gameState.selectedActivity === 'feeling' ? ' btn-feeling-active' : '');
-                if(nBtn) nBtn.className = 'select-deck-btn' + (gameState.selectedActivity === 'need' ? ' btn-need-active' : '');
+                ['child_feeling', 'child_need', 'adult_feeling', 'adult_need'].forEach(act => {
+                    const btn = document.getElementById(`btnDeck${act.split('_').map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join('')}${suffix}`);
+                    if(btn) {
+                        let activeClass = '';
+                        if (act === 'child_feeling') activeClass = ' btn-child-feeling-active';
+                        else if (act === 'child_need') activeClass = ' btn-child-need-active';
+                        else if (act === 'adult_feeling') activeClass = ' btn-adult-feeling-active';
+                        else if (act === 'adult_need') activeClass = ' btn-adult-need-active';
+                        
+                        btn.className = 'select-deck-btn' + (gameState.selectedActivity === act ? activeClass : '');
+                    }
+                });
                 
                 const zBtn = document.getElementById(`btnFontZoom${suffix}`);
                 if(zBtn) {
@@ -977,7 +935,7 @@
                 const fsBtn = document.getElementById(`btnUserFullscreen${suffix}`);
                 if(fsBtn) {
                     fsBtn.classList.toggle('active-fullscreen-toggle', isUserFullscreen);
-                    fsBtn.innerText = isUserFullscreen ? "전체화면해제" : "전체화면보기";
+                    fsBtn.innerText = isUserFullscreen ? "해제" : "전체화면";
                 }
             });
 
@@ -992,8 +950,12 @@
                 if (!gameState.selectedActivity) {
                     centerContainer.innerHTML = `<div class="center-deck-slot"><span style="font-size:12px; color:#94a3b8;">메뉴에서 카드를 선택해 주세요.</span></div>`;
                 } else {
-                    const pool = gameState.selectedActivity === 'feeling' ? feelingPool : needPool;
-                    const isFeeling = gameState.selectedActivity === 'feeling';
+                    let pool = childFeelingPool;
+                    if (gameState.selectedActivity === 'child_feeling') pool = childFeelingPool;
+                    else if (gameState.selectedActivity === 'child_need') pool = childNeedPool;
+                    else if (gameState.selectedActivity === 'adult_feeling') pool = adultFeelingPool;
+                    else if (gameState.selectedActivity === 'adult_need') pool = adultNeedPool;
+
                     let usedCards = [];
                     for (let s in gameState.cards) if (gameState.cards[s].card) usedCards.push(gameState.cards[s].card);
                     for (let s in gameState.gifts) gameState.gifts[s].forEach(item => usedCards.push(typeof item === 'object' ? item.card : item));
@@ -1004,8 +966,8 @@
                             boardHTML += `<div class="board-card-empty"></div>`;
                         } else {
                             const isSelected = selectedCardForGift && selectedCardForGift.card === cardName;
-                            let itemClass = "board-card-item" + (isSelected ? (isFeeling ? " selected-feeling" : " selected-need") : "");
-                            let inlineStyle = isSelected ? "" : `background-color:${isFeeling ? '#fdf2f8' : '#f0f9ff'}; border:1px solid ${isFeeling ? '#be185d' : '#0284c7'}; color:${isFeeling ? '#be185d' : '#0284c7'};`;
+                            let itemClass = "board-card-item" + (isSelected ? " selected-card" : "");
+                            let inlineStyle = isSelected ? "" : `background-color:#fef9e7; border:1px solid #f6e075; color:#b45309;`;
                             boardHTML += `<div class="${itemClass}" style="${inlineStyle}" onclick="handleBoardCardClick('${cardName}', event)">${cardName}</div>`;
                         }
                     });
@@ -1013,9 +975,14 @@
                     centerContainer.innerHTML = boardHTML;
                 }
             } else {
-                let deckText = gameState.selectedActivity === 'feeling' ? "<b>느낌카드</b><br><span style='font-size:11px; margin-top:2px; display:block;'>터치해 뽑기</span>" :
-                               gameState.selectedActivity === 'need' ? "<b>욕구카드</b><br><span style='font-size:11px; margin-top:2px; display:block;'>터치해 뽑기</span>" : "메뉴에서 카드를<br>선택해주세요.";
-                let deckClass = "center-deck-slot" + (gameState.selectedActivity ? ` active-${gameState.selectedActivity}` : '');
+                let deckTitle = "";
+                if (gameState.selectedActivity === 'child_feeling') deckTitle = "어린이 느낌";
+                else if (gameState.selectedActivity === 'child_need') deckTitle = "어린이 욕구";
+                else if (gameState.selectedActivity === 'adult_feeling') deckTitle = "성인 느낌";
+                else if (gameState.selectedActivity === 'adult_need') deckTitle = "성인 욕구";
+
+                let deckText = deckTitle ? `<b>${deckTitle}</b><br><span style='font-size:11px; margin-top:2px; display:block;'>터치해 뽑기</span>` : "메뉴에서 카드를<br>선택해주세요.";
+                let deckClass = "center-deck-slot" + (gameState.selectedActivity ? ` active-${gameState.selectedActivity.replace('_', '-')}` : '');
                 centerContainer.innerHTML = `<div class="${deckClass}" onclick="handleCenterDeckClick()"><span style="font-size: 12px; font-weight: bold;">${deckText}</span></div>`;
             }
 
@@ -1045,9 +1012,7 @@
                     const giftItem = gifts[i];
                     if (giftItem) {
                         const cName = typeof giftItem === 'object' ? giftItem.card : giftItem;
-                        const cType = typeof giftItem === 'object' ? giftItem.type : 'feeling';
-                        const slotClass = cType === 'feeling' ? 'gift-slot has-card has-feeling' : 'gift-slot has-card has-need';
-                        gridHTML += `<div class="${slotClass}" onclick="handleGiftSlotClick('${seat}', ${i}, event)" title="클릭시 반납">${cName}</div>`;
+                        gridHTML += `<div class="gift-slot has-card has-feeling" onclick="handleGiftSlotClick('${seat}', ${i}, event)" title="클릭시 반납">${cName}</div>`;
                     } else {
                         gridHTML += `<div class="gift-slot" style="color:#cbd5e1;">${i+1}</div>`;
                     }
@@ -1060,26 +1025,21 @@
                         slot.style.borderColor = "#cbd5e1";
                         slot.style.backgroundColor = "#f8fafc";
                     } else {
-                        const isFeeling = cardData.type === 'feeling';
-                        const themeBg = isFeeling ? '#fdf2f8' : '#f0f9ff';
-                        const themeBorder = isFeeling ? '#be185d' : '#0284c7';
-                        const themeColor = isFeeling ? '#be185d' : '#0284c7';
-
-                        slot.style.borderColor = themeBorder;
-                        slot.style.backgroundColor = themeBg;
+                        slot.style.borderColor = "#f6e075";
+                        slot.style.backgroundColor = "#fef9e7";
 
                         if (seat === mySeat) {
                             if (gameState.gameMode === 'private') {
                                 if (cardData.revealed) {
                                     slot.innerHTML = `<span style="font-size:11px; color:#ef4444; margin-bottom:2px; display:block;">[전체 공개됨]</span><b>${cardData.card}</b><span style="font-size:11px; color:#888; display:block; margin-top:2px;">(터치해 반납)</span>`;
                                 } else {
-                                    slot.innerHTML = `<b>${cardData.card}</b><span style="font-size:11px; color:${themeColor}; display:block; margin-top:2px;">(터치해 전체공개)</span>`;
+                                    slot.innerHTML = `<b>${cardData.card}</b><span style="font-size:11px; color:#b45309; display:block; margin-top:2px;">(터치해 전체공개)</span>`;
                                 }
                             } else {
                                 if (cardData.selfRevealed) {
-                                    slot.innerHTML = `<b>${cardData.card}</b><span style="font-size:11px; color:${themeColor}; display:block; margin-top:2px;">(터치해 반납)</span>`;
+                                    slot.innerHTML = `<b>${cardData.card}</b><span style="font-size:11px; color:#b45309; display:block; margin-top:2px;">(터치해 반납)</span>`;
                                 } else {
-                                    slot.innerHTML = `<b style="font-size:22px; color:${themeColor};">??</b><span style="font-size:11px; color:${themeColor}; display:block; margin-top:2px;">(내 카드 확인)</span>`;
+                                    slot.innerHTML = `<b style="font-size:22px; color:#b45309;">??</b><span style="font-size:11px; color:#b45309; display:block; margin-top:2px;">(내 카드 확인)</span>`;
                                 }
                             }
                         } else {
@@ -1087,10 +1047,10 @@
                                 if (cardData.revealed) {
                                     slot.innerHTML = `<span style="font-size:11px; color:#ef4444; margin-bottom:2px; display:block;">[공개된 카드]</span><b>${cardData.card}</b>`;
                                 } else {
-                                    slot.innerHTML = `<b style="font-size:20px; color:${themeColor};">??</b>`;
+                                    slot.innerHTML = `<b style="font-size:20px; color:#b45309;">??</b>`;
                                 }
                             } else {
-                                slot.innerHTML = `<span style="font-size:11px; color:${themeColor}; margin-bottom:2px; display:block;">[${seatInfo.name || '상대'}의 카드]</span><b>${cardData.card}</b>`;
+                                slot.innerHTML = `<span style="font-size:11px; color:#b45309; margin-bottom:2px; display:block;">[${seatInfo.name || '상대'}의 카드]</span><b>${cardData.card}</b>`;
                             }
                         }
                     }
