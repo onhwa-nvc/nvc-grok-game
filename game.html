@@ -162,7 +162,7 @@
             border-color: #c99e7a !important;
         }
 
-        /* [PC 화면] 3x3 그리드로 모서리를 비우는 십자형 레이아웃 구성 */
+        /* [PC 화면] 3x3 그리드: 모서리(네 귀퉁이)를 비우는 십자형 레이아웃 복원 */
         .game-board-layout {
             display: grid;
             grid-template-columns: 200px 1fr 200px;
@@ -194,6 +194,7 @@
             flex-shrink: 0;
         }
 
+        /* PC 화면 기준 네 귀퉁이를 비우고 십자로 배치 */
         .area-north { grid-column: 2; grid-row: 1; width: 100%; height: 155px; flex-direction: row; }
         .area-south { grid-column: 2; grid-row: 3; width: 100%; height: 155px; flex-direction: row; }
         .area-west  { grid-column: 1; grid-row: 2; width: 200px; height: 100%; flex-direction: column; }
@@ -453,7 +454,7 @@
             }
         }
 
-        /* [스마트폰 가로 모드: PC 화면 완전 보존 / 남북쪽은 기존 날씬한 높이 유지하며 동서쪽만 세로 코너 공백 채우기] */
+        /* [스마트폰 가로 모드 전용: PC는 영향 없음 / 동서쪽만 세로로 늘려 코너 채우기] */
         @media screen and (max-width: 950px) and (orientation: landscape) {
             .game-container {
                 width: 100vw; height: 100dvh; max-width: none; max-height: none;
@@ -472,12 +473,12 @@
             .game-board-layout {
                 grid-column: 2; grid-row: 1;
                 grid-template-columns: 95px 1fr 95px;
-                grid-template-rows: 95px 1fr 95px; /* 남북쪽 높이 원래대로 슬림하게 복원 */
+                grid-template-rows: 95px 1fr 95px;
                 gap: 4px; width: 100%; height: 100%; margin: 0;
             }
             .table-area { padding: 3px; gap: 6px; width: 100%; height: 100%; justify-content: center; }
             
-            /* 북쪽과 남쪽은 고유의 슬림한 높이(95px) 유지, 서쪽과 동쪽만 위아래(1~3행)로 늘려서 코너 공백 채우기 */
+            /* 스마트폰 가로 모드에서만 동서 자리가 코너 공백을 채우도록 세로 확장 */
             .area-north { grid-column: 2 !important; grid-row: 1 !important; height: 95px !important; width: 100%; }
             .area-south { grid-column: 2 !important; grid-row: 3 !important; height: 95px !important; width: 100%; }
             .area-west  { grid-column: 1 !important; grid-row: 1 / span 3 !important; width: 95px; height: 100% !important; flex-direction: column; }
