@@ -109,25 +109,27 @@
             border: 1px solid rgba(0,0,0,0.06);
         }
 
-        .box-system   { background-color: #f5efe6; border-color: #e4d5c3; }
-        .box-activity { background-color: #f0f4ec; border-color: #d2dfc4; }
-        .box-card     { background-color: #fef9e7; border-color: #f6e075; }
+        /* 묶음 배경 색상 */
+        .box-system   { background-color: #f5efe6; border-color: #e4d5c3; } /* 연한 갈색 */
+        .box-activity { background-color: #f0f4ec; border-color: #d2dfc4; } /* 연한 카키 */
+        .box-card     { background-color: #fef9e7; border-color: #f6e075; } /* 연한 노랑 */
 
+        /* [활성화된 버튼 색상: 과하지 않고 묶음톤보다 약 2배 정도 부드럽게 진한 톤] */
         .mode-btn.active {
-            background-color: #b5c49a !important;
+            background-color: #b5c49a !important; /* 중간 톤 카키 */
             color: #2f3e1e !important;
             border-color: #9ab07b !important;
             box-shadow: 0 1px 3px rgba(0,0,0,0.08);
         }
 
         .btn-feeling-active {
-            background-color: #f3c1d3 !important;
+            background-color: #f3c1d3 !important; /* 부드러운 핑크 */
             color: #881337 !important;
             border-color: #e09bb5 !important;
         }
 
         .btn-need-active {
-            background-color: #b3e0f7 !important;
+            background-color: #b3e0f7 !important; /* 부드러운 하늘/파랑 */
             color: #0369a1 !important;
             border-color: #82ccf2 !important;
         }
@@ -146,7 +148,7 @@
         }
         .fullscreen-toggle-btn:hover { background-color: #fef3c7; }
         .fullscreen-toggle-btn.active-fullscreen-toggle {
-            background-color: #e6c5a8 !important;
+            background-color: #e6c5a8 !important; /* 부드러운 갈색 톤 */
             color: #5c2c16 !important;
             border-color: #c99e7a !important;
         }
@@ -157,7 +159,7 @@
             border-color: #d97706;
         }
         .font-zoom-btn.active {
-            background-color: #e6c5a8 !important;
+            background-color: #e6c5a8 !important; /* 부드러운 갈색 톤 */
             color: #5c2c16 !important;
             border-color: #c99e7a !important;
         }
@@ -322,6 +324,7 @@
             line-height: 1.2;
         }
 
+        /* 동서쪽 선물보관함 폭을 이름표 폭(115px)에 일치 */
         .game-container.mode-board .area-west .gift-box-grid,
         .game-container.mode-board .area-east .gift-box-grid {
             display: flex !important;
@@ -453,62 +456,55 @@
             }
         }
 
-        /* [스마트폰 가로 모드: 동서자리 코너 비어보임 해결 및 위아래 꽉 채우기 수정] */
+        /* [스마트폰 가로 모드] */
         @media screen and (max-width: 950px) and (orientation: landscape) {
             .game-container {
                 width: 100vw; height: 100dvh; max-width: none; max-height: none;
                 border-radius: 0; padding: 4px;
-                display: grid; grid-template-columns: 150px 1fr; grid-template-rows: 1fr; gap: 4px;
+                display: grid; grid-template-columns: 165px 1fr; grid-template-rows: 1fr; gap: 6px;
             }
             .game-container.user-fullscreen-active { height: 100dvh !important; }
             .top-control-bar { display: none !important; }
             .mobile-side-bar {
                 display: flex; grid-column: 1; grid-row: 1; flex-direction: column; justify-content: flex-start; align-items: stretch;
-                gap: 4px; background: #ffffff; padding: 6px; border-radius: 8px; border: 1px solid #e2e8f0; overflow-y: auto; z-index: 20;
+                gap: 5px; background: #ffffff; padding: 8px; border-radius: 10px; border: 1px solid #e2e8f0; overflow-y: auto; z-index: 20;
             }
-            .mobile-side-bar .mobile-row { display: flex; flex-direction: column; gap: 2px; width: 100%; }
-            .mobile-side-bar button, .mobile-side-bar .room-badge { width: 100%; text-align: center; font-size: 11px; padding: 4px; }
+            .mobile-side-bar .mobile-row { display: flex; flex-direction: column; gap: 3px; width: 100%; }
+            .mobile-side-bar button, .mobile-side-bar .room-badge { width: 100%; text-align: center; font-size: 11px; padding: 5px; }
 
-            /* 가로모드 보드판 전체를 위아래 100% 채우도록 3x3 그리드 높이 확장 */
             .game-board-layout {
                 grid-column: 2; grid-row: 1;
-                grid-template-columns: 1fr 1fr 1fr;
-                grid-template-rows: 1fr 1fr 1fr;
+                grid-template-columns: 95px 1fr 95px;
+                grid-template-rows: 95px 1fr 95px;
                 gap: 4px; width: 100%; height: 100%; margin: 0;
             }
-            
-            /* 동(오른쪽) / 서(왼쪽) 테이블을 위아래(1행부터 3행까지) 전체 높이로 꽉 채우기 */
-            .table-area { padding: 3px; gap: 4px; width: 100%; height: 100%; justify-content: center; }
-            .area-north { grid-column: 2 !important; grid-row: 1 !important; height: 100%; width: 100%; }
-            .area-south { grid-column: 2 !important; grid-row: 3 !important; height: 100%; width: 100%; }
-            .area-west  { grid-column: 1 !important; grid-row: 1 / span 3 !important; width: 100%; height: 100%; flex-direction: column; }
-            .area-east  { grid-column: 3 !important; grid-row: 1 / span 3 !important; width: 100%; height: 100%; flex-direction: column; }
-            
-            .center-area-wrapper { grid-column: 2 !important; grid-row: 2 !important; width: 100%; height: 100%; }
+            .table-area { padding: 3px; gap: 6px; width: 100%; height: 100%; justify-content: center; }
+            .area-north, .area-south { grid-column: 2 !important; grid-row: auto !important; height: 95px; width: 100%; }
+            .area-west, .area-east { grid-column: auto !important; grid-row: 2 !important; width: 95px; height: 100%; }
 
-            .card-slot { width: 62px; height: 62px; padding: 2px; }
-            .card-slot b { font-size: 10px !important; }
-            .name-badge { width: 100%; max-width: 85px; padding: 2px; }
-            .seat-name { font-size: 9.5px; }
-            .seat-btn { font-size: 8px; padding: 1px 2px; }
+            .card-slot { width: 70px; height: 70px; padding: 3px; }
+            .card-slot b { font-size: 11px !important; }
+            .name-badge { width: 65px; padding: 3px; }
+            .seat-name { font-size: 10px; }
+            .seat-btn { font-size: 8px; padding: 2px 3px; }
 
             .game-container.mode-board .area-north .gift-box-grid,
             .game-container.mode-board .area-south .gift-box-grid {
                 display: grid !important;
-                grid-template-columns: repeat(5, minmax(45px, 1fr)) !important;
-                grid-template-rows: repeat(2, 28px) !important;
+                grid-template-columns: repeat(5, minmax(58px, 1fr)) !important;
+                grid-template-rows: repeat(2, 33px) !important;
                 gap: 2px !important;
-                max-width: 280px !important;
+                max-width: 360px !important;
                 max-height: none !important;
                 overflow-y: visible !important;
             }
             .game-container.mode-board .area-north .gift-slot,
             .game-container.mode-board .area-south .gift-slot {
-                min-width: 0 !important; width: 100% !important; height: 28px !important; font-size: 9px !important; font-weight: bold !important; padding: 1px !important;
+                min-width: 0 !important; width: 100% !important; height: 33px !important; font-size: 10px !important; font-weight: bold !important; padding: 1px !important;
             }
             .game-container.mode-board .area-west .gift-box-grid,
             .game-container.mode-board .area-east .gift-box-grid {
-                width: 85px !important; max-width: 85px !important; max-height: 140px !important;
+                width: 65px !important; max-width: 65px !important; max-height: 160px !important;
             }
         }
     </style>
