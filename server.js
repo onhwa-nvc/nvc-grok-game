@@ -6,100 +6,108 @@ const path = require('path');
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
-    cors: {
-        origin: "*",
-        methods: ["GET", "POST"]
-    }
+    path: '/socket.io',
+    transports: ['websocket', 'polling']
 });
 
-const PORT = process.env.PORT || 3000;
-
+// HTML, CSS 등 웹 파일들이 있는 폴더 경로 설정
 app.use(express.static(path.join(__dirname)));
 
-// 활성화된 방 목록과 방별 게임 상태를 관리하는 저장소
-const activeRooms = new Set();
-const roomStates = {}; 
+// 방들의 상태를 기억하는 공간
+let rooms = {};
 
 io.on('connection', (socket) => {
-    console.log(`사용자 접속됨: ${socket.id}`);
+    console.log('사용자가 연결되었습니다:', socket.id);
 
-    // 관리자가 지정한 코드로 새 방 생성 (재사용 가능하도록 기존 잔여 데이터 클린업 포함)
-    socket.on('createSpecificRoom', (roomCode) => {
-        const trimmedCode = roomCode.trim();
+    // 1. 관리자 모드에서 새 방을 만들 때 기존 방들을 모두 청소하고 새로 생성
+    socket.on('createSpecificRoomWithCleanup', (roomCode) => {
+        // 기존에 남아있던 모든 방 정보를 초기화(삭제)합니다.
+        rooms = {}; 
         
-        // 혹시라도 남아있을 수 있는 유령 데이터 강제 청소
-        activeRooms.delete(trimmedCode);
-        delete roomStates[trimmedCode];
-
-        activeRooms.add(trimmedCode);
-        socket.join(trimmedCode);
-        
-        // 방 초기 게임 상태 설정
-        roomStates[trimmedCode] = {
-            seats: { 
-                north: { name: "", occupant: null }, 
-                south: { name: "", occupant: null }, 
-                west: { name: "", occupant: null }, 
-                east: { name: "", occupant: null } 
+        // 새로운 방 초기 세팅
+        rooms[roomCode] = {
+            seats: {
+                north: { name: "", occupant: null },
+                south: { name: "", occupant: null },
+                west: { name: "", occupant: null },
+                east: { name: "", occupant: null }
             },
-            cards: { 
-                north: { card: "", type: "", revealed: false, selfRevealed: false }, 
-                south: { card: "", type: "", revealed: false, selfRevealed: false }, 
-                west: { card: "", type: "", revealed: false, selfRevealed: false }, 
-                east: { card: "", type: "", revealed: false, selfRevealed: false } 
+            cards: {
+                north: { card: "", type: "", revealed: false, selfRevealed: false },
+                south: { card: "", type: "", revealed: false, selfRevealed: false },
+                west: { card: "", type: "", revealed: false, selfRevealed: false },
+                east: { card: "", type: "", revealed: false, selfRevealed: false }
             },
             gifts: { north: [], south: [], west: [], east: [] },
             selectedActivity: null,
             gameMode: 'private'
         };
 
-        console.log(`[방 생성 완료] 코드: ${trimmedCode}`);
-        socket.emit('roomCreated', trimmedCode);
+        console.log(`새로운 방 생성 완료 (기존 방 모두 정리됨): ${roomCode}`);
+        socket.emit('roomCreated', roomCode);
     });
 
-    // 방 존재 여부 확인
+    // 일반 방 생성 (혹시 기존 방식으로 호출될 경우 대비)
+    socket.on('createSpecificRoom', (roomCode) => {
+        if (!rooms[roomCode]) {
+            rooms[roomCode] = {
+                seats: {
+                    north: { name: "", occupant: null },
+                    south: { name: "", occupant: null },
+                    west: { name: "", occupant: null },
+                    east: { name: "", occupant: null }
+                },
+                cards: {
+                    north: { card: "", type: "", revealed: false, selfRevealed: false },
+                    south: { card: "", type: "", revealed: false, selfRevealed: false },
+                    west: { card: "", type: "", revealed: false, selfRevealed: false },
+                    east: { card: "", type: "", revealed: false, selfRevealed: false }
+                },
+                gifts: { north: [], south: [], west: [], east: [] },
+                selectedActivity: null,
+                gameMode: 'private'
+            };
+        }
+        socket.emit('roomCreated', roomCode);
+    });
+
+    // 방이 실제로 존재하는지 확인
     socket.on('checkRoomExists', (roomCode) => {
-        const trimmedCode = roomCode.trim();
-        const exists = activeRooms.has(trimmedCode);
-        socket.emit('roomCheckResult', { exists, roomCode: trimmedCode });
+        const exists = !!rooms[roomCode];
+        socket.emit('roomCheckResult', { exists, roomCode });
     });
 
-    // 게임방 입장 시 최신 상태 동기화
+    // 방 입장
     socket.on('joinRoom', (roomCode) => {
-        const trimmedCode = roomCode.trim();
-        socket.join(trimmedCode);
-        console.log(`사용자(${socket.id})가 방 [${trimmedCode}]에 입장했습니다.`);
-        
-        if (roomStates[trimmedCode]) {
-            socket.emit('gameStateUpdate', roomStates[trimmedCode]);
+        socket.join(roomCode);
+        if (rooms[roomCode]) {
+            socket.emit('gameStateUpdate', rooms[roomCode]);
         }
     });
 
-    // 게임 상태 업데이트
-    socket.on('updateGameState', (data) => {
-        const { roomCode, gameState } = data;
-        if (roomCode && roomStates[roomCode]) {
-            roomStates[roomCode] = gameState;
+    // 게임 상태(카드, 자리 등)가 바뀔 때 모든 사람에게 동기화
+    socket.on('updateGameState', ({ roomCode, gameState }) => {
+        if (rooms[roomCode]) {
+            rooms[roomCode] = gameState;
+            io.to(roomCode).emit('gameStateUpdate', gameState);
         }
-        io.to(roomCode).emit('gameStateUpdate', gameState);
     });
 
-    // 방장이 방을 명시적으로 종료(폭파)할 때
+    // 방장이 방을 직접 종료할 때
     socket.on('destroyRoom', (roomCode) => {
-        const trimmedCode = roomCode.trim();
-        if (activeRooms.has(trimmedCode)) {
-            activeRooms.delete(trimmedCode);
-            delete roomStates[trimmedCode];
-            console.log(`[방 폭파 완료] 코드: ${trimmedCode}`);
-            io.to(trimmedCode).emit('roomDestroyed');
+        if (rooms[roomCode]) {
+            delete rooms[roomCode];
+            io.to(roomCode).emit('roomDestroyed');
+            console.log(`방이 종료되었습니다: ${roomCode}`);
         }
     });
 
     socket.on('disconnect', () => {
-        console.log(`사용자 연결 끊김: ${socket.id}`);
+        console.log('사용자 연결이 해제되었습니다:', socket.id);
     });
 });
 
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-    console.log(`서버가 포트 ${PORT}에서 정상적으로 실행 중입니다.`);
+    console.log(`서버가 정상적으로 실행 중입니다: http://localhost:${PORT}`);
 });
